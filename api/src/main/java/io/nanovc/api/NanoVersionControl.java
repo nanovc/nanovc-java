@@ -1,4 +1,4 @@
-package io.nanovc;
+package io.nanovc.api;
 
 /**
  * The entry point for Nano Version Control.

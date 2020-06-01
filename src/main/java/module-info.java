@@ -1,2 +1,0 @@
-module io.nanovc.java {
-}
