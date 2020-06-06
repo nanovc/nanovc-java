@@ -3,12 +3,29 @@ plugins {
     // https://docs.gradle.org/current/userguide/java_library_plugin.html
     id 'java-library'
     id("maven-publish")
+
+    // Instructions to publish to Maven Central:
+    // https://central.sonatype.org/pages/gradle.html
+    //apply plugin: 'maven'
+    //apply plugin: 'signing'
+    // Using the example from here: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+    id('signing')
 }
+
+// Define the name of this artifact:
+def libraryArtifactID = 'nanovc-api';
 
 dependencies {
     // api: ''
     // implementation: ''
     testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
+}
+
+// Make sure we publish Javadoc and Sources:
+// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 test {
@@ -21,6 +38,8 @@ test {
 
 publishing {
     repositories {
+        // From Git Hub Packages documentation:
+        // https://help.github.com/en/packages/publishing-and-managing-packages/publishing-a-package
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/nanovc/nanovc-java")
@@ -29,10 +48,81 @@ publishing {
                 password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
             }
         }
+
+        // From maven-publish documentation:
+        // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+        maven {
+            name = "MavenCentralStaging"
+            // The following details were provided when registering our repository with OSSRH:
+            // https://issues.sonatype.org/browse/OSSRH-58246
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = ossrhUsername // Defined in gradle.properties
+                password = ossrhPassword // Defined in gradle.properties
+            }
+        }
     }
     publications {
+        // From Git Hub Packages documentation:
+        // https://help.github.com/en/packages/publishing-and-managing-packages/publishing-a-package
         gpr(MavenPublication) {
             from(components.java)
         }
+
+
+        // From maven-publish documentation:
+        // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+        mavenCentralJava(MavenPublication) {
+            artifactId = libraryArtifactID
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Nano Version Control Core API'
+                description = 'The Core API for the Nano Version Control Library'
+                url = 'http://nanovc.io'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'lukaszmac'
+                        name = 'Lukasz Machowski'
+                        email = 'nanovc@outlook.com'
+                        url = 'www.linkedin.com/in/lukasz-machowski-05a0a51'
+                        organization = 'Synthesis Software Technologies'
+                        organizationUrl = 'https://www.synthesis.co.za/'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/nanovc/nanovc-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/nanovc/nanovc-java.git'
+                    url = 'https://github.com/nanovc/nanovc-java'
+                }
+            }
+        }
+    }
+}
+
+// From maven-publish documentation:
+// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+signing {
+    sign publishing.publications.mavenCentralJava
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }

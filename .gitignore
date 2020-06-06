@@ -20,6 +20,9 @@ hs_err_pid*
 .gradle
 build/
 
+# Don't commit the gradle.properties because we might keep sensitive keys and passwords there
+gradle.properties
+
 
 # Eclipse
 /.classpath
@@ -32,3 +35,6 @@ build/
 *.iml
 *.ipr
 *.iws
+
+# GPG Keys for Maven Central Publishing:
+/gpg/
