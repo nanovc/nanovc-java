@@ -2,6 +2,7 @@ plugins {
     // Define this as a Java Library:
     // https://docs.gradle.org/current/userguide/java_library_plugin.html
     id 'java-library'
+    id("maven-publish")
 }
 
 dependencies {
@@ -14,5 +15,24 @@ test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
+    }
+}
+
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/nanovc/nanovc-java")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
     }
 }

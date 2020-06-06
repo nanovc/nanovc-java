@@ -19,4 +19,30 @@ subprojects {
     tasks.withType(Test).configureEach {
         useJUnitPlatform()
     }
+
+
+//    // Instructions on how to publish GitHub packages are here:
+//    // https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-gradle-for-use-with-github-packages
+//    apply plugin: "maven-publish"
+//    publishing {
+//        repositories {
+//            maven {
+//                name = "GitHubPackages"
+//                url = uri("https://maven.pkg.github.com/nanovc/nanovc-java")
+//                credentials {
+//                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+//                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+//                }
+//            }
+//        }
+//        publications {
+//            gpr(MavenPublication) {
+//                from components.java
+//                afterEvaluate {
+//                    artifactId = jar.archiveBaseName
+//                }
+//            }
+//        }
+//    }
+
 }
