@@ -9,6 +9,9 @@ plugins {
     //apply plugin: 'maven'
     //apply plugin: 'signing'
     // Using the example from here: https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+    id('maven')
+
+    // https://central.sonatype.org/pages/gradle.html
     id('signing')
 }
 
@@ -20,6 +23,25 @@ dependencies {
     // implementation: ''
     testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
 }
+
+// Instructions for publishing to Maven Central for Gradle:
+//https://central.sonatype.org/pages/gradle.html
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+archivesBaseName = libraryArtifactID
+
 
 // Make sure we publish Javadoc and Sources:
 // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
@@ -119,10 +141,63 @@ publishing {
 // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 signing {
     sign publishing.publications.mavenCentralJava
+
+    // Instructions for publishing to Maven Central for Gradle:
+    //https://central.sonatype.org/pages/gradle.html
+    sign configurations.archives
 }
 
 javadoc {
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
+    }
+}
+
+
+// Instructions for publishing to Maven Central for Gradle:
+//https://central.sonatype.org/pages/gradle.html
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name = 'Nano Version Control Core API'
+                description = 'The Core API for the Nano Version Control Library'
+                url = 'http://nanovc.io'
+                packaging 'jar'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'lukaszmac'
+                        name = 'Lukasz Machowski'
+                        email = 'nanovc@outlook.com'
+                        url = 'www.linkedin.com/in/lukasz-machowski-05a0a51'
+                        organization = 'Synthesis Software Technologies'
+                        organizationUrl = 'https://www.synthesis.co.za/'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/nanovc/nanovc-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/nanovc/nanovc-java.git'
+                    url = 'https://github.com/nanovc/nanovc-java'
+                }
+
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 // https://docs.gradle.org/current/samples/sample_java_modules_multi_project.html
 subprojects {
     group = 'io.nanovc'
-    version = '0.0'
+    version = '0.0.1'
 
     repositories {
         mavenCentral()
