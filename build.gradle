@@ -21,6 +21,14 @@ subprojects {
     }
 
 
+    // Make sure that all sub projects target Java 8:
+    allprojects {
+        apply plugin: 'java'
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+
 //    // Instructions on how to publish GitHub packages are here:
 //    // https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-gradle-for-use-with-github-packages
 //    apply plugin: "maven-publish"
