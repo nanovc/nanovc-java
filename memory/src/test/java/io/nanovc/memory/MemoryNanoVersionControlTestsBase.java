@@ -10,20 +10,11 @@
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// Define the root name for this code-base:
-def rootName = 'nanovc'
-rootProject.name = "$rootName-java"
+package io.nanovc.memory;
 
-// Define sub project names:
-def subProjects = [
-        'api',
-        'memory',
-];
-
-// https://stackoverflow.com/questions/20128416/gradle-subproject-name-different-than-folder-name
-// https://stackoverflow.com/a/20128717/231860
-// In this case we want to prefix all of the names with nanovc (rootName):
-subProjects.each {
-    include it // 'it' is an implicit variable for each item in the list. http://docs.groovy-lang.org/next/html/documentation/working-with-collections.html#_iterating_on_a_list
-    project(":$it").name = "$rootName-$it"
+/**
+ * A test base class for the Memory implementations in the Nano Version Control framework.
+ */
+public class MemoryNanoVersionControlTestsBase
+{
 }

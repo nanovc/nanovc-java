@@ -36,6 +36,15 @@ subprojects {
     sourceCompatibility = 8
     targetCompatibility = 8
 
+
+    // Set the encoding:
+    // https://stackoverflow.com/questions/21267234/show-utf-8-text-properly-in-gradle
+    // https://stackoverflow.com/a/34717160/231860
+    compileJava.options.encoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
     // NOTE: We investigated using modular builds but things seem like they still need some maturing on this front.
     // A decision was made to hold off for NanoVC for now to just target 8.
     // When the time is right, consider going back to the following:

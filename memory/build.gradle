@@ -27,13 +27,14 @@ plugins {
     id('signing')
 }
 
-// Define the name of this artifact:
-def libraryArtifactID = 'nanovc-api';
-def libraryName = 'Nano Version Control Core API'
-def libraryDescription = 'The Core API for the Nano Version Control Library'
+// Define the details of this artifact:
+def libraryArtifactID = 'nanovc-memory';
+def libraryName = 'Nano Version Control In-Memory Implementation'
+def libraryDescription = 'The Nano Version Control Library implemented in Memory'
+
 
 dependencies {
-    // api: ''
+    api project(':nanovc-api')
     // implementation: ''
     testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
 }
