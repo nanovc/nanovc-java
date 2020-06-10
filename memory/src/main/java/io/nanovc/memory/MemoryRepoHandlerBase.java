@@ -224,6 +224,7 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * Initialise the repository before it gets used for other functionality.
      * Sub classes should provide specific initialisation logic.
+     * @param repo The repository to initialise.
      */
     protected void initRepo(TRepo repo)
     {

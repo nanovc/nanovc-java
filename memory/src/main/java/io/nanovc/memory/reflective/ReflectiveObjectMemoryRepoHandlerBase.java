@@ -26,7 +26,7 @@ import java.util.List;
  * This represents the public API when working with {@link MemoryRepo}'s.
  * It holds common state including the {@link MemoryRepo} being worked on and the {@link MemoryRepoEngine} that contains the specific algorithm that we are interested in when working with the repo.
  * You can swap out the repo that is being worked on in cases where a correctly configured repo handler must work on multiple repo's.
- * The core functionality is delegated to the {@link MemoryRepoEngine} which is stateless and can be reused for multiple {@link MemoryRepo}'s and {@link za.co.synthesis.nanovc.memory.reflective.ReflectiveObjectMemoryRepoHandlerBase}'s.
+ * The core functionality is delegated to the {@link MemoryRepoEngine} which is stateless and can be reused for multiple {@link MemoryRepo}'s and {@link ReflectiveObjectMemoryRepoHandlerBase}'s.
  *
  * @param <TContent> The specific type of content that is stored in area for each commit in the repo.
  */
