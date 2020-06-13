@@ -1,25 +1,83 @@
+/*
+ MIT License
+ https://opensource.org/licenses/MIT
+ Copyright 2020 Lukasz Machowski
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+// NOTE: We investigated using modular builds but things seem like they still need some maturing on this front.
+// A decision was made to hold off for NanoVC for now to just target 8.
+// When the time is right, consider going back to the following:
+//
+// Instructions on using hte gradle modules plugin are here:
+// https://github.com/java9-modularity/gradle-modules-plugin
+//plugins {
+//    id 'org.javamodularity.moduleplugin' version '1.7.0' apply false
+//}
+
 // Instructions on how to configure a multi-project gradle build are taken from here:
 // https://docs.gradle.org/current/samples/sample_java_modules_multi_project.html
 subprojects {
+    apply plugin: 'java'
+
+    // NOTE: We investigated using modular builds but things seem like they still need some maturing on this front.
+    // A decision was made to hold off for NanoVC for now to just target 8.
+    // When the time is right, consider going back to the following:
+    // apply plugin: "org.javamodularity.moduleplugin"
+
     group = 'io.nanovc'
-    version = '0.0.1'
+    version = '0.0.4'
+
+    // We are targeting Java 8
+    // NOTE: We have tried setting up Multi-Release-JARS but it's still pretty complex.
+    //       In order to keep the code base simple, we decided to just keep the implementation
+    //       using JDK 8 to get the widest possible adoption.
+    //       The investigation included setting up Java 9 Modules etc.
+    //       Down the line, we will consider going down that route again but for now
+    //       keeping it as Java 8 is possible and makes the most sense to keep things simple.
+    sourceCompatibility = 8
+    targetCompatibility = 8
+
+
+    // Set the encoding:
+    // https://stackoverflow.com/questions/21267234/show-utf-8-text-properly-in-gradle
+    // https://stackoverflow.com/a/34717160/231860
+    compileJava.options.encoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    // NOTE: We investigated using modular builds but things seem like they still need some maturing on this front.
+    // A decision was made to hold off for NanoVC for now to just target 8.
+    // When the time is right, consider going back to the following:
+    // Support separate compilation of module info:
+    // https://github.com/java9-modularity/gradle-modules-plugin#separate-compilation-of-module-infojava
+    // https://stackoverflow.com/a/55562045/231860
+    // modularity.mixedJavaRelease 8
 
     repositories {
         mavenCentral()
     }
 
+    // NOTE: We investigated using modular builds but things seem like they still need some maturing on this front.
+    // A decision was made to hold off for NanoVC for now to just target 8.
+    // When the time is right, consider going back to the following:
     // The following is to enable support for Java 9 Modules:
-    plugins.withType(JavaPlugin).configureEach {
-        java {
-            modularity.inferModulePath = true
-        }
-    }
+    // plugins.withType(JavaPlugin).configureEach {
+    //     java {
+    //         modularity.inferModulePath = true
+    //     }
+    // }
 
     // If all the sub projects use JUnit, we can configure it once:
     tasks.withType(Test).configureEach {
         useJUnitPlatform()
     }
-
 
 //    // Instructions on how to publish GitHub packages are here:
 //    // https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-gradle-for-use-with-github-packages

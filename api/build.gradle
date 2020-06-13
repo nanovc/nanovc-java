@@ -1,3 +1,15 @@
+/*
+ MIT License
+ https://opensource.org/licenses/MIT
+ Copyright 2020 Lukasz Machowski
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 plugins {
     // Define this as a Java Library:
     // https://docs.gradle.org/current/userguide/java_library_plugin.html
@@ -17,6 +29,14 @@ plugins {
 
 // Define the name of this artifact:
 def libraryArtifactID = 'nanovc-api';
+def libraryName = 'Nano Version Control Core API'
+def libraryDescription = 'The Core API for the Nano Version Control Library'
+
+
+// Define environment and sensitive variables:
+def ossrhUsername = project.findProperty("ossrhUsername")?:System.getenv("OSSRHUSERNAME") // Defined in gradle.properties
+def ossrhPassword = project.findProperty("ossrhPassword")?:System.getenv("OSSRHPASSWORD") // Defined in gradle.properties
+
 
 dependencies {
     // api: ''
@@ -81,8 +101,8 @@ publishing {
             def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             credentials {
-                username = ossrhUsername // Defined in gradle.properties
-                password = ossrhPassword // Defined in gradle.properties
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
@@ -108,8 +128,8 @@ publishing {
                 }
             }
             pom {
-                name = 'Nano Version Control Core API'
-                description = 'The Core API for the Nano Version Control Library'
+                name = libraryName
+                description = libraryDescription
                 url = 'http://nanovc.io'
                 licenses {
                     license {
@@ -170,8 +190,8 @@ uploadArchives {
             }
 
             pom.project {
-                name = 'Nano Version Control Core API'
-                description = 'The Core API for the Nano Version Control Library'
+                name = libraryName
+                description = libraryDescription
                 url = 'http://nanovc.io'
                 packaging 'jar'
 
