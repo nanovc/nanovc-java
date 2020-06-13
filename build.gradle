@@ -31,7 +31,7 @@ subprojects {
     // apply plugin: "org.javamodularity.moduleplugin"
 
     group = 'io.nanovc'
-    version = '0.0.3'
+    version = '0.0.4'
 
     sourceCompatibility = 8
     targetCompatibility = 8
