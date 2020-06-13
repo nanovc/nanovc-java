@@ -20,6 +20,9 @@ hs_err_pid*
 .gradle
 build/
 
+# Make sure that we keep the gradle wrapper: https://stackoverflow.com/a/29806323/231860
+!gradle/wrapper/gradle-wrapper.jar
+
 # Don't commit the gradle.properties because we might keep sensitive keys and passwords there
 gradle.properties
 
