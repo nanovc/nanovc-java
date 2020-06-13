@@ -33,6 +33,11 @@ def libraryName = 'Nano Version Control In-Memory Implementation'
 def libraryDescription = 'The Nano Version Control Library implemented in Memory'
 
 
+// Define environment and sensitive variables:
+def ossrhUsername = project.findProperty("ossrhUsername")?:System.getenv("OSSRHUSERNAME") // Defined in gradle.properties
+def ossrhPassword = project.findProperty("ossrhPassword")?:System.getenv("OSSRHPASSWORD") // Defined in gradle.properties
+
+
 dependencies {
     api project(':nanovc-api')
     // implementation: ''
