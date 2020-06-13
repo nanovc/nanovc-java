@@ -33,6 +33,13 @@ subprojects {
     group = 'io.nanovc'
     version = '0.0.4'
 
+    // We are targeting Java 8
+    // NOTE: We have tried setting up Multi-Release-JARS but it's still pretty complex.
+    //       In order to keep the code base simple, we decided to just keep the implementation
+    //       using JDK 8 to get the widest possible adoption.
+    //       The investigation included setting up Java 9 Modules etc.
+    //       Down the line, we will consider going down that route again but for now
+    //       keeping it as Java 8 is possible and makes the most sense to keep things simple.
     sourceCompatibility = 8
     targetCompatibility = 8
 
