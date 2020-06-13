@@ -181,7 +181,7 @@ public abstract class PathBase<TSelf extends Path<TSelf>> implements Path<TSelf>
      */
     static boolean hasEndingDelimiter(String relativeOrAbsolutePath)
     {
-        return (relativeOrAbsolutePath != null && !relativeOrAbsolutePath.isBlank()) && relativeOrAbsolutePath.endsWith(DELIMITER);
+        return (relativeOrAbsolutePath != null && !relativeOrAbsolutePath.isEmpty()) && relativeOrAbsolutePath.endsWith(DELIMITER);
     }
 
 
