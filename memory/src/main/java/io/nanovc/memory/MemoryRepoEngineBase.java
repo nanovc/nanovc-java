@@ -782,20 +782,23 @@ public abstract class MemoryRepoEngineBase<
 
         // Now we want to get all the commits for the repo.
 
+        // Create an initial set of commits to start traversing:
+        Set<TCommit> initialCommitSet = new LinkedHashSet<>();
+
+        // Get the commits for each branch:
+        initialCommitSet.addAll(repo.getBranchTips().values());
+
         // Get the commits for each tag:
-        commitSet.addAll(repo.getTags().values());
+        initialCommitSet.addAll(repo.getTags().values());
 
         // Get all the dangling commits that are not pointed to by a branch:
-        commitSet.addAll(repo.getDanglingCommits());
-
-        // Add the identities of all of the commits so far so that we don't process them again:
-        commitSet.forEach(tCommit -> identities.put(tCommit, tCommit));
+        initialCommitSet.addAll(repo.getDanglingCommits());
 
         // Walk the branches recursively and accumulate commits:
-        for (TCommit branchTipCommit : repo.getBranchTips().values())
+        for (TCommit tipCommit : initialCommitSet)
         {
-            // Extract the commits for this branch recursively:
-            extractCommitsRecursively(branchTipCommit, identities, commitSet);
+            // Extract the commits for this commit recursively:
+            extractCommitsRecursively(tipCommit, identities, commitSet);
         }
         // Now we have all of the commits for this repo.
 
