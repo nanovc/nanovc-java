@@ -12,9 +12,9 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.Area;
+import io.nanovc.AreaAPI;
 import io.nanovc.content.StringContent;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoAPI;
 
 /**
@@ -22,8 +22,8 @@ import io.nanovc.memory.MemoryRepoAPI;
  */
 public interface StringMemoryRepoAPI<
     TContent extends StringContent,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>
     >
     extends MemoryRepoAPI<
         TContent,

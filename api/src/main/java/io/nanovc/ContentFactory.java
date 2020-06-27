@@ -17,7 +17,7 @@ package io.nanovc;
  * @param <TContent> The specific type of content that this factory creates.
  */
 @FunctionalInterface
-public interface ContentFactory<TContent extends Content>
+public interface ContentFactory<TContent extends ContentAPI>
 {
     /**
      * Creates the content for the given path and with the given bytes.

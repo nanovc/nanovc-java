@@ -16,14 +16,15 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * A base class for specific types of paths in a {@link Repo}.
+ * A base class for specific types of paths in a {@link RepoAPI}.
  * This is lighter weight version of Java Paths.
  * We don't need the file system functionality.
  * Absolute paths start with a / ({@link #DELIMITER})
  * Relative paths do not start with a / ({@link #DELIMITER})
  * @param <TSelf> The specific type of path being implemented. This is needed so that we can get chained calls with the specific type of path.
  */
-public abstract class PathBase<TSelf extends Path<TSelf>> implements Path<TSelf>
+public abstract class PathBase<TSelf extends PathAPI<TSelf>>
+    implements PathAPI<TSelf>
 {
 
     /**

@@ -12,15 +12,14 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Comparison;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.content.ByteArrayContent;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-
+import static io.nanovc.memory.ByteHelper.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -74,7 +73,7 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
         MemoryCommit commit2 = repo.commit(contentArea, "Second commit.");
 
         // Get the difference between the two commits:
-        Comparison comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
+        ComparisonAPI comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
         assertEquals(
             "/Hello : Changed\n" +
             "/Info : Added\n" +
@@ -183,18 +182,6 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
 
         // Make sure that the count has a value:
         assertTrue(count > 0);
-    }
-
-    /**
-     * A helper method to convert a string to bytes.
-     * This keeps tests concise.
-     * It abstracts the encoding away.
-     * @param string The string to convert to bytes.
-     * @return The bytes for the string.
-     */
-    public static byte[] bytes(String string)
-    {
-        return string.getBytes(StandardCharsets.UTF_8);
     }
 
 }

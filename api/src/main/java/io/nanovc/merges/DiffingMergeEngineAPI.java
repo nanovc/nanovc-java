@@ -13,13 +13,13 @@
 package io.nanovc.merges;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 
 /**
  * This captures the functionality that is exposed by a Diffing Merge Engine.
  * The internal API between a {@link DiffingMergeHandlerBase} and its {@link DiffingMergeEngineBase}.
  */
-public interface DiffingMergeEngineAPI extends MergeEngine
+public interface DiffingMergeEngineAPI extends MergeEngineAPI
 {
     /**
      * Merges the given changes between two commits into the given area.
@@ -39,12 +39,12 @@ public interface DiffingMergeEngineAPI extends MergeEngine
      * @param byteArrayIndex                          The byte array index to use when creating snap-shots for the content.
      * @param <TContent>                              The specific type of content that we are merging in this call.
      */
-    <TContent extends Content> void mergeIntoAreaWithThreeWayDiff(
-        Area<TContent> mergedAreaToUpdate,
-        Commit commonAncestorCommit, Commit sourceCommit, Commit destinationCommit,
-        Area<TContent> commonAncestorArea, Area<TContent> sourceArea, Area<TContent> destinationArea,
-        Comparison comparisonBetweenSourceAndDestination,
-        Difference differenceBetweenAncestorAndSource, Difference differenceBetweenAncestorAndDestination,
+    <TContent extends ContentAPI> void mergeIntoAreaWithThreeWayDiff(
+        AreaAPI<TContent> mergedAreaToUpdate,
+        CommitAPI commonAncestorCommit, CommitAPI sourceCommit, CommitAPI destinationCommit,
+        AreaAPI<TContent> commonAncestorArea, AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea,
+        ComparisonAPI comparisonBetweenSourceAndDestination,
+        DifferenceAPI differenceBetweenAncestorAndSource, DifferenceAPI differenceBetweenAncestorAndDestination,
         ContentFactory<TContent> contentFactory,
         ByteArrayIndex byteArrayIndex
     );
@@ -63,11 +63,11 @@ public interface DiffingMergeEngineAPI extends MergeEngine
      * @param byteArrayIndex                          The byte array index to use when creating snap-shots for the content.
      * @param <TContent>                            The specific type of content that we are merging in this call.
      */
-    <TContent extends Content> void mergeIntoAreaWithTwoWayDiff(
-        Area<TContent> mergedAreaToUpdate,
-        Commit sourceCommit, Commit destinationCommit,
-        Area<TContent> sourceArea, Area<TContent> destinationArea,
-        Comparison comparisonBetweenSourceAndDestination,
+    <TContent extends ContentAPI> void mergeIntoAreaWithTwoWayDiff(
+        AreaAPI<TContent> mergedAreaToUpdate,
+        CommitAPI sourceCommit, CommitAPI destinationCommit,
+        AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea,
+        ComparisonAPI comparisonBetweenSourceAndDestination,
         ContentFactory<TContent> contentFactory,
         ByteArrayIndex byteArrayIndex
     );

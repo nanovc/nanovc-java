@@ -12,7 +12,7 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.Difference;
+import io.nanovc.DifferenceAPI;
 import io.nanovc.Record;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.clocks.ClockWithVMNanos;
@@ -112,7 +112,7 @@ public class ReflectiveObjectMemoryRepoHandlerTests extends MemoryRepoHandlerTes
         assertEquals("Machowski", employeeAt2.lastName);
 
         // Do a diff between the two commits:
-        Difference differences = handler.computeDifferenceBetweenCommits(commit1, commit2);
+        DifferenceAPI differences = handler.computeDifferenceBetweenCommits(commit1, commit2);
         String diffs = differences.asListString();
         String expectedDiffs = "/fields/firstName : Changed";
         assertEquals(expectedDiffs, diffs);

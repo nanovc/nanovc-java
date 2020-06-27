@@ -18,7 +18,7 @@ import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.merges.LastWinsMergeHandler;
 
@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * A fully self contained nano repository for version control.
  * Use this class for general purpose storage of history.
- * If you want more control, see the {@link RepoHandler} instead.
+ * If you want more control, see the {@link RepoHandlerAPI} instead.
  */
 public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMapArea>
     implements MemoryRepoHandlerAPI<
@@ -46,6 +46,16 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     /**
      * The common engine to use for {@link MemoryNanoRepo}'s.
      */
+    public static final ClockAPI<? extends TimestampAPI> COMMON_CLOCK = ClockWithVMNanos.COMMON_CLOCK;
+
+    /**
+     * The clock to use for creating timestamps.
+     */
+    protected ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
+
+    /**
+     * The common engine to use for {@link MemoryNanoRepo}'s.
+     */
     public static final MemoryRepoEngine<ByteArrayContent, ByteArrayHashMapArea> COMMON_ENGINE = new MemoryRepoEngine<>();
 
     /**
@@ -56,32 +66,32 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     /**
      * A common difference handler that is used as the default for Nano Repos.
      */
-    public static final HashMapDifferenceHandler COMMON_DIFFERENCE_HANDLER = new HashMapDifferenceHandler();
+    public static final HashMapDifferenceHandler COMMON_DIFFERENCE_HANDLER = HashMapDifferenceHandler.COMMON_DIFFERENCE_HANDLER;
 
     /**
-     * The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    protected DifferenceHandler<? extends DifferenceEngine> differenceHandler = COMMON_DIFFERENCE_HANDLER;
+    protected DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler = COMMON_DIFFERENCE_HANDLER;
 
     /**
      * A common comparison handler that is used as the default for Nano Repos.
      */
-    public static final HashMapComparisonHandler COMMON_COMPARISON_HANDLER = new HashMapComparisonHandler();
+    public static final HashMapComparisonHandler COMMON_COMPARISON_HANDLER = HashMapComparisonHandler.COMMON_COMPARISON_HANDLER;
 
     /**
-     * The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    protected ComparisonHandler<? extends ComparisonEngine> comparisonHandler = COMMON_COMPARISON_HANDLER;
+    protected ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler = COMMON_COMPARISON_HANDLER;
 
     /**
      * A common merge handler that is used as the default for Nano Repos.
      */
-    public static final LastWinsMergeHandler COMMON_MERGE_HANDLER = new LastWinsMergeHandler();
+    public static final LastWinsMergeHandler COMMON_MERGE_HANDLER = LastWinsMergeHandler.COMMON_MERGE_HANDLER;
 
     /**
      * The handler to use for merging commits.
      */
-    protected MergeHandler<? extends MergeEngine> mergeHandler = COMMON_MERGE_HANDLER;
+    protected MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler = COMMON_MERGE_HANDLER;
 
     /**
      * The byte array index to use for managing the in-memory byte arrays that get created in a repo.
@@ -89,16 +99,6 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * The index gives us Value-Equality semantics for byte[] lookups.
      */
     protected ByteArrayIndex byteArrayIndex;
-
-    /**
-     * The common engine to use for {@link MemoryNanoRepo}'s.
-     */
-    public static final Clock<? extends Timestamp> COMMON_CLOCK = new ClockWithVMNanos();
-
-    /**
-     * The clock to use for creating timestamps.
-     */
-    protected Clock<? extends Timestamp> clock = COMMON_CLOCK;
 
     /**
      * Creates a new Memory Nano Repo.
@@ -127,7 +127,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @param comparisonHandler The handler to use when computing comparisons between commits. Plug in an alternative handler or use {@link #COMMON_COMPARISON_HANDLER}.
      * @param mergeHandler The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
      */
-    public MemoryNanoRepo(ByteArrayIndex byteArrayIndex, MemoryRepoEngine<ByteArrayContent, ByteArrayHashMapArea> engine, Clock<? extends Timestamp> clock, DifferenceHandler<? extends DifferenceEngine> differenceHandler, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, MergeHandler<? extends MergeEngine> mergeHandler)
+    public MemoryNanoRepo(ByteArrayIndex byteArrayIndex, MemoryRepoEngine<ByteArrayContent, ByteArrayHashMapArea> engine, ClockAPI<? extends TimestampAPI> clock, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.byteArrayIndex = byteArrayIndex;
         this.engine = engine;
@@ -363,7 +363,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The differences between the given areas.
      */
     @Override
-    public Difference computeDifferenceBetweenAreas(Area<? extends ByteArrayContent> fromArea, Area<? extends ByteArrayContent> toArea)
+    public DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends ByteArrayContent> fromArea, AreaAPI<? extends ByteArrayContent> toArea)
     {
         return this.engine.computeDifferenceBetweenAreas(fromArea, toArea, this.differenceHandler);
     }
@@ -377,7 +377,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The differences between the given commits.
      */
     @Override
-    public Difference computeDifferenceBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
+    public DifferenceAPI computeDifferenceBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
         return this.engine.computeDifferenceBetweenCommits(fromCommit, toCommit, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
@@ -390,7 +390,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The differences between the given branches.
      */
     @Override
-    public Difference computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
+    public DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.engine.computeDifferenceBetweenBranches(fromBranchName, toBranchName, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
@@ -404,7 +404,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The comparisons between the given areas.
      */
     @Override
-    public Comparison computeComparisonBetweenAreas(Area<? extends ByteArrayContent> fromArea, Area<? extends ByteArrayContent> toArea)
+    public ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends ByteArrayContent> fromArea, AreaAPI<? extends ByteArrayContent> toArea)
     {
         return this.engine.computeComparisonBetweenAreas(fromArea, toArea, this.comparisonHandler);
     }
@@ -418,7 +418,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The comparisons between the given commits.
      */
     @Override
-    public Comparison computeComparisonBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
+    public ComparisonAPI computeComparisonBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
         return this.engine.computeComparisonBetweenCommits(fromCommit, toCommit, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
@@ -431,7 +431,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The comparisons between the given branches.
      */
     @Override
-    public Comparison computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
+    public ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.engine.computeComparisonBetweenBranches(fromBranchName, toBranchName, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
@@ -505,45 +505,45 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     }
 
     /**
-     * Gets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public DifferenceHandler<? extends DifferenceEngine> getDifferenceHandler()
+    public DifferenceHandlerAPI<? extends DifferenceEngineAPI> getDifferenceHandler()
     {
         return this.differenceHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setDifferenceHandler(DifferenceHandler<? extends DifferenceEngine> differenceHandler)
+    public void setDifferenceHandler(DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler)
     {
         this.differenceHandler = differenceHandler;
     }
 
     /**
-     * Gets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public ComparisonHandler<? extends ComparisonEngine> getComparisonHandler()
+    public ComparisonHandlerAPI<? extends ComparisonEngineAPI> getComparisonHandler()
     {
         return this.comparisonHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setComparisonHandler(ComparisonHandler<? extends ComparisonEngine> comparisonHandler)
+    public void setComparisonHandler(ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler)
     {
         this.comparisonHandler = comparisonHandler;
     }
@@ -554,7 +554,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The handler to use for merges.
      */
     @Override
-    public MergeHandler<? extends MergeEngine> getMergeHandler()
+    public MergeHandlerAPI<? extends MergeEngineAPI> getMergeHandler()
     {
         return this.mergeHandler;
     }
@@ -565,7 +565,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @param mergeHandler The handler to use for merges.
      */
     @Override
-    public void setMergeHandler(MergeHandler<? extends MergeEngine> mergeHandler)
+    public void setMergeHandler(MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.mergeHandler = mergeHandler;
     }
@@ -579,7 +579,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchQuery prepareSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return this.engine.prepareSearchQuery(searchQueryDefinition);
     }
@@ -606,7 +606,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery, SearchParameters overrideParameters)
+    public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery, SearchParametersAPI overrideParameters)
     {
         return this.engine.searchWithQuery(searchQuery, overrideParameters, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
@@ -618,7 +618,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults search(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchResults search(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         MemorySearchQuery searchQuery = prepareSearchQuery(searchQueryDefinition);
         return searchWithQuery(searchQuery);
@@ -632,7 +632,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults search(SearchQueryDefinition searchQueryDefinition, SearchParameters overrideParameters)
+    public MemorySearchResults search(SearchQueryDefinitionAPI searchQueryDefinition, SearchParametersAPI overrideParameters)
     {
         MemorySearchQuery searchQuery = prepareSearchQuery(searchQueryDefinition);
         return searchWithQuery(searchQuery, overrideParameters);
@@ -660,7 +660,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
      * @return A compatible area for the repo handler which is either a cast of the same instance or a completely new clone of it if it is an incompatible type.
      */
     @Override
-    public ByteArrayHashMapArea castOrCloneArea(Area<? extends Content> areaToCastOrClone)
+    public ByteArrayHashMapArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
     {
         return this.engine.castOrCloneArea(areaToCastOrClone, this::createArea, ByteArrayContent::new, this.byteArrayIndex);
     }

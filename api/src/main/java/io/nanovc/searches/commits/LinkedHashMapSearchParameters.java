@@ -12,19 +12,20 @@
 
 package io.nanovc.searches.commits;
 
-import io.nanovc.SearchParameters;
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.CommitAPI;
+import io.nanovc.SearchParametersAPI;
+import io.nanovc.SearchQueryDefinitionAPI;
 import io.nanovc.reflection.ClassType;
 import io.nanovc.searches.commits.expressions.ConstantExpression;
 
 import java.util.LinkedHashMap;
 
 /**
- * The parameters for a search for {@link io.nanovc.Commit}'s.
- * These parameters are used in a {@link SearchQueryDefinition}.
+ * The parameters for a search for {@link CommitAPI}'s.
+ * These parameters are used in a {@link SearchQueryDefinitionAPI}.
  * This concept is similar to a parameterised query for SQL.
  */
-public class LinkedHashMapSearchParameters extends LinkedHashMap<String, ConstantExpression<?>> implements SearchParameters
+public class LinkedHashMapSearchParameters extends LinkedHashMap<String, ConstantExpression<?>> implements SearchParametersAPI
 {
     /**
      * Gets the constant expression for the given parameter name.

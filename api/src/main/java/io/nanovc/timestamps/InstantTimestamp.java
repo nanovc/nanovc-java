@@ -12,7 +12,7 @@
 
 package io.nanovc.timestamps;
 
-import io.nanovc.Timestamp;
+import io.nanovc.TimestampBase;
 
 import java.time.Instant;
 
@@ -25,7 +25,7 @@ import java.time.Instant;
  * 2) JDK uses milli second precision, but JDK 9 gives us nano precision. We still want the design to work irrespective of JDK version.
  * 3) With recent vulnerabilities like Sceptre, we see that specifications for EcmaScript are very reluctant to provide high precision timing. This means that we want our design to still work whether the runtime actually supports high precision timing or not.
  */
-public class InstantTimestamp extends Timestamp
+public class InstantTimestamp extends TimestampBase
 {
     /**
      * The UTC instant in time represented by this timestamp.

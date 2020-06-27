@@ -14,8 +14,8 @@ package io.nanovc;
 
 /**
  * The engine for working with a nano version control repository.
- * This represents the internal API for a {@link RepoHandler}.
- * It must contain ALL the actual logic for manipulating and extracting meaningful information from the {@link Repo}.
+ * This represents the internal API for a {@link RepoHandlerAPI}.
+ * It must contain ALL the actual logic for manipulating and extracting meaningful information from the {@link RepoAPI}.
  * A Repo Engine does not contain any state. Just the logic of how to manipulate a repo.
  * Therefore you need to pass the repo into all the calls.
  * This is good where one Repo Engine is going to be reused across many Repos and handlers.
@@ -29,21 +29,21 @@ package io.nanovc;
  * @param <TRepo>        The specific type of repo that this engine is for.
  */
 public class RepoEngineBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends Commit,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
-    TRepo extends Repo<TContent, TArea, TCommit>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends CommitAPI,
+    TSearchQuery extends SearchQueryAPI<TCommit>,
+    TSearchResults extends SearchResultsAPI<TCommit, TSearchQuery>,
+    TRepo extends RepoAPI<TContent, TArea, TCommit>
     >
-    implements RepoEngine<
-    TContent,
-    TArea,
-    TCommit,
-    TSearchQuery,
-    TSearchResults,
-    TRepo
-    >
+    implements RepoEngineAPI<
+        TContent,
+        TArea,
+        TCommit,
+        TSearchQuery,
+        TSearchResults,
+        TRepo
+        >
 {
     // NOTE: There is no generic API for all engines. Each specific technique will determine an appropriate private API between the handler and the engine.
 }

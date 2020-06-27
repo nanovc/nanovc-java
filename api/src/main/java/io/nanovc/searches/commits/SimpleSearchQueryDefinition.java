@@ -18,9 +18,9 @@ import io.nanovc.searches.commits.expressions.Expression;
 import java.util.List;
 
 /**
- * This is the definition of a query to search for {@link Commit}'s.
+ * This is the definition of a query to search for {@link CommitAPI}'s.
  * It captures any arguments for the query expression (parameters).
- * The definition can be reused multiple times to produce {@link SearchQuery}'s.
+ * The definition can be reused multiple times to produce {@link SearchQueryAPI}'s.
  */
 public class SimpleSearchQueryDefinition extends SearchQueryDefinitionBase
 {
@@ -32,7 +32,7 @@ public class SimpleSearchQueryDefinition extends SearchQueryDefinitionBase
      * @param listOfCommitsExpression The expression to get a list of commits for the search. Pass null if you want to search for a single commit instead.
      * @param parameters              The parameters to use for the search query.
      */
-    public SimpleSearchQueryDefinition(Expression<Commit> singleCommitExpression, Expression<List<Commit>> listOfCommitsExpression, SearchParameters parameters)
+    public SimpleSearchQueryDefinition(Expression<CommitAPI> singleCommitExpression, Expression<List<CommitAPI>> listOfCommitsExpression, SearchParametersAPI parameters)
     {
         super(singleCommitExpression, listOfCommitsExpression, parameters);
     }
@@ -42,7 +42,7 @@ public class SimpleSearchQueryDefinition extends SearchQueryDefinitionBase
      * @param singleCommitExpression The expression to get a single commit for the search.
      * @return A search query definition that gets a single commit.
      */
-    public static SimpleSearchQueryDefinition forSingleCommit(Expression<Commit> singleCommitExpression)
+    public static SimpleSearchQueryDefinition forSingleCommit(Expression<CommitAPI> singleCommitExpression)
     {
         return new SimpleSearchQueryDefinition(singleCommitExpression, null, new HashMapSearchParameters());
     }
@@ -52,7 +52,7 @@ public class SimpleSearchQueryDefinition extends SearchQueryDefinitionBase
      * @param listOfCommitsExpression The expression to get a list of commits for the search.
      * @return A search query definition that gets a single commit.
      */
-    public static SimpleSearchQueryDefinition forListOfCommits(Expression<List<Commit>> listOfCommitsExpression)
+    public static SimpleSearchQueryDefinition forListOfCommits(Expression<List<CommitAPI>> listOfCommitsExpression)
     {
         return new SimpleSearchQueryDefinition(null, listOfCommitsExpression, new HashMapSearchParameters());
     }

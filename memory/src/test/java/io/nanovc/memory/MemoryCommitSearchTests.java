@@ -1,6 +1,6 @@
 package io.nanovc.memory;
 
-import io.nanovc.Commit;
+import io.nanovc.CommitAPI;
 import io.nanovc.RepoPath;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.searches.commits.SimpleSearchQueryDefinition;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests the API for searching through {@link Commit}'s.
+ * Tests the API for searching through {@link CommitAPI}'s.
  */
 public class MemoryCommitSearchTests extends MemoryNanoVersionControlTestsBase
 {

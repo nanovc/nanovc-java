@@ -12,9 +12,6 @@
 
 package io.nanovc.searches.commits.expressions;
 
-import io.nanovc.Commit;
-import io.nanovc.reflection.ClassType;
-
 /**
  * An expression to get the tip of a list of commits.
  * This is usually combined with {@link AllRepoCommitsExpression}.

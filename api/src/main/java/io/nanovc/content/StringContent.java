@@ -20,7 +20,9 @@ import java.util.Objects;
  * Content that wraps a {@link String}.
  * The encoding to bytes is defined by the character set associated with the content.
  */
-public class StringContent extends ContentWithByteArrayBase implements ContentWithByteArray, ImmutableContent
+public class StringContent
+    extends ContentWithByteArrayBase
+    implements ContentWithByteArrayAPI, ImmutableContent
 {
     /**
      * The string content that is being represented.

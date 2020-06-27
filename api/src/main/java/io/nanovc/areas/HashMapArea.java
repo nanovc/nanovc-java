@@ -1,8 +1,8 @@
 package io.nanovc.areas;
 
-import io.nanovc.Area;
+import io.nanovc.AreaAPI;
 import io.nanovc.AreaEntry;
-import io.nanovc.Content;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
 
 import java.util.HashMap;
@@ -14,7 +14,9 @@ import java.util.stream.Stream;
  * The key is the absolute repo path for the content.
  * The value is the content.
  */
-public class HashMapArea<TContent extends Content> extends HashMap<String, TContent> implements Area<TContent>
+public class HashMapArea<TContent extends ContentAPI>
+    extends HashMap<String, TContent>
+    implements AreaAPI<TContent>
 {
     /**
      * Creates and puts the given content into this map.
@@ -173,7 +175,7 @@ public class HashMapArea<TContent extends Content> extends HashMap<String, TCont
      * @return The stream of content for this area.
      */
     @Override
-    public Stream<AreaEntry<Content>> getContentStream()
+    public Stream<AreaEntry<ContentAPI>> getContentStream()
     {
         return this.entrySet().stream().map(entry -> new AreaEntry<>(RepoPath.at(entry.getKey()), entry.getValue()));
     }

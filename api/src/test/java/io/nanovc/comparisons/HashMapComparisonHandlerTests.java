@@ -1,6 +1,6 @@
 package io.nanovc.comparisons;
 
-import io.nanovc.Comparison;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.areas.StringHashMapArea;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class HashMapComparisonHandlerTests
         StringHashMapArea secondArea = new StringHashMapArea();
 
         // Get the comparisons between the two areas:
-        Comparison comparison = handler.compare(firstArea, secondArea);
+        ComparisonAPI comparison = handler.compare(firstArea, secondArea);
 
         // Make sure we got a comparison structure:
         assertNotNull(comparison, "We were expecting a comparison to be computed that was empty. Instead, we got null.");

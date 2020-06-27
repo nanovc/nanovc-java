@@ -126,7 +126,7 @@ public class ExpressionToStringTests
     {
         AllRepoCommitsExpression expression = AllRepoCommitsExpression.allRepoCommits();
         assertEquals("[All Repo Commits]", expression.toString());
-        assertEquals("List<Commit>", expression.getReturnType().toString());
+        assertEquals("List<CommitAPI>", expression.getReturnType().toString());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ExpressionToStringTests
     {
         TipOfExpression expression = AllRepoCommitsExpression.allRepoCommits().tip();
         assertEquals("tipOf([All Repo Commits])", expression.toString());
-        assertEquals("Commit", expression.getReturnType().toString());
+        assertEquals("CommitAPI", expression.getReturnType().toString());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ExpressionToStringTests
     {
         BranchCommitsExpression expression = BranchCommitsExpression.of("master");
         assertEquals("[Commits for branch: master]", expression.toString());
-        assertEquals("List<Commit>", expression.getReturnType().toString());
+        assertEquals("List<CommitAPI>", expression.getReturnType().toString());
     }
 
     @Test
@@ -150,6 +150,6 @@ public class ExpressionToStringTests
     {
         TipOfExpression expression = BranchCommitsExpression.of("master").tip();
         assertEquals("tipOf([Commits for branch: master])", expression.toString());
-        assertEquals("Commit", expression.getReturnType().toString());
+        assertEquals("CommitAPI", expression.getReturnType().toString());
     }
 }

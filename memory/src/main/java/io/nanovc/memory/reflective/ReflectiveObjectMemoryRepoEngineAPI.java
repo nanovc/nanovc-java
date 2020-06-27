@@ -13,11 +13,10 @@
 package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoEngineAPI;
-import io.nanovc.memory.MemorySearchQueryBase;
-import io.nanovc.memory.MemorySearchResultsBase;
+import io.nanovc.memory.MemorySearchQueryAPI;
+import io.nanovc.memory.MemorySearchResultsAPI;
 
 import java.util.List;
 
@@ -34,11 +33,11 @@ import java.util.List;
  * @param <TRepo>    The specific type of repo that this engine is for.
  */
 public interface ReflectiveObjectMemoryRepoEngineAPI<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends ReflectiveObjectMemoryRepoAPI<TContent, TArea, TCommit>
     >
     extends MemoryRepoEngineAPI<
@@ -63,7 +62,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param contentFactory The content factory to use when populating the content area.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Commit the given content to the repo.
@@ -80,7 +79,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param parentCommit   The parent commit that we want to make this commit from.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit);
+    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit);
 
     /**
      * Commit the given content to the repo.
@@ -98,7 +97,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits);
+    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -113,7 +112,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param contentFactory The content factory to use when populating the content area.
      * @return The commit for this content area.
      */
-    TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Checks out the object for the given commit.

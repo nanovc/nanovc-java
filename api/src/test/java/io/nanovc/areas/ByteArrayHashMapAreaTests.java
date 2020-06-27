@@ -15,8 +15,7 @@ public class ByteArrayHashMapAreaTests extends NanoVersionControlTestsBase
     @Test
     public void testCreation()
     {
-        ByteArrayHashMapArea area;
-        area = new ByteArrayHashMapArea();
+        new ByteArrayHashMapArea();
     }
 
     /**

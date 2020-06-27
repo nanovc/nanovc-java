@@ -12,7 +12,9 @@ import java.nio.charset.StandardCharsets;
  * The key is the absolute repo path for the content.
  * The value is the {@link StringContent}.
  */
-public class StringHashMapArea extends HashMapArea<StringContent> implements StringArea
+public class StringHashMapArea
+    extends HashMapArea<StringContent>
+    implements StringAreaAPI
 {
     /**
      * The character set to use for encoding the strings as content.

@@ -15,7 +15,9 @@ package io.nanovc.content;
 /**
  * Content that wraps a byte array.
  */
-public class ByteArrayContent extends ContentWithByteArrayBase implements ContentWithByteArray, ImmutableContent
+public class ByteArrayContent
+    extends ContentWithByteArrayBase
+    implements ContentWithByteArrayAPI, ImmutableContent
 {
     /**
      * The byte content that is being represented.

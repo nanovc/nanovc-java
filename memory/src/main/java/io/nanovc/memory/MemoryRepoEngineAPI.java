@@ -13,8 +13,8 @@
 package io.nanovc.memory;
 
 import io.nanovc.*;
-import io.nanovc.areas.ByteArrayArea;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.areas.ByteArrayAreaAPI;
+import io.nanovc.ByteArrayIndex;
 
 import java.util.List;
 import java.util.Set;
@@ -33,21 +33,21 @@ import java.util.Set;
  * @param <TRepo>        The specific type of repo that this engine is for.
  */
 public interface MemoryRepoEngineAPI<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>
     >
-    extends RepoEngine<
-    TContent,
-    TArea,
-    TCommit,
-    TSearchQuery,
-    TSearchResults,
-    TRepo
-    >
+    extends RepoEngineAPI<
+        TContent,
+        TArea,
+        TCommit,
+        TSearchQuery,
+        TSearchResults,
+        TRepo
+        >
 {
     /**
      * Creates a repo that is associated with this repo engine.
@@ -80,7 +80,7 @@ public interface MemoryRepoEngineAPI<
      *
      * @return A new empty area for snapshots.
      */
-    ByteArrayArea createSnapshotArea();
+    ByteArrayAreaAPI createSnapshotArea();
 
     /**
      * Creates a new instance of the content with the given bytes.
@@ -102,7 +102,7 @@ public interface MemoryRepoEngineAPI<
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock);
+    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Commit the given content to the repo.
@@ -117,7 +117,7 @@ public interface MemoryRepoEngineAPI<
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, TCommit parentCommit);
+    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit);
 
     /**
      * Commit the given content to the repo.
@@ -133,7 +133,7 @@ public interface MemoryRepoEngineAPI<
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits);
+    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -146,7 +146,7 @@ public interface MemoryRepoEngineAPI<
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock);
+    TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Constructs a new commit for the given content.
@@ -159,7 +159,7 @@ public interface MemoryRepoEngineAPI<
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit constructCommit(TArea contentAreaToCommit, String message, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock);
+    TCommit constructCommit(TArea contentAreaToCommit, String message, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Checks out the content for the given commit into the given content area.
@@ -194,7 +194,7 @@ public interface MemoryRepoEngineAPI<
      *
      * @return A new clock for creating timestamps.
      */
-    Clock<? extends Timestamp> createClock();
+    ClockAPI<? extends TimestampAPI> createClock();
 
     /**
      * Gets the latest commit for the branch with the given name.
@@ -264,10 +264,10 @@ public interface MemoryRepoEngineAPI<
      *
      * @param fromArea          The first area to find differences from.
      * @param toArea            The second area to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @return The differences between the given areas.
      */
-    Difference computeDifferenceBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea, DifferenceHandler<? extends DifferenceEngine> differenceHandler);
+    DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler);
 
     /**
      * Computes a difference between the given commits.
@@ -275,26 +275,26 @@ public interface MemoryRepoEngineAPI<
      *
      * @param fromCommit        The first commit to find differences from.
      * @param toCommit          The second commit to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The differences between the given commits.
      */
-    Difference computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    DifferenceAPI computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Computes a difference between the given branches.
      *
      * @param fromBranchName    The first branch to find differences from.
      * @param toBranchName      The second branch to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The differences between the given branches.
      */
-    Difference computeDifferenceBetweenBranches(String fromBranchName, String toBranchName, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Computes a comparison between the given areas.
@@ -302,10 +302,10 @@ public interface MemoryRepoEngineAPI<
      *
      * @param fromArea          The first area to find comparisons from.
      * @param toArea            The second area to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @return The comparisons between the given areas.
      */
-    Comparison computeComparisonBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea, ComparisonHandler<? extends ComparisonEngine> comparisonHandler);
+    ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler);
 
     /**
      * Computes a comparison between the given commits.
@@ -313,26 +313,26 @@ public interface MemoryRepoEngineAPI<
      *
      * @param fromCommit        The first commit to find comparisons from.
      * @param toCommit          The second commit to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The comparisons between the given commits.
      */
-    Comparison computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    ComparisonAPI computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Computes a comparison between the given branches.
      *
      * @param fromBranchName    The first branch to find comparisons from.
      * @param toBranchName      The second branch to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The comparisons between the given branches.
      */
-    Comparison computeComparisonBetweenBranches(String fromBranchName, String toBranchName, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * A factory method to create the specific search query to use.
@@ -340,7 +340,7 @@ public interface MemoryRepoEngineAPI<
      * @param searchQueryDefinition The definition of the search query that is being created.
      * @return A new search query.
      */
-    TSearchQuery createSearchQuery(SearchQueryDefinition searchQueryDefinition);
+    TSearchQuery createSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition);
 
     /**
      * Prepares a reusable search query from the given search definition.
@@ -350,7 +350,7 @@ public interface MemoryRepoEngineAPI<
      * @param searchQueryDefinition The definition of the search to perform.
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
-    TSearchQuery prepareSearchQuery(SearchQueryDefinition searchQueryDefinition);
+    TSearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition);
 
     /**
      * A factory method to create the specific search results that are needed.
@@ -371,7 +371,7 @@ public interface MemoryRepoEngineAPI<
      * @param contentFactory     The content factory to use when populating the content area.
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
-    TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParameters overrideParameters, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParametersAPI overrideParameters, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Merges one branch into another.
@@ -390,7 +390,7 @@ public interface MemoryRepoEngineAPI<
      * @param clock                 The clock to use for generating the timestamp for the commit.
      * @return The commit that was performed for the merge.
      */
-    TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, MergeHandler<? extends MergeEngine> mergeHandler, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock);
+    TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Creates a new branch with the given name and makes it point at the given commit.
@@ -410,5 +410,5 @@ public interface MemoryRepoEngineAPI<
      * @param byteArrayIndex    The byte array index to use that allows us to re-use byte arrays that we have seen before in the repo.
      * @return A compatible area for the repo handler which is either a cast of the same instance or a completely new clone of it if it is an incompatible type.
      */
-    TArea castOrCloneArea(Area<? extends Content> areaToCastOrClone, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex);
+    TArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex);
 }

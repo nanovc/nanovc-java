@@ -13,9 +13,10 @@
 package io.nanovc;
 
 /**
- * A base class for a commit in a {@link Repo}.
+ * A base class for a commit in a {@link RepoAPI}.
  * It stores information about who saved the snapshots of content, when they were saved, and why they were saved.
  */
-public abstract class CommitBase implements Commit
+public abstract class CommitBase
+    implements CommitAPI
 {
 }

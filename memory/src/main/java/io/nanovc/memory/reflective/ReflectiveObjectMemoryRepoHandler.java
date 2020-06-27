@@ -17,7 +17,7 @@ import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.content.StringContent;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.memory.*;
 
 /**
@@ -46,18 +46,18 @@ public class ReflectiveObjectMemoryRepoHandler
      * @param byteArrayIndex    The index to use for managing byte arrays in the in-memory repo. Pass null to create a new default index.
      * @param clock             The clock to use for creating timestamps.
      * @param repoEngine        The repo engine to use internally.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public ReflectiveObjectMemoryRepoHandler(
         ReflectiveObjectMemoryRepo repo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         ReflectiveObjectMemoryRepoEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(ByteArrayContent::new, ByteArrayHashMapArea::new, repo, byteArrayIndex, clock, repoEngine, differenceHandler, comparisonHandler, mergeHandler);

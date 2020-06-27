@@ -14,7 +14,7 @@ package io.nanovc.memory.reflective;
 
 import io.nanovc.Record;
 import io.nanovc.areas.ByteArrayHashMapArea;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import org.junit.jupiter.api.Test;

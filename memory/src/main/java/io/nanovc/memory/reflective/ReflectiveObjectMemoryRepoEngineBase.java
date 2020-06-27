@@ -13,11 +13,10 @@
 package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoEngineBase;
-import io.nanovc.memory.MemorySearchQueryBase;
-import io.nanovc.memory.MemorySearchResultsBase;
+import io.nanovc.memory.MemorySearchQueryAPI;
+import io.nanovc.memory.MemorySearchResultsAPI;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,11 +37,11 @@ import java.util.Objects;
  * @param <TRepo>    The specific type of repo that this engine is for.
  */
 public abstract class ReflectiveObjectMemoryRepoEngineBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends ReflectiveObjectMemoryRepoBase<TContent, TArea, TCommit>
     >
     extends MemoryRepoEngineBase<
@@ -242,7 +241,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -270,7 +269,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit)
+    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -299,7 +298,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -325,7 +324,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);

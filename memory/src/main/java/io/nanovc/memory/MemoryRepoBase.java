@@ -12,8 +12,8 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoBase;
 
 import java.util.HashMap;
@@ -28,9 +28,9 @@ import java.util.LinkedHashSet;
  * @param <TCommit>  The specific type of commit that is created in the repo.
  */
 public abstract class MemoryRepoBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>
     >
     extends RepoBase<
     TContent,

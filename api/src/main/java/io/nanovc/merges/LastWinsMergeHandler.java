@@ -15,8 +15,13 @@ package io.nanovc.merges;
 /**
  * A merge handler where the last change (in time) wins when a merge conflict is detected.
  */
-public class LastWinsMergeHandler extends DiffingMergeHandlerBase<LastWinsMergeEngine>
+public class LastWinsMergeHandler extends LastWinsMergeHandlerBase<LastWinsMergeEngine>
 {
+    /**
+     * A common merge handler that is used as the default for Nano Repos.
+     */
+    public static final LastWinsMergeHandler COMMON_MERGE_HANDLER = new LastWinsMergeHandler();
+
     /**
      * Creates a new merge handler with the given engine.
      * The change from the last commit wins.

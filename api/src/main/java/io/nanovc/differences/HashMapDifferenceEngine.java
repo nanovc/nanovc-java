@@ -12,17 +12,20 @@
 
 package io.nanovc.differences;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
+import io.nanovc.DifferenceEngineAPI;
 
 /**
- * A difference engine that uses hash maps to compute the differences between two {@link Area}'s of {@link Content}.
+ * A difference engine that uses hash maps to compute the differences between two {@link AreaAPI}'s of {@link ContentAPI}.
  * This {@link HashMapDifferenceEngine} does not contain any state. Just the logic of how to compute the differences.
  * This is good where one {@link HashMapDifferenceEngine} is going to be reused across many {@link HashMapDifferenceHandler}'s.
  * This {@link HashMapDifferenceEngine} is thread safe because it is stateless.
- * It is designed to be able to compute many differences between {@link Area}'s.
+ * It is designed to be able to compute many differences between {@link AreaAPI}'s.
  */
-public class HashMapDifferenceEngine extends HashMapDifferenceEngineBase
+public class HashMapDifferenceEngine
+    extends HashMapDifferenceEngineBase
+    implements DifferenceEngineAPI
 {
 }
 

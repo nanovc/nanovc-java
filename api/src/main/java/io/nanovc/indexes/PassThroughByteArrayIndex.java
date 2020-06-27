@@ -12,6 +12,8 @@
 
 package io.nanovc.indexes;
 
+import io.nanovc.ByteArrayIndex;
+
 /**
  * A byte array index that doesn't actually do the value based lookup and instead just passes through the input to the output.
  * This is useful for unit testing.

@@ -27,14 +27,8 @@ package io.nanovc;
  */
 public class NanoVersionControl
 {
-//
-//    /**
-//     * Creates a new handler for Nano Version Control.
-//     * @return A new handler that can be used for Nano Version Control.
-//     */
-//    public static GitRepoHandler newHandler()
-//    {
-//        GitRepoHandler nanoHandler = new GitRepoHandler();
-//        return nanoHandler;
-//    }
+    /**
+     * The URL to Nano Version Control on the web.
+     */
+    public static final String URL = "https://nanovc.io";
 }

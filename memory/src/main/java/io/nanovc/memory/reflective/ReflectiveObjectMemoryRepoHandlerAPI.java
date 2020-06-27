@@ -12,8 +12,8 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.content.StringContent;
 import io.nanovc.memory.*;
@@ -30,11 +30,11 @@ import java.util.List;
  * @param <TContent> The specific type of content that is stored in area for each commit in the repo.
  */
 public interface ReflectiveObjectMemoryRepoHandlerAPI<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends ReflectiveObjectMemoryRepoAPI<TContent, TArea, TCommit>,
     TEngine extends ReflectiveObjectMemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >

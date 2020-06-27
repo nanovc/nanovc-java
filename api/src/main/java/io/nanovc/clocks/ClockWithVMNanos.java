@@ -23,6 +23,11 @@ import io.nanovc.timestamps.TimestampWithVMNanos;
 public class ClockWithVMNanos extends AbstractClockWithVMNanos
 {
     /**
+     * A common clock that is used as the default for Nano Repos.
+     */
+    public static final ClockWithVMNanos COMMON_CLOCK = new ClockWithVMNanos();
+
+    /**
      * Creates a new clock.
      * The epoch will be created when the first timestamp is created.
      * The minimum and maximum duration is set to the range of an int (-2s to +2s).

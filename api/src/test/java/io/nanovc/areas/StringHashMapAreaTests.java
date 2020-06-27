@@ -18,10 +18,9 @@ public class StringHashMapAreaTests
     @Test
     public void testCreation()
     {
-        StringHashMapArea area;
-        area = new StringHashMapArea();
-        area = new StringHashMapArea(StandardCharsets.UTF_8);
-        area = new StringHashMapArea(StandardCharsets.ISO_8859_1);
+        new StringHashMapArea();
+        new StringHashMapArea(StandardCharsets.UTF_8);
+        new StringHashMapArea(StandardCharsets.ISO_8859_1);
     }
 
     /**

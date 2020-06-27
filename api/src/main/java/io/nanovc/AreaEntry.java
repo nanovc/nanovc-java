@@ -13,10 +13,10 @@
 package io.nanovc;
 
 /**
- * An entry in an {@link Area} which defines the path for each piece of {@link Content} in the {@link Area}.
+ * An entry in an {@link AreaAPI} which defines the path for each piece of {@link ContentAPI} in the {@link AreaAPI}.
  * @param <TContent> The specific type of content that this entry contains.
  */
-public class AreaEntry<TContent extends Content>
+public class AreaEntry<TContent extends ContentAPI>
 {
     /**
      * The path of the content in the area.

@@ -15,14 +15,20 @@ package io.nanovc.differences;
 import io.nanovc.*;
 
 /**
- * The base class for difference handlers.
- * This represents the public API when computing {@link Difference}'s.
- * It holds common state being worked on and the {@link DifferenceEngine} that contains the specific algorithm that we are interested in when computing differences.
- * The core functionality is delegated to the {@link DifferenceEngine} which is stateless and can be reused across multiple threads.
+ * A difference handler that uses {@link java.util.HashMap}'s internally.
+ * This represents the public API when computing {@link DifferenceAPI}'s.
+ * It holds common state being worked on and the {@link DifferenceEngineAPI} that contains the specific algorithm that we are interested in when computing differences.
+ * The core functionality is delegated to the {@link DifferenceEngineAPI} which is stateless and can be reused across multiple threads.
  */
 
-public class HashMapDifferenceHandler extends HashMapDifferenceHandlerBase<HashMapDifferenceEngine>
+public class HashMapDifferenceHandler
+    extends HashMapDifferenceHandlerBase<HashMapDifferenceEngine>
 {
+    /**
+     * A common difference handler that is used as the default for Nano Repos.
+     */
+    public static final HashMapDifferenceHandler COMMON_DIFFERENCE_HANDLER = new HashMapDifferenceHandler();
+
     /**
      * Creates a new handler with the given engine for computing the differences.
      *

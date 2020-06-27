@@ -2,7 +2,7 @@ package io.nanovc.areas;
 
 import io.nanovc.AreaBase;
 import io.nanovc.AreaEntry;
-import io.nanovc.Content;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
 
 import java.util.Iterator;
@@ -15,7 +15,8 @@ import java.util.stream.Stream;
  * Every time you put the content it overwrites the path of the single piece of content.
  * This is useful for repo's with one concept that needs to be version controlled.
  */
-public class SingleContentArea<TContent extends Content> extends AreaBase<TContent>
+public class SingleContentArea<TContent extends ContentAPI>
+    extends AreaBase<TContent>
 {
     public SingleContentArea()
     {
@@ -171,7 +172,7 @@ public class SingleContentArea<TContent extends Content> extends AreaBase<TConte
      * @return The stream of content for this area.
      */
     @Override
-    public Stream<AreaEntry<Content>> getContentStream()
+    public Stream<AreaEntry<ContentAPI>> getContentStream()
     {
         if (this.content != null && this.absolutePath != null) return Stream.of(new AreaEntry<>(this.absolutePath, this.content));
         else return Stream.empty();

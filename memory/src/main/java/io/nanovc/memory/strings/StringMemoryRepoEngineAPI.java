@@ -12,12 +12,12 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.Area;
+import io.nanovc.AreaAPI;
 import io.nanovc.content.StringContent;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoEngineAPI;
-import io.nanovc.memory.MemorySearchQueryBase;
-import io.nanovc.memory.MemorySearchResultsBase;
+import io.nanovc.memory.MemorySearchQueryAPI;
+import io.nanovc.memory.MemorySearchResultsAPI;
 
 /**
  * The interface for the engine for working with a nano version control repository of strings in memory.
@@ -33,11 +33,11 @@ import io.nanovc.memory.MemorySearchResultsBase;
  */
 public interface StringMemoryRepoEngineAPI<
     TContent extends StringContent,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
-    TRepo extends StringMemoryRepoBase<TContent, TArea, TCommit>
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
+    TRepo extends StringMemoryRepoAPI<TContent, TArea, TCommit>
     >
     extends MemoryRepoEngineAPI<
         TContent,
@@ -48,4 +48,5 @@ public interface StringMemoryRepoEngineAPI<
         TRepo
         >
 {
+    // Nothing additional to add to the API.
 }

@@ -23,7 +23,8 @@ import java.util.stream.Stream;
  * The key is the absolute repo path for the content.
  * The value is the content.
  */
-public class HashMapDifference extends HashMap<String, DifferenceState> implements Difference
+public class HashMapDifference extends HashMap<String, DifferenceState>
+    implements DifferenceAPI
 {
     /**
      * Creates and puts the given content into this map.

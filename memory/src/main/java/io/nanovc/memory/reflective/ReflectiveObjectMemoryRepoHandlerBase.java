@@ -15,7 +15,7 @@ package io.nanovc.memory.reflective;
 import io.nanovc.*;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.content.StringContent;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.memory.*;
 
 import java.util.Arrays;
@@ -31,11 +31,11 @@ import java.util.List;
  * @param <TContent> The specific type of content that is stored in area for each commit in the repo.
  */
 public abstract class ReflectiveObjectMemoryRepoHandlerBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends ReflectiveObjectMemoryRepoAPI<TContent, TArea, TCommit>,
     TEngine extends ReflectiveObjectMemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
@@ -68,8 +68,8 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      * @param byteArrayIndex    The index to use for managing byte arrays in the in-memory repo. Pass null to create a new default index.
      * @param clock             The clock to use for creating timestamps.
      * @param repoEngine        The repo engine to use internally. Pass null to create a new default engine.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public ReflectiveObjectMemoryRepoHandlerBase(
@@ -77,11 +77,11 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
         AreaFactory<TContent, TArea> areaFactory,
         TRepo repo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         TEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(contentFactory, areaFactory, repo, byteArrayIndex, clock, repoEngine, differenceHandler, comparisonHandler, mergeHandler);

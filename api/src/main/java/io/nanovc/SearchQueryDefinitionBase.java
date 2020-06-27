@@ -17,31 +17,32 @@ import io.nanovc.searches.commits.expressions.Expression;
 import java.util.List;
 
 /**
- * This is the definition of a query to search for {@link Commit}'s.
+ * This is the definition of a query to search for {@link CommitAPI}'s.
  * It captures any arguments for the query expression (parameters).
- * The definition can be reused multiple times to produce {@link SearchQuery}'s.
+ * The definition can be reused multiple times to produce {@link SearchQueryAPI}'s.
  * This is part of the {@link CRUSHED#READ} concepts.
  */
-public class SearchQueryDefinitionBase implements SearchQueryDefinition
+public class SearchQueryDefinitionBase
+    implements SearchQueryDefinitionAPI
 {
     /**
      * The expression to evaluate for the commit search.
      * This can be null if you want a list of commits as a result (see {@link #listOfCommitsExpression}).
      * If this is specified and the {@link #listOfCommitsExpression} then this one is used instead.
      */
-    private final Expression<Commit> singleCommitExpression;
+    private final Expression<CommitAPI> singleCommitExpression;
 
     /**
      * The expression to evaluate to get a list of commits for the search.
      * This can be null if you only want a single commit as a result (see {@link #singleCommitExpression}).
      * If this is specified and the {@link #singleCommitExpression} then the {@link #singleCommitExpression} is used instead.
      */
-    private final Expression<List<Commit>> listOfCommitsExpression;
+    private final Expression<List<CommitAPI>> listOfCommitsExpression;
 
     /**
      * The parameters for the expression.
      */
-    private final SearchParameters parameters;
+    private final SearchParametersAPI parameters;
 
     /**
      * Create a new search query definition.
@@ -49,7 +50,7 @@ public class SearchQueryDefinitionBase implements SearchQueryDefinition
      * @param listOfCommitsExpression The expression to get a list of commits for the search. Pass null if you want to search for a single commit instead.
      * @param parameters The parameters to use for the search query.
      */
-    public SearchQueryDefinitionBase(Expression<Commit> singleCommitExpression, Expression<List<Commit>> listOfCommitsExpression, SearchParameters parameters)
+    public SearchQueryDefinitionBase(Expression<CommitAPI> singleCommitExpression, Expression<List<CommitAPI>> listOfCommitsExpression, SearchParametersAPI parameters)
     {
         this.singleCommitExpression = singleCommitExpression;
         this.listOfCommitsExpression = listOfCommitsExpression;
@@ -82,7 +83,7 @@ public class SearchQueryDefinitionBase implements SearchQueryDefinition
      * If this is specified and the {@link #getListOfCommitsExpression} then this one is used instead.
      */
     @Override
-    public Expression<Commit> getSingleCommitExpression()
+    public Expression<CommitAPI> getSingleCommitExpression()
     {
         return this.singleCommitExpression;
     }
@@ -93,7 +94,7 @@ public class SearchQueryDefinitionBase implements SearchQueryDefinition
      * If this is specified and the {@link #getSingleCommitExpression} then the {@link #getSingleCommitExpression} is used instead.
      */
     @Override
-    public Expression<List<Commit>> getListOfCommitsExpression()
+    public Expression<List<CommitAPI>> getListOfCommitsExpression()
     {
         return this.listOfCommitsExpression;
     }
@@ -102,7 +103,7 @@ public class SearchQueryDefinitionBase implements SearchQueryDefinition
      * The parameters for the expression.
      */
     @Override
-    public SearchParameters getParameters()
+    public SearchParametersAPI getParameters()
     {
         return this.parameters;
     }

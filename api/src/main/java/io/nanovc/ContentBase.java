@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * A base class for {@link Content} that exists in an {@link Area}.
+ * A base class for {@link ContentAPI} that exists in an {@link AreaAPI}.
  * Sub class this to create your own type of content.
  */
-public abstract class ContentBase implements Content
+public abstract class ContentBase implements ContentAPI
 {
     /**
      * Gets the content as a byte array.

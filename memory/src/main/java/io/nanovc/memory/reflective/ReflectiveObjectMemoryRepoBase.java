@@ -12,10 +12,10 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoBase;
 
 /**
@@ -27,9 +27,9 @@ import io.nanovc.memory.MemoryRepoBase;
  * @param <TCommit>  The specific type of commit that is created in the repo.
  */
 public abstract class ReflectiveObjectMemoryRepoBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>
     >
     extends MemoryRepoBase<
     TContent,

@@ -12,8 +12,8 @@
 
 package io.nanovc.content;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import io.nanovc.ContentBase;
 
 import java.nio.ByteBuffer;
@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * A base class for {@link Content} that exists in an {@link Area}.
+ * A base class for {@link ContentAPI} that exists in an {@link AreaAPI}.
  * Sub class this to create your own type of content.
  */
-public abstract class ContentWithByteArrayBase extends ContentBase implements ContentWithByteArray
+public abstract class ContentWithByteArrayBase
+    extends ContentBase
+    implements ContentWithByteArrayAPI
 {
 
     /**

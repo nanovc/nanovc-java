@@ -12,22 +12,23 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Commit;
 import io.nanovc.SearchQueryBase;
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.SearchQueryDefinitionAPI;
 
 /**
  * A search query for {@link MemoryCommit}'s.
  * @param <TCommit>  The specific type of commit that is created in the repo.
  */
-public abstract class MemorySearchQueryBase<TCommit extends Commit> extends SearchQueryBase<TCommit>
+public abstract class MemorySearchQueryBase<TCommit extends MemoryCommitAPI<?>>
+    extends SearchQueryBase<TCommit>
+    implements MemorySearchQueryAPI<TCommit>
 {
     /**
      * Creates a new search query.
      *
      * @param definition The definition that was used to create this definition.
      */
-    public MemorySearchQueryBase(SearchQueryDefinition definition)
+    public MemorySearchQueryBase(SearchQueryDefinitionAPI definition)
     {
         super(definition);
     }

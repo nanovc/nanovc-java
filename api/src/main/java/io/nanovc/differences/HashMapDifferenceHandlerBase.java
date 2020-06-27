@@ -15,13 +15,15 @@ package io.nanovc.differences;
 import io.nanovc.*;
 
 /**
- * The base class for difference handlers.
- * This represents the public API when computing {@link Difference}'s.
- * It holds common state being worked on and the {@link DifferenceEngine} that contains the specific algorithm that we are interested in when computing differences.
- * The core functionality is delegated to the {@link DifferenceEngine} which is stateless and can be reused across multiple threads.
+ * The base class for difference handlers that use {@link java.util.HashMap}'s internally.
+ * This represents the public API when computing {@link DifferenceAPI}'s.
+ * It holds common state being worked on and the {@link DifferenceEngineAPI} that contains the specific algorithm that we are interested in when computing differences.
+ * The core functionality is delegated to the {@link DifferenceEngineAPI} which is stateless and can be reused across multiple threads.
  * @param <TEngine>  The specific type of engine that computes the differences.
  */
-public abstract class HashMapDifferenceHandlerBase<TEngine extends HashMapDifferenceEngineAPI> extends DifferenceHandlerBase<TEngine>
+public abstract class HashMapDifferenceHandlerBase<TEngine extends HashMapDifferenceEngineAPI>
+    extends DifferenceHandlerBase<TEngine>
+    implements HashMapDifferenceHandlerAPI<TEngine>
 {
     /**
      * Creates a new handler with the given engine for computing the differences.
@@ -41,7 +43,7 @@ public abstract class HashMapDifferenceHandlerBase<TEngine extends HashMapDiffer
      * @return The differences between the given areas.
      */
     @Override
-    public Difference computeDifference(Area<? extends Content> fromArea, Area<? extends Content> toArea)
+    public DifferenceAPI computeDifference(AreaAPI<? extends ContentAPI> fromArea, AreaAPI<? extends ContentAPI> toArea)
     {
         return this.getEngine().computeDifference(fromArea, toArea);
     }

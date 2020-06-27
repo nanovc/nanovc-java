@@ -12,10 +12,10 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoAPI;
 
 /**
@@ -23,9 +23,9 @@ import io.nanovc.memory.MemoryRepoAPI;
  * NOTE: This repo represents the state of the version controlled data.
  */
 public interface ReflectiveObjectMemoryRepoAPI<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>
     >
     extends MemoryRepoAPI<
     TContent,

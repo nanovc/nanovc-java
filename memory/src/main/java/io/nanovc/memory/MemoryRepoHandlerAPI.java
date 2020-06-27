@@ -16,10 +16,10 @@ import io.nanovc.*;
 
 /**
  * The repo handler API for working with {@link MemoryRepoBase}'s.
- * This represents the public API when working with {@link Repo}'s.
- * It holds common state including the {@link Repo} being worked on and the {@link RepoEngine} that contains the specific algorithm that we are interested in when working with the repo.
+ * This represents the public API when working with {@link RepoAPI}'s.
+ * It holds common state including the {@link RepoAPI} being worked on and the {@link RepoEngineAPI} that contains the specific algorithm that we are interested in when working with the repo.
  * You can swap out the repo that is being worked on in cases where a correctly configured repo handler must work on multiple repo's.
- * The core functionality is delegated to the {@link RepoEngine} which is stateless and can be reused for multiple {@link Repo}'s and {@link RepoHandler}'s.
+ * The core functionality is delegated to the {@link RepoEngineAPI} which is stateless and can be reused for multiple {@link RepoAPI}'s and {@link RepoHandlerAPI}'s.
  *
  * @param <TContent>     The specific type of content that is stored in area for each commit in the repo.
  * @param <TArea>        The specific type of area that is stored for each commit in the repo.
@@ -30,23 +30,23 @@ import io.nanovc.*;
  * @param <TEngine>      The specific type of engine that manipulates the repo.
  */
 public interface MemoryRepoHandlerAPI<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>,
     TEngine extends MemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
-    extends RepoHandler<
-    TContent,
-    TArea,
-    TCommit,
-    TSearchQuery,
-    TSearchResults,
-    TRepo,
-    TEngine
-    >
+    extends RepoHandlerAPI<
+        TContent,
+        TArea,
+        TCommit,
+        TSearchQuery,
+        TSearchResults,
+        TRepo,
+        TEngine
+        >
 {
     // There is no additional public API when dealing with memory.
 }

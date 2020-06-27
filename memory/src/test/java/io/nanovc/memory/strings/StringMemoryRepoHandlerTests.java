@@ -471,7 +471,7 @@ public class StringMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
 
 
         // Compare the differences:
-        Difference difference = repoHandler.computeDifferenceBetweenCommits(commit1, commit2);
+        DifferenceAPI difference = repoHandler.computeDifferenceBetweenCommits(commit1, commit2);
 
         // Make sure the comparison is as expected:
         assertNotNull(difference);
@@ -482,7 +482,7 @@ public class StringMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
 
 
         // Compare the changes:
-        Comparison comparison = repoHandler.computeComparisonBetweenCommits(commit1, commit2);
+        ComparisonAPI comparison = repoHandler.computeComparisonBetweenCommits(commit1, commit2);
 
         // Make sure the comparison is as expected:
         assertNotNull(comparison);
@@ -523,7 +523,7 @@ public class StringMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second commit");
 
         // Construct the query that we are interested in:
-        SearchQueryDefinition definition = SimpleSearchQueryDefinition.forSingleCommit(AllRepoCommitsExpression.allRepoCommits().tip());
+        SearchQueryDefinitionAPI definition = SimpleSearchQueryDefinition.forSingleCommit(AllRepoCommitsExpression.allRepoCommits().tip());
 
         // Search for the last commit:
         MemorySearchResults searchResults = repoHandler.search(definition);

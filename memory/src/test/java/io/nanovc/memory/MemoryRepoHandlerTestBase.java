@@ -12,8 +12,8 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @param <THandler> The specific type of handler to test.
  */
 public abstract class MemoryRepoHandlerTestBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
     TCommit extends MemoryCommitBase<TCommit>,
     TSearchQuery extends MemorySearchQueryBase<TCommit>,
     TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,

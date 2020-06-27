@@ -12,18 +12,24 @@
 
 package io.nanovc.comparisons;
 
-import io.nanovc.Comparison;
-import io.nanovc.ComparisonEngine;
+import io.nanovc.ComparisonAPI;
+import io.nanovc.ComparisonEngineAPI;
 
 /**
- * The base class for comparison handlers.
- * This represents the public API when computing {@link Comparison}'s.
- * It holds common state being worked on and the {@link ComparisonEngine} that contains the specific algorithm that we are interested in when computing comparisons.
- * The core functionality is delegated to the {@link ComparisonEngine} which is stateless and can be reused across multiple threads.
+ * A comparison handler that uses {@link java.util.HashMap}'s internally.
+ * This represents the public API when computing {@link ComparisonAPI}'s.
+ * It holds common state being worked on and the {@link ComparisonEngineAPI} that contains the specific algorithm that we are interested in when computing comparisons.
+ * The core functionality is delegated to the {@link ComparisonEngineAPI} which is stateless and can be reused across multiple threads.
  */
 
-public class HashMapComparisonHandler extends HashMapComparisonHandlerBase<HashMapComparisonEngine>
+public class HashMapComparisonHandler
+    extends HashMapComparisonHandlerBase<HashMapComparisonEngine>
 {
+    /**
+     * A common comparison handler that is used as the default for Nano Repos.
+     */
+    public static final HashMapComparisonHandler COMMON_COMPARISON_HANDLER = new HashMapComparisonHandler();
+
     /**
      * Creates a new handler with the given engine for computing the comparisons.
      *

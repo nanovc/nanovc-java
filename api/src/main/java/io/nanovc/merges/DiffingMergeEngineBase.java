@@ -13,12 +13,14 @@
 package io.nanovc.merges;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 
 /**
  * A base class for a merge engine that performs diffs between the content of the commits.
  */
-public abstract class DiffingMergeEngineBase extends MergeEngineBase implements DiffingMergeEngineAPI
+public abstract class DiffingMergeEngineBase
+    extends MergeEngineBase
+    implements DiffingMergeEngineAPI
 {
     /**
      * Merges the given changes between two commits into the given area.
@@ -39,7 +41,7 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>                              The specific type of content that we are merging in this call.
      */
     @Override
-    public <TContent extends Content> void mergeIntoAreaWithThreeWayDiff(Area<TContent> mergedAreaToUpdate, Commit commonAncestorCommit, Commit sourceCommit, Commit destinationCommit, Area<TContent> commonAncestorArea, Area<TContent> sourceArea, Area<TContent> destinationArea, Comparison comparisonBetweenSourceAndDestination, Difference differenceBetweenAncestorAndSource, Difference differenceBetweenAncestorAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    public <TContent extends ContentAPI> void mergeIntoAreaWithThreeWayDiff(AreaAPI<TContent> mergedAreaToUpdate, CommitAPI commonAncestorCommit, CommitAPI sourceCommit, CommitAPI destinationCommit, AreaAPI<TContent> commonAncestorArea, AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea, ComparisonAPI comparisonBetweenSourceAndDestination, DifferenceAPI differenceBetweenAncestorAndSource, DifferenceAPI differenceBetweenAncestorAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
     {
         // Go through each path in the comparison:
         for (ComparisonEntry comparisonEntry : comparisonBetweenSourceAndDestination)
@@ -292,7 +294,7 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>            The specific type of content that is conflicted. Return null to not include any content in the merged area for this path.
      * @return The merged bytes to use for the resolved conflict.
      */
-    protected abstract <TContent extends Content> byte[] resolveConflictForChangesInSourceAndDestinationBranches(RepoPath path, Commit sourceCommit, TContent sourceContent, DifferenceState sourceDifference, Commit destinationCommit, TContent destinationContent, DifferenceState destinationDifference);
+    protected abstract <TContent extends ContentAPI> byte[] resolveConflictForChangesInSourceAndDestinationBranches(RepoPath path, CommitAPI sourceCommit, TContent sourceContent, DifferenceState sourceDifference, CommitAPI destinationCommit, TContent destinationContent, DifferenceState destinationDifference);
 
     /**
      * Resolves the conflict when there were changes for the given content in the source branch but a deletion in the destination branch.
@@ -306,7 +308,7 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>            The specific type of content that is conflicted. Return null to not include any content in the merged area for this path.
      * @return The merged bytes to use for the resolved conflict.
      */
-    protected abstract <TContent extends Content> byte[] resolveConflictForChangesInSourceBranchButDeletionInDestinationBranch(RepoPath path, Commit sourceCommit, TContent sourceContent, DifferenceState sourceDifference, Commit destinationCommit, DifferenceState destinationDifference);
+    protected abstract <TContent extends ContentAPI> byte[] resolveConflictForChangesInSourceBranchButDeletionInDestinationBranch(RepoPath path, CommitAPI sourceCommit, TContent sourceContent, DifferenceState sourceDifference, CommitAPI destinationCommit, DifferenceState destinationDifference);
 
     /**
      * Resolves the conflict when there was a deletion of the given content in the source branch but a change in the destination branch.
@@ -320,7 +322,7 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>            The specific type of content that is conflicted. Return null to not include any content in the merged area for this path.
      * @return The merged bytes to use for the resolved conflict.
      */
-    protected abstract <TContent extends Content> byte[] resolveConflictForDeletionInSourceBranchButChangeInDestinationBranch(RepoPath path, Commit sourceCommit, DifferenceState sourceDifference, Commit destinationCommit, TContent destinationContent, DifferenceState destinationDifference);
+    protected abstract <TContent extends ContentAPI> byte[] resolveConflictForDeletionInSourceBranchButChangeInDestinationBranch(RepoPath path, CommitAPI sourceCommit, DifferenceState sourceDifference, CommitAPI destinationCommit, TContent destinationContent, DifferenceState destinationDifference);
 
     /**
      * Merges the given changes between two commits into the given area.
@@ -337,7 +339,7 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>                            The specific type of content that we are merging in this call.
      */
     @Override
-    public <TContent extends Content> void mergeIntoAreaWithTwoWayDiff(Area<TContent> mergedAreaToUpdate, Commit sourceCommit, Commit destinationCommit, Area<TContent> sourceArea, Area<TContent> destinationArea, Comparison comparisonBetweenSourceAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    public <TContent extends ContentAPI> void mergeIntoAreaWithTwoWayDiff(AreaAPI<TContent> mergedAreaToUpdate, CommitAPI sourceCommit, CommitAPI destinationCommit, AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea, ComparisonAPI comparisonBetweenSourceAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
     {
         // Go through each path in the comparison:
         for (ComparisonEntry comparisonEntry : comparisonBetweenSourceAndDestination)
@@ -429,5 +431,5 @@ public abstract class DiffingMergeEngineBase extends MergeEngineBase implements 
      * @param <TContent>         The specific type of content that is conflicted. Return null to not include any content in the merged area for this path.
      * @return The merged bytes to use for the resolved conflict.
      */
-    protected abstract <TContent extends Content> byte[] resolveConflictForTwoWayMerge(RepoPath path, Commit sourceCommit, TContent sourceContent, Commit destinationCommit, TContent destinationContent);
+    protected abstract <TContent extends ContentAPI> byte[] resolveConflictForTwoWayMerge(RepoPath path, CommitAPI sourceCommit, TContent sourceContent, CommitAPI destinationCommit, TContent destinationContent);
 }

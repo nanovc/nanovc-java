@@ -13,8 +13,9 @@
 package io.nanovc;
 
 /**
- * An entry in a {@link Comparison} which defines the path for each piece of {@link Content} in both {@link Area}'s that were compared.
+ * An entry in a {@link ComparisonAPI} which defines the path for each piece of {@link ContentAPI} in both {@link AreaAPI}'s that were compared.
  */
+@Record
 public class ComparisonEntry
 {
     /**

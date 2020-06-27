@@ -12,7 +12,7 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Comparison;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.areas.StringHashMapArea;
 import io.nanovc.clocks.ClockWithVMNanos;
@@ -98,7 +98,7 @@ public class MemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         MemoryCommit commit2 = repoHandler.commit(contentArea, "Second commit.");
 
         // Get the difference between the two commits:
-        Comparison comparison = repoHandler.computeComparisonBetweenCommits(commit1, commit2);
+        ComparisonAPI comparison = repoHandler.computeComparisonBetweenCommits(commit1, commit2);
         assertEquals(
             "/Hello : Changed\n" +
             "/Info : Added\n" +

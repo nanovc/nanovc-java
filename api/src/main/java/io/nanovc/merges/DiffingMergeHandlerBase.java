@@ -13,14 +13,16 @@
 package io.nanovc.merges;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 
 /**
  * A merge handler where the last change (in time) wins when a merge conflict is detected.
  *
  * @param <TEngine> The specific diffing engine to use for merging commits.
  */
-public abstract class DiffingMergeHandlerBase<TEngine extends DiffingMergeEngineAPI> extends MergeHandlerBase<TEngine>
+public abstract class DiffingMergeHandlerBase<TEngine extends DiffingMergeEngineAPI>
+    extends MergeHandlerBase<TEngine>
+    implements DiffingMergeHandlerAPI<TEngine>
 {
     /**
      * Creates a new merge handler with the given engine.
@@ -59,15 +61,16 @@ public abstract class DiffingMergeHandlerBase<TEngine extends DiffingMergeEngine
      * @param <TContent>                              The specific type of content that we are merging in this call.
      */
     @Override
-    public <TContent extends Content> void mergeIntoAreaWithThreeWayDiff(Area<TContent> mergedAreaToUpdate, Commit commonAncestorCommit, Commit sourceCommit, Commit destinationCommit, Area<TContent> commonAncestorArea, Area<TContent> sourceArea, Area<TContent> destinationArea, Comparison comparisonBetweenSourceAndDestination, Difference differenceBetweenAncestorAndSource, Difference differenceBetweenAncestorAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    public <TContent extends ContentAPI> void mergeIntoAreaWithThreeWayDiff(AreaAPI<TContent> mergedAreaToUpdate, CommitAPI commonAncestorCommit, CommitAPI sourceCommit, CommitAPI destinationCommit, AreaAPI<TContent> commonAncestorArea, AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea, ComparisonAPI comparisonBetweenSourceAndDestination, DifferenceAPI differenceBetweenAncestorAndSource, DifferenceAPI differenceBetweenAncestorAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
     {
-        this.getEngine().mergeIntoAreaWithThreeWayDiff(mergedAreaToUpdate,
-                                                       commonAncestorCommit, sourceCommit, destinationCommit,
-                                                       commonAncestorArea, sourceArea, destinationArea,
-                                                       comparisonBetweenSourceAndDestination,
-                                                       differenceBetweenAncestorAndSource, differenceBetweenAncestorAndDestination,
-                                                       contentFactory,
-                                                       byteArrayIndex
+        this.getEngine().mergeIntoAreaWithThreeWayDiff(
+            mergedAreaToUpdate,
+            commonAncestorCommit, sourceCommit, destinationCommit,
+            commonAncestorArea, sourceArea, destinationArea,
+            comparisonBetweenSourceAndDestination,
+            differenceBetweenAncestorAndSource, differenceBetweenAncestorAndDestination,
+            contentFactory,
+            byteArrayIndex
         );
     }
 
@@ -86,14 +89,15 @@ public abstract class DiffingMergeHandlerBase<TEngine extends DiffingMergeEngine
      * @param <TContent>                            The specific type of content that we are merging in this call.
      */
     @Override
-    public <TContent extends Content> void mergeIntoAreaWithTwoWayDiff(Area<TContent> mergedAreaToUpdate, Commit sourceCommit, Commit destinationCommit, Area<TContent> sourceArea, Area<TContent> destinationArea, Comparison comparisonBetweenSourceAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    public <TContent extends ContentAPI> void mergeIntoAreaWithTwoWayDiff(AreaAPI<TContent> mergedAreaToUpdate, CommitAPI sourceCommit, CommitAPI destinationCommit, AreaAPI<TContent> sourceArea, AreaAPI<TContent> destinationArea, ComparisonAPI comparisonBetweenSourceAndDestination, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
     {
-        this.getEngine().mergeIntoAreaWithTwoWayDiff(mergedAreaToUpdate,
-                                                     sourceCommit, destinationCommit,
-                                                     sourceArea, destinationArea,
-                                                     comparisonBetweenSourceAndDestination,
-                                                     contentFactory,
-                                                     byteArrayIndex
+        this.getEngine().mergeIntoAreaWithTwoWayDiff(
+            mergedAreaToUpdate,
+            sourceCommit, destinationCommit,
+            sourceArea, destinationArea,
+            comparisonBetweenSourceAndDestination,
+            contentFactory,
+            byteArrayIndex
         );
     }
 }

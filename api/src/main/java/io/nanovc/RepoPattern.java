@@ -13,7 +13,7 @@
 package io.nanovc;
 
 /**
- * A base class for specific types of patterns in a {@link Repo}.
+ * A base class for specific types of patterns in a {@link RepoAPI}.
  * We use glob like syntax eg: *.json or **.json (to cross path boundaries).
  * Absolute paths start with a / ({@link PathBase#DELIMITER})
  * Relative paths do not start with a / ({@link PathBase#DELIMITER})

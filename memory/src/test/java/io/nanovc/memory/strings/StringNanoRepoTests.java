@@ -12,10 +12,10 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.Comparison;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.RepoPath;
 import io.nanovc.areas.StringHashMapArea;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import org.junit.jupiter.api.Test;
@@ -78,7 +78,7 @@ public class StringNanoRepoTests
         MemoryCommit commit2 = repo.commitToBranch(contentArea, "master", "Second commit.");
 
         // Get the difference between the two commits:
-        Comparison comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
+        ComparisonAPI comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
         assertEquals(
             "/Hello : Changed\n" +
             "/Hello/Info : Added\n" +

@@ -12,19 +12,18 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Commit;
-import io.nanovc.SearchQuery;
+import io.nanovc.SearchQueryAPI;
 
 /**
- * This contains the result of a search for {@link Commit}'s.
- * Use a {@link SearchQuery} to find the commits.
+ * This contains the result of a search for {@link MemoryCommitAPI}'s.
+ * Use a {@link SearchQueryAPI} to find the commits.
  */
 public class MemorySearchResults
     extends
     MemorySearchResultsBase<
-            MemoryCommit,
+        MemoryCommit,
         MemorySearchQuery
-            >
+        >
 {
 
     /**
