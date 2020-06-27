@@ -5,17 +5,18 @@ import io.nanovc.AreaEntry;
 import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
 
-import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 /**
- * An area that is backed by a {@link HashMap} which is fast for accessing but the order of the content is undefined.
+ * An area that is backed by a {@link java.util.TreeMap} so that the order of the content is always sorted by the absolute path.
  * The key is the absolute repo path for the content.
  * The value is the content.
  */
-public class HashMapArea<TContent extends ContentAPI>
-    extends HashMap<String, TContent>
+public class TreeMapArea<TContent extends ContentAPI>
+    extends TreeMap<String, TContent>
     implements AreaAPI<TContent>
 {
     /**

@@ -8,12 +8,12 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * An area for storing strings.
- * It is backed by a {@link HashMapArea} which is efficient for access but does not preserve order of its contents.
+ * It is backed by a {@link TreeMapArea} which always keeps it's contents sorted.
  * The key is the absolute repo path for the content.
  * The value is the {@link StringContent}.
  */
-public class StringHashMapArea
-    extends HashMapArea<StringContent>
+public class StringTreeMapArea
+    extends TreeMapArea<StringContent>
     implements StringAreaAPI
 {
     /**
@@ -25,7 +25,7 @@ public class StringHashMapArea
      * Creates a new string hash map area which uses the given charset for encoding the strings to bytes.
      * @param charset The character set to use for encoding the strings to bytes.
      */
-    public StringHashMapArea(Charset charset)
+    public StringTreeMapArea(Charset charset)
     {
         this.charset = charset;
     }
@@ -33,7 +33,7 @@ public class StringHashMapArea
     /**
      * Creates a new string hash map area which uses UTF-8 for encoding the strings to bytes.
      */
-    public StringHashMapArea()
+    public StringTreeMapArea()
     {
         this(StandardCharsets.UTF_8);
     }

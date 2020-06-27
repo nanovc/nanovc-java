@@ -5,17 +5,18 @@ import io.nanovc.AreaEntry;
 import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
- * An area that is backed by a {@link HashMap} which is fast for accessing but the order of the content is undefined.
+ * An area that is backed by a {@link LinkedHashMap} so that the order of the content is preserved.
  * The key is the absolute repo path for the content.
  * The value is the content.
  */
-public class HashMapArea<TContent extends ContentAPI>
-    extends HashMap<String, TContent>
+public class LinkedHashMapArea<TContent extends ContentAPI>
+    extends LinkedHashMap<String, TContent>
     implements AreaAPI<TContent>
 {
     /**

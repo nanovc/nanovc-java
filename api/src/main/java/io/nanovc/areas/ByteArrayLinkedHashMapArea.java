@@ -8,12 +8,12 @@ import io.nanovc.content.ByteArrayContent;
 
 /**
  * An area for storing byte arrays.
- * It is backed by a {@link HashMapArea} which is efficient to access but does not preserve its order.
+ * It is backed by a {@link LinkedHashMapArea} which preserves the order of its contents.
  * The key is the absolute repo path for the content.
  * The value is the {@link ByteArrayContent}.
  */
-public class ByteArrayHashMapArea
-    extends HashMapArea<ByteArrayContent>
+public class ByteArrayLinkedHashMapArea
+    extends LinkedHashMapArea<ByteArrayContent>
     implements ByteArrayAreaAPI
 {
     /**
@@ -75,20 +75,20 @@ public class ByteArrayHashMapArea
     }
 
     /**
-     * This either casts the given area to a {@link ByteArrayHashMapArea} if it creates a new one with the same content as the given one.
+     * This either casts the given area to a {@link ByteArrayLinkedHashMapArea} if it creates a new one with the same content as the given one.
      * When it clones the area, it makes references to the original content objects.
      * @param area The area to either cast or wrap as a ByteArrayHashMapArea.
-     * @return The given area either casted to a {@link ByteArrayHashMapArea} if it already is one or a new copy with the same content.
+     * @return The given area either casted to a {@link ByteArrayLinkedHashMapArea} if it already is one or a new copy with the same content.
      */
-    public static ByteArrayHashMapArea castOrClone(AreaAPI<? extends ContentAPI> area)
+    public static ByteArrayLinkedHashMapArea castOrClone(AreaAPI<? extends ContentAPI> area)
     {
-        if (area instanceof ByteArrayHashMapArea) return (ByteArrayHashMapArea) area;
+        if (area instanceof ByteArrayLinkedHashMapArea) return (ByteArrayLinkedHashMapArea) area;
         else
         {
             // This is not the desired type.
 
             // Create a copy of the area:
-            ByteArrayHashMapArea clone = new ByteArrayHashMapArea();
+            ByteArrayLinkedHashMapArea clone = new ByteArrayLinkedHashMapArea();
             for (AreaEntry<? extends ContentAPI> entry : area)
             {
                 clone.putContent(entry.path, new ByteArrayContent(entry.content.asByteArray()));
