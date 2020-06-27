@@ -18,9 +18,10 @@ import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.content.StringContent;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
-import io.nanovc.memory.*;
+import io.nanovc.memory.MemoryCommit;
+import io.nanovc.memory.MemorySearchQuery;
+import io.nanovc.memory.MemorySearchResults;
 import io.nanovc.merges.LastWinsMergeHandler;
 
 import java.nio.charset.Charset;
@@ -218,6 +219,36 @@ public class StringNanoRepo extends StringMemoryRepo
     public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
         return this.getEngine().commit(contentAreaToCommit, message, this, this.getByteArrayIndex(), this.getClock(), firstParentCommit, Arrays.asList(otherParentCommits));
+    }
+
+    /**
+     * Commit the given content to the repo.
+     * It tracks the given commits as the parents.
+     *
+     * @param contentAreaToCommit The content area to commit to version control.
+     * @param message             The commit message.
+     * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
+     * @return The commit for this content area.
+     */
+    @Override public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, List<MemoryCommit> parentCommits)
+    {
+        // Determine how many parent commits there are to decide how to route this to the engine:
+        if (parentCommits == null)
+        {
+            // There is no list of parent commits.
+            return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock);
+        }
+        else
+        {
+            // There is a list of parent commits.
+            // Determine how to pass the list to the engine as efficiently as possible:
+            switch (parentCommits.size())
+            {
+                case 0: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock);
+                case 1: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                default: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+            }
+        }
     }
 
     /**

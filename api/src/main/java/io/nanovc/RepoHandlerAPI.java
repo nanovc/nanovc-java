@@ -92,6 +92,17 @@ public interface RepoHandlerAPI<
     TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
+     * Commit the given content to the repo.
+     * It tracks the given commits as the parents.
+     *
+     * @param contentAreaToCommit The content area to commit to version control.
+     * @param message             The commit message.
+     * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
+     * @return The commit for this content area.
+     */
+    TCommit commit(TArea contentAreaToCommit, String message, List<TCommit> parentCommits);
+
+    /**
      * Commit the given content to the given branch in the the repo.
      *
      * @param contentAreaToCommit The content area to commit to version control.

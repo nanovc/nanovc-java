@@ -12,9 +12,10 @@
 
 package io.nanovc;
 
-import io.nanovc.areas.StringHashMapArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.content.StringContent;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,19 @@ public class RepoHandlerAPITests
     public void commitTests()
     {
         MockRepoHandler repoHandler = new MockRepoHandler();
+
+        StringAreaAPI area = null;
+        String message = null;
+        MockCommit parentCommit1 = null;
+        MockCommit parentCommit2 = null;
+        MockCommit parentCommit3 = null;
+
+        // Use the API:
+        repoHandler.commit(area, message, parentCommit1);
+        repoHandler.commit(area, message, parentCommit1, parentCommit2);
+        repoHandler.commit(area, message, parentCommit1, parentCommit2, parentCommit3);
+        repoHandler.commit(area, message, parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
+        repoHandler.commit(area, message, Arrays.asList(parentCommit1, parentCommit2));
     }
 
     //#region Mock Implementation
@@ -65,44 +79,49 @@ public class RepoHandlerAPITests
         }
     }
 
-    private static class MockRepo extends RepoBase<StringContent, StringHashMapArea, MockCommit>
+    private static class MockRepo extends RepoBase<StringContent, StringAreaAPI, MockCommit>
     {
     }
 
-    private static class MockRepoEngine extends RepoEngineBase<StringContent, StringHashMapArea, MockCommit, MockSearchQuery, MockSearchResults, MockRepo>
+    private static class MockRepoEngine extends RepoEngineBase<StringContent, StringAreaAPI, MockCommit, MockSearchQuery, MockSearchResults, MockRepo>
     {
     }
 
     private static class MockRepoHandler
-    extends RepoHandlerBase<StringContent, StringHashMapArea, MockCommit, MockSearchQuery, MockSearchResults, MockRepo, MockRepoEngine>
+    extends RepoHandlerBase<StringContent, StringAreaAPI, MockCommit, MockSearchQuery, MockSearchResults, MockRepo, MockRepoEngine>
     {
 
-        @Override public StringHashMapArea createArea()
+        @Override public StringAreaAPI createArea()
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringHashMapArea contentAreaToCommit, String message)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringHashMapArea contentAreaToCommit, String message, MockCommit parentCommit)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit parentCommit)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringHashMapArea contentAreaToCommit, String message, MockCommit firstParentCommit, MockCommit... otherParentCommits)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit firstParentCommit, MockCommit... otherParentCommits)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringHashMapArea contentAreaToCommit, String message, MockCommit firstParentCommit, List<MockCommit> otherParentCommits)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit firstParentCommit, List<MockCommit> otherParentCommits)
         {
             return null;
         }
 
-        @Override public MockCommit commitToBranch(StringHashMapArea contentAreaToCommit, String branch, String message)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, List<MockCommit> parentCommits)
+        {
+            return null;
+        }
+
+        @Override public MockCommit commitToBranch(StringAreaAPI contentAreaToCommit, String branch, String message)
         {
             return null;
         }
@@ -117,12 +136,12 @@ public class RepoHandlerAPITests
             return null;
         }
 
-        @Override public void checkoutIntoArea(MockCommit mockCommit, StringHashMapArea areaToUpdate)
+        @Override public void checkoutIntoArea(MockCommit mockCommit, StringAreaAPI areaToUpdate)
         {
 
         }
 
-        @Override public StringHashMapArea checkout(MockCommit mockCommit)
+        @Override public StringAreaAPI checkout(MockCommit mockCommit)
         {
             return null;
         }
@@ -172,7 +191,7 @@ public class RepoHandlerAPITests
             return null;
         }
 
-        @Override public StringHashMapArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
+        @Override public StringAreaAPI castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
         {
             return null;
         }
@@ -216,7 +235,7 @@ public class RepoHandlerAPITests
         {
             return null;
         }
-
-        //#endregion
     }
+
+    //#endregion
 }
