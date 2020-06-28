@@ -122,6 +122,7 @@ public class CommitTags
      * Creates new commit tags and adds all the other tags without modifying them.
      * Use this to mixin other standard tags into the new tags.
      *
+     * @param otherTags The other tags to merge into these tags. The other tags are not modified.
      * @return The modified tags so that they can be chained in a fluent manner.
      */
     public static CommitTags with(StringAreaAPI otherTags)
