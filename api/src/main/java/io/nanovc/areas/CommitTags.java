@@ -30,40 +30,46 @@ public class CommitTags
     extends StringLinkedHashMapArea
 {
     /**
-     * This is the relative path to use for timestamps.
+     * This holds common paths for commit tags.
      */
-    public static final String TIMESTAMP_PATH = "/timestamp";
+    public static class CommonPaths
+    {
+        /**
+         * This is the relative path to use for timestamps.
+         */
+        public static final String TIMESTAMP_PATH = "/timestamp";
 
-    /**
-     * The path to the author commit tag.
-     * Author is usually the same as committer but in certain rare cases (like in Git),
-     * the author is the person that created the content but the committer is the one
-     * that actually commits it to version control on the authors behalf.
-     */
-    public static final String AUTHOR_PATH = "/author";
+        /**
+         * The path to the author commit tag.
+         * Author is usually the same as committer but in certain rare cases (like in Git),
+         * the author is the person that created the content but the committer is the one
+         * that actually commits it to version control on the authors behalf.
+         */
+        public static final String AUTHOR_PATH = "/author";
 
-    /**
-     * The path to the timestamp for the author tag.
-     */
-    public static final String AUTHOR_TIMESTAMP_PATH = AUTHOR_PATH + TIMESTAMP_PATH;
+        /**
+         * The path to the timestamp for the author tag.
+         */
+        public static final String AUTHOR_TIMESTAMP_PATH = AUTHOR_PATH + TIMESTAMP_PATH;
 
-    /**
-     * The path to the committer commit tag.
-     * Committer is usually the same as author but in certain rare cases (like in Git),
-     * the author is the person that created the content but the committer is the one
-     * that actually commits it to version control on the authors behalf.
-     */
-    public static final String COMMITTER_PATH = "/committer";
+        /**
+         * The path to the committer commit tag.
+         * Committer is usually the same as author but in certain rare cases (like in Git),
+         * the author is the person that created the content but the committer is the one
+         * that actually commits it to version control on the authors behalf.
+         */
+        public static final String COMMITTER_PATH = "/committer";
 
-    /**
-     * The path to the timestamp for the committer tag.
-     */
-    public static final String COMMITTER_TIMESTAMP_PATH = COMMITTER_PATH + TIMESTAMP_PATH;
+        /**
+         * The path to the timestamp for the committer tag.
+         */
+        public static final String COMMITTER_TIMESTAMP_PATH = COMMITTER_PATH + TIMESTAMP_PATH;
 
-    /**
-     * This is the path to use for a lengthier description compared to the message for the commit.
-     */
-    public static final String DESCRIPTION_PATH = "/description";
+        /**
+         * This is the path to use for a lengthier description compared to the message for the commit.
+         */
+        public static final String DESCRIPTION_PATH = "/description";
+    }
 
     /**
      * Creates empty commit tags that can be used to chain further calls.
@@ -71,6 +77,16 @@ public class CommitTags
      * @return Empty commit tags that can be chained in a fluent manner.
      */
     public static CommitTags with()
+    {
+        return new CommitTags();
+    }
+
+    /**
+     * Creates empty commit tags.
+     *
+     * @return Empty commit tags that can be chained in a fluent manner.
+     */
+    public static CommitTags none()
     {
         return new CommitTags();
     }
@@ -376,7 +392,7 @@ public class CommitTags
      */
     public CommitTags author(String author)
     {
-        putString(AUTHOR_PATH, author);
+        putString(CommonPaths.AUTHOR_PATH, author);
         return this;
     }
 
@@ -390,7 +406,7 @@ public class CommitTags
      */
     public CommitTags authorTimestamp(TimestampAPI timestamp)
     {
-        putString(AUTHOR_TIMESTAMP_PATH, timestamp.getInstant().toString());
+        putString(CommonPaths.AUTHOR_TIMESTAMP_PATH, timestamp.getInstant().toString());
         return this;
     }
 
@@ -404,7 +420,7 @@ public class CommitTags
      */
     public CommitTags authorTimestamp(Instant timestamp)
     {
-        putString(AUTHOR_TIMESTAMP_PATH, timestamp.toString());
+        putString(CommonPaths.AUTHOR_TIMESTAMP_PATH, timestamp.toString());
         return this;
     }
 
@@ -420,7 +436,7 @@ public class CommitTags
      */
     public CommitTags committer(String committer)
     {
-        putString(COMMITTER_PATH, committer);
+        putString(CommonPaths.COMMITTER_PATH, committer);
         return this;
     }
 
@@ -434,7 +450,7 @@ public class CommitTags
      */
     public CommitTags committerTimestamp(TimestampAPI timestamp)
     {
-        putString(COMMITTER_TIMESTAMP_PATH, timestamp.getInstant().toString());
+        putString(CommonPaths.COMMITTER_TIMESTAMP_PATH, timestamp.getInstant().toString());
         return this;
     }
 
@@ -448,7 +464,7 @@ public class CommitTags
      */
     public CommitTags committerTimestamp(Instant timestamp)
     {
-        putString(COMMITTER_TIMESTAMP_PATH, timestamp.toString());
+        putString(CommonPaths.COMMITTER_TIMESTAMP_PATH, timestamp.toString());
         return this;
     }
 
@@ -461,7 +477,7 @@ public class CommitTags
      */
     public CommitTags description(String description)
     {
-        putString(DESCRIPTION_PATH, description);
+        putString(CommonPaths.DESCRIPTION_PATH, description);
         return this;
     }
 
