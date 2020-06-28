@@ -3,9 +3,6 @@ package io.nanovc.areas;
 import io.nanovc.RepoPath;
 import io.nanovc.content.StringContent;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
  * An area for storing strings.
  * It is backed by a {@link TreeMapArea} which always keeps it's contents sorted.
@@ -17,25 +14,10 @@ public class StringTreeMapArea
     implements StringAreaAPI
 {
     /**
-     * The character set to use for encoding the strings as content.
-     */
-    protected final Charset charset;
-
-    /**
-     * Creates a new string hash map area which uses the given charset for encoding the strings to bytes.
-     * @param charset The character set to use for encoding the strings to bytes.
-     */
-    public StringTreeMapArea(Charset charset)
-    {
-        this.charset = charset;
-    }
-
-    /**
      * Creates a new string hash map area which uses UTF-8 for encoding the strings to bytes.
      */
     public StringTreeMapArea()
     {
-        this(StandardCharsets.UTF_8);
     }
 
     /**
@@ -45,7 +27,7 @@ public class StringTreeMapArea
      */
     protected StringContent createContentFor(String value)
     {
-        return new StringContent(value, this.charset);
+        return new StringContent(value);
     }
 
     /**

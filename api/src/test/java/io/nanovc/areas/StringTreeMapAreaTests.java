@@ -27,8 +27,6 @@ public class StringTreeMapAreaTests extends StringAreaAPITestsBase<StringTreeMap
     public void testCreation()
     {
         new StringTreeMapArea();
-        new StringTreeMapArea(StandardCharsets.UTF_8);
-        new StringTreeMapArea(StandardCharsets.ISO_8859_1);
     }
 
 }

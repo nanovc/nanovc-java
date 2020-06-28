@@ -27,8 +27,6 @@ public class StringLinkedHashMapAreaTests extends StringAreaAPITestsBase<StringL
     public void testCreation()
     {
         new StringLinkedHashMapArea();
-        new StringLinkedHashMapArea(StandardCharsets.UTF_8);
-        new StringLinkedHashMapArea(StandardCharsets.ISO_8859_1);
     }
 
 }

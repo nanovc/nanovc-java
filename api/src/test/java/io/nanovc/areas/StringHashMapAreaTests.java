@@ -27,8 +27,6 @@ public class StringHashMapAreaTests extends StringAreaAPITestsBase<StringHashMap
     public void testCreation()
     {
         new StringHashMapArea();
-        new StringHashMapArea(StandardCharsets.UTF_8);
-        new StringHashMapArea(StandardCharsets.ISO_8859_1);
     }
 
 }
