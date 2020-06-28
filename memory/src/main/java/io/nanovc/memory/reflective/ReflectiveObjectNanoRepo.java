@@ -14,11 +14,11 @@ package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
 import io.nanovc.areas.ByteArrayHashMapArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import io.nanovc.memory.MemorySearchQuery;
@@ -33,8 +33,8 @@ import java.util.Set;
  * A fully self contained nano repository for version control of arbitrary objects using reflection.
  * Use this class for general purpose storage of history.
  * NOTE: This is a rudimentary implementation right now.
- *       Only simple reflection is supported meaning that it serializes String fields straight on the class.
- *       See {@link ReflectiveObjectMemoryRepoEngineBase#serializeObjectToContentArea(Object, AreaAPI, ContentFactory, ReflectiveObjectMemoryRepoBase)}
+ * Only simple reflection is supported meaning that it serializes String fields straight on the class.
+ * See {@link ReflectiveObjectMemoryRepoEngineBase#serializeObjectToContentArea(Object, AreaAPI, ContentFactory, ReflectiveObjectMemoryRepoBase)}
  * If you want more control, see the {@link ReflectiveObjectMemoryRepoHandler} instead.
  */
 public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
@@ -130,6 +130,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
 
     /**
      * Creates a new Memory Nano Repo.
+     *
      * @param byteArrayIndex The index to use when committing content.
      */
     public ReflectiveObjectNanoRepo(ByteArrayIndex byteArrayIndex)
@@ -140,12 +141,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
 
     /**
      * Creates a new Memory Nano Repo.
-     * @param byteArrayIndex The byte array index to reuse. This allows us to keep a shared pool of byte arrays for the content that is created. This index could be shared across multiple repos to save memory. Plug in an alternative handler or use {@link HashWrapperByteArrayIndex}.
-     * @param engine The engine to use for the version control functionality. All of the version control logic is delegated to this engine. You can plug in an alternative engine to modify the behaviour for this repo. Plug in an alternative handler or use {@link #COMMON_ENGINE}.
-     * @param clock The clock to use when creating commits for this repo. Plug in an alternative handler or use {@link #COMMON_CLOCK}.
+     *
+     * @param byteArrayIndex    The byte array index to reuse. This allows us to keep a shared pool of byte arrays for the content that is created. This index could be shared across multiple repos to save memory. Plug in an alternative handler or use {@link HashWrapperByteArrayIndex}.
+     * @param engine            The engine to use for the version control functionality. All of the version control logic is delegated to this engine. You can plug in an alternative engine to modify the behaviour for this repo. Plug in an alternative handler or use {@link #COMMON_ENGINE}.
+     * @param clock             The clock to use when creating commits for this repo. Plug in an alternative handler or use {@link #COMMON_CLOCK}.
      * @param differenceHandler The handler to use when computing differences between commits. Plug in an alternative handler or use {@link #COMMON_DIFFERENCE_HANDLER}.
      * @param comparisonHandler The handler to use when computing comparisons between commits. Plug in an alternative handler or use {@link #COMMON_COMPARISON_HANDLER}.
-     * @param mergeHandler The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
+     * @param mergeHandler      The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
      */
     public ReflectiveObjectNanoRepo(ByteArrayIndex byteArrayIndex, ReflectiveObjectMemoryRepoEngineAPI<
         ByteArrayContent,
@@ -227,12 +229,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message)
+    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -241,13 +244,14 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, MemoryCommit parentCommit)
+    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit parentCommit)
     {
-        return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, parentCommit);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommit);
     }
 
     /**
@@ -256,14 +260,15 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
+    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -272,16 +277,17 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
      * @return The commit for this content area.
      */
-    @Override public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, List<MemoryCommit> parentCommits)
+    @Override public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, List<MemoryCommit> parentCommits)
     {
         // Determine how many parent commits there are to decide how to route this to the engine:
         if (parentCommits == null)
         {
             // There is no list of parent commits.
-            return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock);
+            return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
         }
         else
         {
@@ -289,9 +295,12 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
             // Determine how to pass the list to the engine as efficiently as possible:
             switch (parentCommits.size())
             {
-                case 0: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock);
-                case 1: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
-                default: return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+                case 0:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+                case 1:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                default:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
             }
         }
     }
@@ -302,14 +311,15 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
+    public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -318,12 +328,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      * @param contentAreaToCommit The content area to commit to version control.
      * @param branch              The branch to commit to. If the branch doesn't exist, it is created.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commitToBranch(ByteArrayHashMapArea contentAreaToCommit, String branch, String message)
+    public MemoryCommit commitToBranch(ByteArrayHashMapArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitToBranch(contentAreaToCommit, branch, message, this, this.byteArrayIndex, this.clock);
+        return this.engine.commitToBranch(contentAreaToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -498,12 +509,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param objectToCommit The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commitObject(Object objectToCommit, String message)
+    public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObject(objectToCommit, message, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -512,13 +524,14 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param objectToCommit The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit   The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commitObject(Object objectToCommit, String message, MemoryCommit parentCommit)
+    public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit parentCommit)
     {
-        return this.engine.commitObject(objectToCommit, message, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, parentCommit);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, parentCommit);
     }
 
     /**
@@ -527,14 +540,15 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param objectToCommit     The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit  The parent commit that we want to make this commit from.
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commitObject(Object objectToCommit, String message, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
+    public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.engine.commitObject(objectToCommit, message,commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -543,14 +557,15 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      *
      * @param objectToCommit     The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit  The parent commit that we want to make this commit from.
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commitObject(Object objectToCommit, String message, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
+    public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, otherParentCommits);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -559,12 +574,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      * @param objectToCommit The object to commit to the repo.
      * @param branch         The branch to commit to. If the branch doesn't exist, it is created.
      * @param message        The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commitObjectToBranch(Object objectToCommit, String branch, String message)
+    public MemoryCommit commitObjectToBranch(Object objectToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObjectToBranch(objectToCommit, branch, message, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.engine.commitObjectToBranch(objectToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -742,12 +758,13 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit that was performed for the merge.
      */
     @Override
-    public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message)
+    public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
-        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new, this.byteArrayIndex, this.clock);
+        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new, this.byteArrayIndex, this.clock);
     }
 
     /**

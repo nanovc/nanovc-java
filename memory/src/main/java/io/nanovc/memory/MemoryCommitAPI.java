@@ -15,6 +15,7 @@ package io.nanovc.memory;
 import io.nanovc.CommitAPI;
 import io.nanovc.TimestampAPI;
 import io.nanovc.areas.ByteArrayAreaAPI;
+import io.nanovc.areas.StringAreaAPI;
 
 import java.util.List;
 
@@ -90,4 +91,20 @@ public interface MemoryCommitAPI<TSelf extends MemoryCommitAPI<?>>
      * @param otherParents The other parent commits.
      */
     void setOtherParents(List<TSelf> otherParents);
+
+    /**
+     * Gets the commit tags that contain additional meta-data for this commit.
+     * This is useful for authors, committers and other such data.
+     * Consider using {@link io.nanovc.CommitTags} as a helper to create these.
+     * @return The commit tags that contain additional meta-data for this commit.
+     */
+    StringAreaAPI getCommitTags();
+
+    /**
+     * Sets the commit tags that contain additional meta-data for this commit.
+     * This is useful for authors, committers and other such data.
+     * Consider using {@link io.nanovc.CommitTags} as a helper to create these.
+     * @param commitTags The commit tags that contain additional meta-data for this commit.
+     */
+    void setCommitTags(StringAreaAPI commitTags);
 }

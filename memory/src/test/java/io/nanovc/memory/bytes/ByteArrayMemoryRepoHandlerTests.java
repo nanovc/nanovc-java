@@ -90,14 +90,14 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello World"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Commit 1");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Commit 1", CommitTags.none());
         assertNotNull(commit1);
 
         // Make a change:
         area.putBytes("/A", bytes("A"));
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Commit 2");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Commit 2", CommitTags.none());
         assertNotNull(commit2);
         assertNotSame(commit1, commit2);
 
@@ -121,7 +121,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello World"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Commit 1");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Commit 1", CommitTags.none());
         assertNotNull(commit1);
 
         // Make a change:
@@ -161,7 +161,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertEquals("/ : byte[11] ➡ 'Hello World'", area.asListString());
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commit(area, "Initial Structure");
+        MemoryCommit commit1 = repoHandler.commit(area, "Initial Structure", CommitTags.none());
         assertNotNull(commit1);
 
         // Checkout the content:
@@ -186,7 +186,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         );
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commit(area, "Added a greeting, times 2");
+        MemoryCommit commit2 = repoHandler.commit(area, "Added a greeting, times 2", CommitTags.none());
         assertNotNull(commit2);
         assertNotSame(commit1, commit2);
 
@@ -230,7 +230,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertFalse(repoHandler.getBranchNames().contains("master"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure", CommitTags.none());
 
         // Make sure that the repo has a branch:
         assertEquals(1, repoHandler.getRepo().getBranchTips().size());
@@ -254,7 +254,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello Again"));
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "changed", "Made a change");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "changed", "Made a change", CommitTags.none());
 
         // Make sure that the repo has the new branch:
         assertEquals(2, repoHandler.getRepo().getBranchTips().size());
@@ -271,7 +271,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello Master"));
 
         // Commit the changes:
-        MemoryCommit commit3 = repoHandler.commitToBranch(area, "master", "Made a change to master");
+        MemoryCommit commit3 = repoHandler.commitToBranch(area, "master", "Made a change to master", CommitTags.none());
 
         // Make sure that the repo has the branches we expect:
         assertEquals(2, repoHandler.getRepo().getBranchTips().size());
@@ -310,7 +310,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertFalse(repoHandler.getBranchNames().contains("master"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure", CommitTags.none());
 
         // Make sure that the repo has a branch:
         assertEquals(1, repoHandler.getRepo().getBranchTips().size());
@@ -346,7 +346,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertFalse(repoHandler.getTagNames().contains("Tag 1"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "Initial Structure", CommitTags.none());
 
         // Make sure that we don't have any tags after we commit (because we haven't tagged yet):
         assertEquals(0, repoHandler.getRepo().getTags().size());
@@ -389,7 +389,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
 
         // Create another commit so that we have more history in the repo:
         area.putBytes("/", bytes("Hello World Again"));
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Great Changes");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Great Changes", CommitTags.none());
 
         // Update an existing tag for the latest commit:
         repoHandler.tagCommit(commit2, "Tag 1");
@@ -430,7 +430,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
                 area.putBytes("/", bytes("Hello World " + i));
 
                 // Commit the string:
-                commit = repoHandler.commit(area, "Commit " + i);
+                commit = repoHandler.commit(area, "Commit " + i, CommitTags.none());
             }
 
             // Checkout the last commit:
@@ -465,7 +465,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/c", bytes("c1"));
 
         // Commit the area:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Make some changes:
         area.putBytes(RepoPath.atRoot(), bytes("New Root"));
@@ -474,7 +474,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.removeBytes("/c");
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second commit");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second commit", CommitTags.none());
 
 
         // Compare the differences:
@@ -518,7 +518,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/c", bytes("c1"));
 
         // Commit the area:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Make some changes:
         area.putBytes(RepoPath.atRoot(), bytes("New Root"));
@@ -527,7 +527,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.removeBytes("/c");
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second commit");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second commit", CommitTags.none());
 
         // Construct the query that we are interested in:
         SearchQueryDefinitionAPI definition = SimpleSearchQueryDefinition.forSingleCommit(AllRepoCommitsExpression.allRepoCommits().tip());
@@ -565,7 +565,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/c", bytes("c1"));
 
         // Commit the area to the master branch:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Make some changes:
         area.putBytes(RepoPath.atRoot(), bytes("New Root"));
@@ -577,7 +577,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/d", bytes("D2"));
 
         // Commit the changes to a disconnected branch (no common ancestor):
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "disconnected", "Second commit");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "disconnected", "Second commit", CommitTags.none());
 
         // Make another change to master:
         ByteArrayHashMapArea masterArea = repoHandler.checkout(commit1);
@@ -589,10 +589,10 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         masterArea.putBytes("/e", bytes("E3"));
 
         // Commit the changes to master (after making the disconnected changes):
-        MemoryCommit commit3 = repoHandler.commitToBranch(masterArea, "master", "Third Commit");
+        MemoryCommit commit3 = repoHandler.commitToBranch(masterArea, "master", "Third Commit", CommitTags.none());
 
         // Merge the disconnected branch back into the master branch:
-        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "disconnected", "Merging disconnected branch into master branch");
+        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "disconnected", "Merging disconnected branch into master branch", CommitTags.none());
 
         // Make sure that merge commit is as expected:
         assertNotNull(mergeCommit);
@@ -638,7 +638,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/c", bytes("c1"));
 
         // Commit the area to the master branch:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Change the content at an existing path that we will also change in the disconnected branch:
         area.putBytes("/a", bytes("A3"));
@@ -647,7 +647,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/e", bytes("E3"));
 
         // Commit the changes to master (before making the disconnected changes):
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second Commit");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "master", "Second Commit", CommitTags.none());
 
         // Create the disconnected branch:
         area = repoHandler.checkout(commit1);
@@ -661,10 +661,10 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/d", bytes("D2"));
 
         // Commit the changes to a disconnected branch (no common ancestor):
-        MemoryCommit commit3 = repoHandler.commitToBranch(area, "disconnected", "Third commit");
+        MemoryCommit commit3 = repoHandler.commitToBranch(area, "disconnected", "Third commit", CommitTags.none());
 
         // Merge the disconnected branch back into the master branch:
-        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "disconnected", "Merging disconnected branch into master branch");
+        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "disconnected", "Merging disconnected branch into master branch", CommitTags.none());
 
         // Make sure that merge commit is as expected:
         assertNotNull(mergeCommit);
@@ -709,7 +709,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/c", bytes("c1"));
 
         // Commit the area to the master branch:
-        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit");
+        MemoryCommit commit1 = repoHandler.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Make some changes:
         area.putBytes(RepoPath.atRoot(), bytes("New Root"));
@@ -721,17 +721,17 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         repoHandler.createBranchAtCommit(commit1, "feature");
 
         // Commit the changes to a feature branch:
-        MemoryCommit commit2 = repoHandler.commitToBranch(area, "feature", "Second commit");
+        MemoryCommit commit2 = repoHandler.commitToBranch(area, "feature", "Second commit", CommitTags.none());
 
         // Make another change to master:
         ByteArrayHashMapArea masterArea = repoHandler.checkout(commit1);
         masterArea.putBytes("/a", bytes("A3"));
 
         // Commit the changes to master (after making the feature changes):
-        MemoryCommit commit3 = repoHandler.commitToBranch(masterArea, "master", "Third Commit");
+        MemoryCommit commit3 = repoHandler.commitToBranch(masterArea, "master", "Third Commit", CommitTags.none());
 
         // Merge the feature branch back into the master branch:
-        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "feature", "Merging Feature into Master");
+        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromAnotherBranch("master", "feature", "Merging Feature into Master", CommitTags.none());
 
         // Make sure that merge commit is as expected:
         assertNotNull(mergeCommit);
@@ -770,7 +770,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello World"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1");
+        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1", CommitTags.none());
         assertNotNull(commit1);
 
         // Make sure that the commit is tracked as a dangling tip:
@@ -780,7 +780,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/A", bytes("A"));
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", commit1);
+        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", CommitTags.none(), commit1);
         assertNotNull(commit2);
         assertNotSame(commit1, commit2);
 
@@ -808,7 +808,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello World"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1");
+        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1", CommitTags.none());
         assertNotNull(commit1);
 
         // Make sure that the commit is tracked as a dangling tip:
@@ -817,17 +817,17 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         // Add branch 1A:
         ByteArrayHashMapArea areaAt1A = repoHandler.checkout(commit1);
         areaAt1A.putBytes("/A", bytes("A"));
-        MemoryCommit commit1A = repoHandler.commit(areaAt1A, "Commit 1A", commit1);
+        MemoryCommit commit1A = repoHandler.commit(areaAt1A, "Commit 1A", CommitTags.none(), commit1);
 
         // Add branch 1B:
         ByteArrayHashMapArea areaAt1B = repoHandler.checkout(commit1);
         areaAt1B.putBytes("/B", bytes("B"));
-        MemoryCommit commit1B = repoHandler.commit(areaAt1B, "Commit 1B", commit1);
+        MemoryCommit commit1B = repoHandler.commit(areaAt1B, "Commit 1B", CommitTags.none(), commit1);
 
         // Add branch 1C:
         ByteArrayHashMapArea areaAt1C = repoHandler.checkout(commit1);
         areaAt1C.putBytes("/C", bytes("C"));
-        MemoryCommit commit1C = repoHandler.commit(areaAt1C, "Commit 1C", commit1);
+        MemoryCommit commit1C = repoHandler.commit(areaAt1C, "Commit 1C", CommitTags.none(), commit1);
 
         // Confirm that all 3 commits are dangling:
         assertTrue(repoHandler.getRepo().getDanglingCommits().contains(commit1A), "The commit should be a dangling tip.");
@@ -835,7 +835,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertTrue(repoHandler.getRepo().getDanglingCommits().contains(commit1C), "The commit should be a dangling tip.");
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", commit1A, commit1B, commit1C);
+        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", CommitTags.none(), commit1A, commit1B, commit1C);
         assertNotNull(commit2);
         assertNotSame(commit1, commit2);
 
@@ -869,7 +869,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         area.putBytes("/", bytes("Hello World"));
 
         // Commit the content:
-        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1");
+        MemoryCommit commit1 = repoHandler.commit(area, "Commit 1", CommitTags.none());
         assertNotNull(commit1);
 
         // Make sure that the commit is tracked as a dangling tip:
@@ -878,17 +878,17 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         // Add branch 1A:
         ByteArrayHashMapArea areaAt1A = repoHandler.checkout(commit1);
         areaAt1A.putBytes("/A", bytes("A"));
-        MemoryCommit commit1A = repoHandler.commit(areaAt1A, "Commit 1A", commit1);
+        MemoryCommit commit1A = repoHandler.commit(areaAt1A, "Commit 1A", CommitTags.none(), commit1);
 
         // Add branch 1B:
         ByteArrayHashMapArea areaAt1B = repoHandler.checkout(commit1);
         areaAt1B.putBytes("/B", bytes("B"));
-        MemoryCommit commit1B = repoHandler.commit(areaAt1B, "Commit 1B", commit1);
+        MemoryCommit commit1B = repoHandler.commit(areaAt1B, "Commit 1B", CommitTags.none(), commit1);
 
         // Add branch 1C:
         ByteArrayHashMapArea areaAt1C = repoHandler.checkout(commit1);
         areaAt1C.putBytes("/C", bytes("C"));
-        MemoryCommit commit1C = repoHandler.commit(areaAt1C, "Commit 1C", commit1);
+        MemoryCommit commit1C = repoHandler.commit(areaAt1C, "Commit 1C", CommitTags.none(), commit1);
 
         // Confirm that all 3 commits are dangling:
         assertTrue(repoHandler.getRepo().getDanglingCommits().contains(commit1A), "The commit should be a dangling tip.");
@@ -896,7 +896,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         assertTrue(repoHandler.getRepo().getDanglingCommits().contains(commit1C), "The commit should be a dangling tip.");
 
         // Commit the changes:
-        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", commit1A, Arrays.asList(commit1B, commit1C));
+        MemoryCommit commit2 = repoHandler.commit(area, "Commit 2", CommitTags.none(), commit1A, Arrays.asList(commit1B, commit1C));
         assertNotNull(commit2);
         assertNotSame(commit1, commit2);
 

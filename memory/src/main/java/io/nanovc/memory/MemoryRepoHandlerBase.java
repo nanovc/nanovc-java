@@ -13,9 +13,9 @@
 package io.nanovc.memory;
 
 import io.nanovc.*;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.merges.LastWinsMergeHandler;
 
 import java.util.Arrays;
@@ -29,13 +29,13 @@ import java.util.Set;
  * You can swap out the repo that is being worked on in cases where a correctly configured repo handler must work on multiple repo's.
  * The core functionality is delegated to the {@link RepoEngineAPI} which is stateless and can be reused for multiple {@link RepoAPI}'s and {@link RepoHandlerAPI}'s.
  *
- * @param <TContent>     The specific type of content that is stored in area for each commit in the repo.
- * @param <TArea>        The specific type of area that is stored for each commit in the repo.
- * @param <TCommit>      The specific type of commit that is created in the repo.
- * @param <TSearchQuery> The specific type of search query that this engine returns.
+ * @param <TContent>       The specific type of content that is stored in area for each commit in the repo.
+ * @param <TArea>          The specific type of area that is stored for each commit in the repo.
+ * @param <TCommit>        The specific type of commit that is created in the repo.
+ * @param <TSearchQuery>   The specific type of search query that this engine returns.
  * @param <TSearchResults> The specific type of search results that we expect to get.
- * @param <TRepo>        The specific type of repo that this handler manages.
- * @param <TEngine>      The specific type of engine that manipulates the repo.
+ * @param <TRepo>          The specific type of repo that this handler manages.
+ * @param <TEngine>        The specific type of engine that manipulates the repo.
  */
 public abstract class MemoryRepoHandlerBase<
     TContent extends ContentAPI,
@@ -224,6 +224,7 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * Initialise the repository before it gets used for other functionality.
      * Sub classes should provide specific initialisation logic.
+     *
      * @param repo The repository to initialise.
      */
     protected void initRepo(TRepo repo)
@@ -254,12 +255,13 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -268,13 +270,14 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit parentCommit)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit parentCommit)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, parentCommit);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommit);
     }
 
     /**
@@ -283,14 +286,15 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, TCommit... otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, TCommit... otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -299,14 +303,15 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -315,16 +320,17 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
      * @return The commit for this content area.
      */
-    @Override public TCommit commit(TArea contentAreaToCommit, String message, List<TCommit> parentCommits)
+    @Override public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, List<TCommit> parentCommits)
     {
         // Determine how many parent commits there are to decide how to route this to the engine:
         if (parentCommits == null)
         {
             // There is no list of parent commits.
-            return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock);
+            return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
         }
         else
         {
@@ -332,9 +338,12 @@ public abstract class MemoryRepoHandlerBase<
             // Determine how to pass the list to the engine as efficiently as possible:
             switch (parentCommits.size())
             {
-                case 0: return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock);
-                case 1: return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0));
-                default: return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+                case 0:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
+                case 1:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                default:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
             }
         }
     }
@@ -345,12 +354,13 @@ public abstract class MemoryRepoHandlerBase<
      * @param contentAreaToCommit The content area to commit to version control.
      * @param branch              The branch to commit to. If the branch doesn't exist, it is created.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message)
+    public TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitToBranch(contentAreaToCommit, branch, message, this.repo, this.byteArrayIndex, this.clock);
+        return this.engine.commitToBranch(contentAreaToCommit, branch, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -565,15 +575,17 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * Merges one branch into another.
      * The merge handler is used to resolve any merge conflicts if there are any.
+     *
      * @param destinationBranchName The branch that we should merge into.
-     * @param sourceBranchName The branch that we should merge from.
-     * @param message The commit message to use for the merge.
+     * @param sourceBranchName      The branch that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit that was performed for the merge.
      */
     @Override
-    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message)
+    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
-        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
+        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
     }
 
     /**

@@ -14,8 +14,8 @@ package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
 import io.nanovc.areas.HashMapArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.content.StringContent;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.memory.*;
 
 import java.util.Arrays;
@@ -92,12 +92,13 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      *
      * @param objectToCommit The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commitObject(Object objectToCommit, String message)
+    public TCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObject(objectToCommit, message, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory);
     }
 
     /**
@@ -106,13 +107,14 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      *
      * @param objectToCommit The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit   The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commitObject(Object objectToCommit, String message, TCommit parentCommit)
+    public TCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, TCommit parentCommit)
     {
-        return this.engine.commitObject(objectToCommit, message, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, parentCommit);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, parentCommit);
     }
 
     /**
@@ -121,15 +123,16 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      *
      * @param objectToCommit     The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags         The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit  The parent commit that we want to make this commit from.
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @SafeVarargs
     @Override
-    public final TCommit commitObject(Object objectToCommit, String message, TCommit firstParentCommit, TCommit... otherParentCommits)
+    public final TCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, TCommit... otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.engine.commitObject(objectToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -138,14 +141,15 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      *
      * @param objectToCommit     The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags         The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit  The parent commit that we want to make this commit from.
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object objectToCommit, String message, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, firstParentCommit, otherParentCommits);
+        return this.engine.commitObject(objectToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -154,12 +158,13 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
      * @param objectToCommit The object to commit to the repo.
      * @param branch         The branch to commit to. If the branch doesn't exist, it is created.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commitObjectToBranch(Object objectToCommit, String branch, String message)
+    public TCommit commitObjectToBranch(Object objectToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObjectToBranch(objectToCommit, branch, message, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory);
+        return this.engine.commitObjectToBranch(objectToCommit, branch, message, commitTags, this.repo, this.byteArrayIndex, this.clock, this.areaFactory, this.contentFactory);
     }
 
     /**

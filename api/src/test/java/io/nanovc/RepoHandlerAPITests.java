@@ -39,23 +39,30 @@ public class RepoHandlerAPITests
         MockCommit parentCommit3 = null;
 
         // Define commit tags:
-        StringAreaAPI commitTags;
+        StringAreaAPI commitTags = null;
 
         // Use the API:
-        repoHandler.commit(area, message, CommitTags.none(), parentCommit1);
-        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, parentCommit2);
-        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, parentCommit2, parentCommit3);
-        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
-        repoHandler.commit(area, message, CommitTags.none(), Arrays.asList(parentCommit1, parentCommit2));
+        repoHandler.commit(area, message, commitTags, parentCommit1);
+        repoHandler.commit(area, message, commitTags, parentCommit1, parentCommit2);
+        repoHandler.commit(area, message, commitTags, parentCommit1, parentCommit2, parentCommit3);
+        repoHandler.commit(area, message, commitTags, parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
+        repoHandler.commit(area, message, commitTags, Arrays.asList(parentCommit1, parentCommit2));
 
-        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1);
-        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, parentCommit2);
-        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, parentCommit2, parentCommit3);
-        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
-        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), Arrays.asList(parentCommit1, parentCommit2));
+        repoHandler.commitToBranch(area, branchName, message, commitTags);
+    }
 
-        repoHandler.commitToBranch(area, branchName, message, CommitTags.none());
-        repoHandler.commitToBranch(area, branchName, message, CommitTags.withAuthor("Luke"));
+    @Test
+    public void mergeTests()
+    {
+        MockRepoHandler repoHandler = new MockRepoHandler();
+
+        String message = null;
+        String destinationBranchName = null;
+        String sourceBranchName = null;
+        StringAreaAPI commitTags = null;
+
+        // Use the API:
+        repoHandler.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags);
     }
 
     //#region Mock Implementation
@@ -246,7 +253,7 @@ public class RepoHandlerAPITests
             return null;
         }
 
-        @Override public MockCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message)
+        @Override public MockCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
         {
             return null;
         }

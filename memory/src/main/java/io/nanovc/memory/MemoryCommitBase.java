@@ -15,6 +15,7 @@ package io.nanovc.memory;
 import io.nanovc.CommitBase;
 import io.nanovc.TimestampAPI;
 import io.nanovc.areas.ByteArrayAreaAPI;
+import io.nanovc.areas.StringAreaAPI;
 
 import java.util.List;
 
@@ -59,6 +60,13 @@ public abstract class MemoryCommitBase<TSelf extends MemoryCommitBase<?>>
      * The commit message.
      */
     public String message;
+
+    /**
+     * The commit tags that contain additional meta-data for this commit.
+     * This is useful for authors, committers and other such data.
+     * Consider using {@link io.nanovc.CommitTags} as a helper to create these.
+     */
+    public StringAreaAPI commitTags;
 
     /**
      * Gets the message for this commit.
@@ -167,6 +175,28 @@ public abstract class MemoryCommitBase<TSelf extends MemoryCommitBase<?>>
     public void setOtherParents(List<TSelf> otherParents)
     {
         this.otherParents = otherParents;
+    }
+
+    /**
+     * Gets the commit tags that contain additional meta-data for this commit.
+     * This is useful for authors, committers and other such data.
+     * Consider using {@link io.nanovc.CommitTags} as a helper to create these.
+     * @return The commit tags that contain additional meta-data for this commit.
+     */
+    public StringAreaAPI getCommitTags()
+    {
+        return commitTags;
+    }
+
+    /**
+     * Sets the commit tags that contain additional meta-data for this commit.
+     * This is useful for authors, committers and other such data.
+     * Consider using {@link io.nanovc.CommitTags} as a helper to create these.
+     * @param commitTags The commit tags that contain additional meta-data for this commit.
+     */
+    public void setCommitTags(StringAreaAPI commitTags)
+    {
+        this.commitTags = commitTags;
     }
 
     @Override

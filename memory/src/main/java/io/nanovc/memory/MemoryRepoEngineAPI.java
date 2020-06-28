@@ -14,7 +14,7 @@ package io.nanovc.memory;
 
 import io.nanovc.*;
 import io.nanovc.areas.ByteArrayAreaAPI;
-import io.nanovc.ByteArrayIndex;
+import io.nanovc.areas.StringAreaAPI;
 
 import java.util.List;
 import java.util.Set;
@@ -97,12 +97,13 @@ public interface MemoryRepoEngineAPI<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Commit the given content to the repo.
@@ -111,13 +112,14 @@ public interface MemoryRepoEngineAPI<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit);
 
     /**
      * Commit the given content to the repo.
@@ -126,6 +128,7 @@ public interface MemoryRepoEngineAPI<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
@@ -133,7 +136,7 @@ public interface MemoryRepoEngineAPI<
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -141,12 +144,13 @@ public interface MemoryRepoEngineAPI<
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param branchName          The name of the branch to commit to. The branch is created if it doesn't already exist.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+    TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Constructs a new commit for the given content.
@@ -155,11 +159,12 @@ public interface MemoryRepoEngineAPI<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    TCommit constructCommit(TArea contentAreaToCommit, String message, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+    TCommit constructCommit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Checks out the content for the given commit into the given content area.
@@ -380,6 +385,7 @@ public interface MemoryRepoEngineAPI<
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param mergeHandler          The handler to use for dealing with the merge logic.
      * @param comparisonHandler     The handler to use for comparing content between content areas.
      * @param differenceHandler     The handler to use for finding differences between content areas.
@@ -390,7 +396,7 @@ public interface MemoryRepoEngineAPI<
      * @param clock                 The clock to use for generating the timestamp for the commit.
      * @return The commit that was performed for the merge.
      */
-    TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+    TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Creates a new branch with the given name and makes it point at the given commit.

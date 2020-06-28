@@ -15,10 +15,10 @@ package io.nanovc.memory;
 import io.nanovc.*;
 import io.nanovc.areas.ByteArrayAreaAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.epochs.EpochWithVMNanos;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.searches.commits.HashMapSearchParameters;
 import io.nanovc.searches.commits.expressions.AllRepoCommitsExpression;
@@ -107,15 +107,16 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Save this commit as a new dangling commit for the repo because there is no branch or tag pointing at it:
         repo.getDanglingCommits().add(commit);
@@ -131,6 +132,7 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
@@ -138,10 +140,10 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Keep track of the parent commit:
         commit.setFirstParent(parentCommit);
@@ -166,6 +168,7 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
@@ -174,10 +177,10 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Keep track of the parent commits:
         commit.setFirstParent(firstParentCommit);
@@ -203,15 +206,16 @@ public abstract class MemoryRepoEngineBase<
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param branchName          The name of the branch to commit to. The branch is created if it doesn't already exist.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    public TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Check whether we already have this branch and get the last commit if we do:
         TCommit previousCommit = repo.getBranchTips().get(branchName);
@@ -253,11 +257,12 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit constructCommit(TArea contentAreaToCommit, String message, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    public TCommit constructCommit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Get the timestamp of this commit:
         TimestampAPI timestamp = clock.now();
@@ -270,6 +275,9 @@ public abstract class MemoryRepoEngineBase<
 
         // Save the commit message:
         commit.setMessage(message);
+
+        // Save the commit tags (making sure that we have something):
+        commit.setCommitTags(commitTags == null ? CommitTags.none() : commitTags);
 
         // Create an area for this snapshot:
         ByteArrayAreaAPI snapshotArea = createSnapshotArea();
@@ -853,6 +861,7 @@ public abstract class MemoryRepoEngineBase<
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param mergeHandler          The handler to use for dealing with the merge logic.
      * @param comparisonHandler     The handler to use for comparing content between content areas.
      * @param differenceHandler     The handler to use for finding differences between content areas.
@@ -864,7 +873,7 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit that was performed for the merge.
      */
     @Override
-    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Get the commits for each branch:
         TCommit sourceCommit = getLatestCommitForBranch(sourceBranchName, repo);
@@ -946,7 +955,7 @@ public abstract class MemoryRepoEngineBase<
 
 
         // Commit the merged area:
-        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, repo, byteArrayIndex, clock);
+        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, commitTags, repo, byteArrayIndex, clock);
 
         // Add the source commit as another parent so that we can keep track of where we merged from:
         mergeCommit.setOtherParents(new ArrayList<>());

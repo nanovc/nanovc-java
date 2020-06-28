@@ -12,10 +12,11 @@
 
 package io.nanovc.memory;
 
+import io.nanovc.ByteArrayIndex;
+import io.nanovc.CommitTags;
 import io.nanovc.ComparisonAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.content.ByteArrayContent;
-import io.nanovc.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import org.junit.jupiter.api.Test;
 
@@ -63,14 +64,14 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
         contentArea.putBytes("Static",  bytes("Content"));
 
         // Commit the content:
-        MemoryCommit commit1 = repo.commit(contentArea, "First commit!");
+        MemoryCommit commit1 = repo.commit(contentArea, "First commit!", CommitTags.none());
 
         // Add and modify content:
         contentArea.putBytes("Hello", bytes("Nano World"));
         contentArea.putBytes("Info", bytes("Details"));
 
         // Commit again:
-        MemoryCommit commit2 = repo.commit(contentArea, "Second commit.");
+        MemoryCommit commit2 = repo.commit(contentArea, "Second commit.", CommitTags.none());
 
         // Get the difference between the two commits:
         ComparisonAPI comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
@@ -93,13 +94,13 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
         area.putBytes("/", "Hello World!".getBytes());
 
         // Commit the content:
-        MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit");
+        MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Change the content:
         area.putBytes("/A", "A1".getBytes());
 
         // Commit the changed content:
-        MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit");
+        MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit", CommitTags.none());
 
         // Create another branch:
         repo.createBranchAtCommit(first_commit, "alternate");
@@ -108,10 +109,10 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
         area.putBytes("/A", "A2".getBytes());
 
         // Commit the change:
-        MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit");
+        MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit", CommitTags.none());
 
         // Merge the changes:
-        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
         // Get the merged content:
         ByteArrayHashMapArea mergedContent = repo.checkout(merge_commit);
@@ -145,13 +146,13 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
             area.putBytes("/", "Hello World!".getBytes());
 
             // Commit the content:
-            MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit");
+            MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit", CommitTags.none());
 
             // Change the content:
             area.putBytes("/A", ("A1" + (i % 100)).getBytes());
 
             // Commit the changed content:
-            MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit");
+            MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit", CommitTags.none());
 
             // Create another branch:
             repo.createBranchAtCommit(first_commit, "alternate");
@@ -160,10 +161,10 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
             area.putBytes("/A", ("A2" + (i % 100)).getBytes());
 
             // Commit the change:
-            MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit");
+            MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit", CommitTags.none());
 
             // Merge the changes:
-            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
             // Get the merged content:
             ByteArrayHashMapArea mergedContent = repo.checkout(merge_commit);

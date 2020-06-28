@@ -13,6 +13,7 @@
 package io.nanovc.memory;
 
 import io.nanovc.ClockBase;
+import io.nanovc.CommitTags;
 import io.nanovc.TimestampBase;
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.areas.StringHashMapArea;
@@ -156,7 +157,7 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
     protected MemoryCommit createCommit(MemoryRepoEngine<StringContent, StringAreaAPI> engine, MemoryRepo<StringContent, StringAreaAPI> repo, ClockBase<? extends TimestampBase> clock)
     {
         // Create a new commit:
-        MemoryCommit commit = engine.commit(new StringHashMapArea(), "Commit", repo, PassThroughByteArrayIndex.instance, clock);
+        MemoryCommit commit = engine.commit(new StringHashMapArea(), "Commit", CommitTags.none(), repo, PassThroughByteArrayIndex.instance, clock);
 
         return commit;
     }

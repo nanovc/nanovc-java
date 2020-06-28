@@ -13,6 +13,7 @@
 package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoEngineAPI;
 import io.nanovc.memory.MemorySearchQueryAPI;
@@ -55,6 +56,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      *
      * @param object         The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -62,7 +64,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param contentFactory The content factory to use when populating the content area.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Commit the given content to the repo.
@@ -71,6 +73,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      *
      * @param object         The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -79,7 +82,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param parentCommit   The parent commit that we want to make this commit from.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit);
+    TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit);
 
     /**
      * Commit the given content to the repo.
@@ -88,6 +91,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      *
      * @param object             The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags         The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex     The byte array index to use when creating snap-shots for the content.
      * @param clock              The clock to use for generating the timestamp for the commit.
@@ -97,7 +101,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param otherParentCommits The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits);
+    TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -105,6 +109,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param object         The object to commit to the repo.
      * @param branchName     The name of the branch to commit to. The branch is created if it doesn't already exist.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -112,7 +117,7 @@ public interface ReflectiveObjectMemoryRepoEngineAPI<
      * @param contentFactory The content factory to use when populating the content area.
      * @return The commit for this content area.
      */
-    TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
+    TCommit commitObjectToBranch(Object object, String branchName, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory);
 
     /**
      * Checks out the object for the given commit.
