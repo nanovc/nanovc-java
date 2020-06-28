@@ -12,7 +12,6 @@
 
 package io.nanovc;
 
-import io.nanovc.areas.EncodedStringLinkedHashMapArea;
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.content.StringContent;
 
@@ -38,6 +37,7 @@ public class RepoHandlerAPITests
         MockCommit parentCommit3 = null;
 
         // Define commit tags:
+        StringAreaAPI commitTags;
 
         // Use the API:
         repoHandler.commit(area, message, parentCommit1);

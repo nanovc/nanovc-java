@@ -6,6 +6,10 @@ import io.nanovc.content.StringContent;
 
 /**
  * An area for {@link StringContent}.
+ * An area for {@link StringContent} which uses {@link java.nio.charset.StandardCharsets#UTF_8} for encoding of all strings in the area.
+ * This implies that each piece of content has the same encoding character set.
+ * If you want a non-homogenous string area where each string can be encoded with a different character set
+ * then use {@link EncodedStringAreaAPI} instead.
  */
 public interface StringAreaAPI extends AreaAPI<StringContent>
 {

@@ -38,4 +38,22 @@ public class AreaEntry<TContent extends ContentAPI>
         this.path = path;
         this.content = content;
     }
+
+    /**
+     * Gets the path of the content in the area.
+     * @return The path of the content in the area.
+     */
+    public RepoPath getPath()
+    {
+        return path;
+    }
+
+    /**
+     * Gets the content in the area at the path for this entry.
+     * @return The content in the area at the path for this entry.
+     */
+    public TContent getContent()
+    {
+        return content;
+    }
 }
