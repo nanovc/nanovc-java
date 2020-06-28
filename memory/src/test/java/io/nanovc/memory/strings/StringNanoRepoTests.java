@@ -38,7 +38,6 @@ public class StringNanoRepoTests
             new HashWrapperByteArrayIndex(),
             StringNanoRepo.COMMON_ENGINE,
             StringNanoRepo.COMMON_CLOCK,
-            StandardCharsets.UTF_8,
             StringNanoRepo.COMMON_DIFFERENCE_HANDLER,
             StringNanoRepo.COMMON_COMPARISON_HANDLER,
             StringNanoRepo.COMMON_MERGE_HANDLER

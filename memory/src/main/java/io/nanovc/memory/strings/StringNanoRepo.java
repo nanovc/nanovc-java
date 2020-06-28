@@ -24,8 +24,6 @@ import io.nanovc.memory.MemorySearchQuery;
 import io.nanovc.memory.MemorySearchResults;
 import io.nanovc.merges.LastWinsMergeHandler;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -93,11 +91,6 @@ public class StringNanoRepo extends StringMemoryRepo
     private ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
 
     /**
-     * The encoding to use when committing strings.
-     */
-    private Charset encoding = StandardCharsets.UTF_8;
-
-    /**
      * A common difference handler that is used as the default for Nano Repos.
      */
     public static final DifferenceHandlerAPI<? extends DifferenceEngineAPI> COMMON_DIFFERENCE_HANDLER = HashMapDifferenceHandler.COMMON_DIFFERENCE_HANDLER;
@@ -150,17 +143,15 @@ public class StringNanoRepo extends StringMemoryRepo
      * @param byteArrayIndex The byte array index to reuse. This allows us to keep a shared pool of byte arrays for the content that is created. This index could be shared across multiple repos to save memory. Plug in an alternative handler or use {@link HashWrapperByteArrayIndex}.
      * @param engine The engine to use for the version control functionality. All of the version control logic is delegated to this engine. You can plug in an alternative engine to modify the behaviour for this repo. Plug in an alternative handler or use {@link #COMMON_ENGINE}.
      * @param clock The clock to use when creating commits for this repo. Plug in an alternative clock or use {@link #COMMON_CLOCK}.
-     * @param encoding The encoding to use to store the strings in this repo as bytes in the content areas of commits. Plug in an alternative handler or use {@link StandardCharsets#UTF_8}.
      * @param differenceHandler The handler to use when computing differences between commits. Plug in an alternative handler or use {@link #COMMON_DIFFERENCE_HANDLER}.
      * @param comparisonHandler The handler to use when computing comparisons between commits. Plug in an alternative handler or use {@link #COMMON_COMPARISON_HANDLER}.
      * @param mergeHandler The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
      */
-    public StringNanoRepo(ByteArrayIndex byteArrayIndex, StringMemoryRepoEngineAPI<StringContent, StringHashMapArea, MemoryCommit, MemorySearchQuery, MemorySearchResults, StringMemoryRepo> engine, ClockBase<? extends TimestampBase> clock, Charset encoding, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
+    public StringNanoRepo(ByteArrayIndex byteArrayIndex, StringMemoryRepoEngineAPI<StringContent, StringHashMapArea, MemoryCommit, MemorySearchQuery, MemorySearchResults, StringMemoryRepo> engine, ClockBase<? extends TimestampBase> clock, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.byteArrayIndex = byteArrayIndex;
         this.engine = engine;
         this.clock = clock;
-        this.encoding = encoding;
         this.differenceHandler = differenceHandler;
         this.comparisonHandler = comparisonHandler;
         this.mergeHandler = mergeHandler;
@@ -174,7 +165,7 @@ public class StringNanoRepo extends StringMemoryRepo
     @Override
     public StringHashMapArea createArea()
     {
-        return new StringHashMapArea(this.getEncoding());
+        return new StringHashMapArea();
     }
 
     /**
@@ -456,7 +447,7 @@ public class StringNanoRepo extends StringMemoryRepo
      */
     protected StringContent createContent(byte[] contentBytes)
     {
-        return new StringContent(contentBytes, this.getEncoding());
+        return new StringContent(contentBytes);
     }
 
     /**
@@ -728,25 +719,4 @@ public class StringNanoRepo extends StringMemoryRepo
     {
         this.clock = clock;
     }
-
-    /**
-     * Gets the encoding to use when committing strings.
-     *
-     * @return The encoding to use when committing strings.
-     */
-    public Charset getEncoding()
-    {
-        return encoding;
-    }
-
-    /**
-     * Sets the encoding to use when committing strings.
-     *
-     * @param encoding The encoding to use when committing strings.
-     */
-    public void setEncoding(Charset encoding)
-    {
-        this.encoding = encoding;
-    }
-
 }
