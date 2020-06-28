@@ -12,6 +12,7 @@
 
 package io.nanovc.areas;
 
+import io.nanovc.CommitTags;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

@@ -13,6 +13,8 @@
 package io.nanovc;
 
 
+import io.nanovc.areas.StringAreaAPI;
+
 import java.util.List;
 import java.util.Set;
 
@@ -52,9 +54,10 @@ public interface RepoHandlerAPI<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
-    TCommit commit(TArea contentAreaToCommit, String message);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags);
 
     /**
      * Commit the given content to the repo.
@@ -62,10 +65,11 @@ public interface RepoHandlerAPI<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TCommit parentCommit);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit parentCommit);
 
     /**
      * Commit the given content to the repo.
@@ -73,11 +77,12 @@ public interface RepoHandlerAPI<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, TCommit... otherParentCommits);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, TCommit... otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -85,11 +90,12 @@ public interface RepoHandlerAPI<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, List<TCommit> otherParentCommits);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, List<TCommit> otherParentCommits);
 
     /**
      * Commit the given content to the repo.
@@ -97,10 +103,11 @@ public interface RepoHandlerAPI<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
      * @return The commit for this content area.
      */
-    TCommit commit(TArea contentAreaToCommit, String message, List<TCommit> parentCommits);
+    TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, List<TCommit> parentCommits);
 
     /**
      * Commit the given content to the given branch in the the repo.
@@ -108,9 +115,10 @@ public interface RepoHandlerAPI<
      * @param contentAreaToCommit The content area to commit to version control.
      * @param branch              The branch to commit to. If the branch doesn't exist, it is created.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
-    TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message);
+    TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags);
 
     /**
      * Creates a new branch with the given name and makes it point at the given commit.

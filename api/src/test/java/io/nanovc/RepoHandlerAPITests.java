@@ -14,6 +14,7 @@ package io.nanovc;
 
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.content.StringContent;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,10 +22,11 @@ import java.util.Set;
 
 /**
  * Tests for the {@link RepoHandlerAPI}.
+ * This makes sure that the generic API for all implementations stays as expected.
  */
 public class RepoHandlerAPITests
 {
-
+    @Test
     public void commitTests()
     {
         MockRepoHandler repoHandler = new MockRepoHandler();
@@ -40,13 +42,20 @@ public class RepoHandlerAPITests
         StringAreaAPI commitTags;
 
         // Use the API:
-        repoHandler.commit(area, message, parentCommit1);
-        repoHandler.commit(area, message, parentCommit1, parentCommit2);
-        repoHandler.commit(area, message, parentCommit1, parentCommit2, parentCommit3);
-        repoHandler.commit(area, message, parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
-        repoHandler.commit(area, message, Arrays.asList(parentCommit1, parentCommit2));
+        repoHandler.commit(area, message, CommitTags.none(), parentCommit1);
+        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, parentCommit2);
+        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, parentCommit2, parentCommit3);
+        repoHandler.commit(area, message, CommitTags.none(), parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
+        repoHandler.commit(area, message, CommitTags.none(), Arrays.asList(parentCommit1, parentCommit2));
 
-        repoHandler.commitToBranch(area, branchName, message);
+        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1);
+        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, parentCommit2);
+        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, parentCommit2, parentCommit3);
+        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), parentCommit1, Arrays.asList(parentCommit2, parentCommit3));
+        repoHandler.commit(area, message, CommitTags.withAuthor("Luke"), Arrays.asList(parentCommit1, parentCommit2));
+
+        repoHandler.commitToBranch(area, branchName, message, CommitTags.none());
+        repoHandler.commitToBranch(area, branchName, message, CommitTags.withAuthor("Luke"));
     }
 
     //#region Mock Implementation
@@ -102,32 +111,32 @@ public class RepoHandlerAPITests
             return null;
         }
 
-        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, StringAreaAPI commitTags)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit parentCommit)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, StringAreaAPI commitTags, MockCommit parentCommit)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit firstParentCommit, MockCommit... otherParentCommits)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, StringAreaAPI commitTags, MockCommit firstParentCommit, MockCommit... otherParentCommits)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, MockCommit firstParentCommit, List<MockCommit> otherParentCommits)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, StringAreaAPI commitTags, MockCommit firstParentCommit, List<MockCommit> otherParentCommits)
         {
             return null;
         }
 
-        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, List<MockCommit> parentCommits)
+        @Override public MockCommit commit(StringAreaAPI contentAreaToCommit, String message, StringAreaAPI commitTags, List<MockCommit> parentCommits)
         {
             return null;
         }
 
-        @Override public MockCommit commitToBranch(StringAreaAPI contentAreaToCommit, String branch, String message)
+        @Override public MockCommit commitToBranch(StringAreaAPI contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
         {
             return null;
         }
