@@ -12,7 +12,7 @@
 
 package io.nanovc.timestamps;
 
-import io.nanovc.Timestamp;
+import io.nanovc.TimestampBase;
 import io.nanovc.epochs.EpochWithVMNanos;
 
 import java.time.Instant;
@@ -33,7 +33,7 @@ import java.time.Instant;
  * 2) JDK uses milli second precision, but JDK 9 gives us nano precision. We still want the design to work irrespective of JDK version.
  * 3) With recent vulnerabilities like Sceptre, we see that specifications for EcmaScript are very reluctant to provide high precision timing. This means that we want our design to still work whether the runtime actually supports high precision timing or not.
  */
-public class TimestampWithVMNanos extends Timestamp
+public class TimestampWithVMNanos extends TimestampBase
 {
     /**
      * The epoch that this timestamp is relative to.
@@ -67,12 +67,4 @@ public class TimestampWithVMNanos extends Timestamp
         return this.epoch.getGlobalTime().plusNanos(this.nanoTime);
     }
 
-    /**
-     * Create a new instant timestamp from this timestamp.
-     * @return A new instant time stamp.
-     */
-    public InstantTimestamp toInstantTimestamp()
-    {
-        return new InstantTimestamp(getInstant());
-    }
 }

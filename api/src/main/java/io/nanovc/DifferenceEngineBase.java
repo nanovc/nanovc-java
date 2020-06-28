@@ -13,15 +13,15 @@
 package io.nanovc;
 
 /**
- * A base class that actually computes the differences between two {@link Area}'s of {@link Content}.
- * This represents the internal API for a {@link DifferenceHandler}.
- * It must contain ALL the actual logic for computing the differences between two {@link Area}'s.
- * Please make sure that the {@link DifferenceHandler} does not contain any actual functionality because it means that new higher level engines can't be created and swapped out because they might have a dependency on the {@link DifferenceHandler}.
- * A {@link DifferenceEngine} does not contain any state. Just the logic of how to compute the differences.
- * This is good where one {@link DifferenceEngine} is going to be reused across many {@link DifferenceHandler}'s.
- * A {@link DifferenceEngine} is thread safe because it is stateless.
- * It is designed to be able to compute many differences between {@link Area}'s.
+ * A base class that actually computes the differences between two {@link AreaAPI}'s of {@link ContentAPI}.
+ * This represents the internal API for a {@link DifferenceHandlerAPI}.
+ * It must contain ALL the actual logic for computing the differences between two {@link AreaAPI}'s.
+ * Please make sure that the {@link DifferenceHandlerAPI} does not contain any actual functionality because it means that new higher level engines can't be created and swapped out because they might have a dependency on the {@link DifferenceHandlerAPI}.
+ * A {@link DifferenceEngineAPI} does not contain any state. Just the logic of how to compute the differences.
+ * This is good where one {@link DifferenceEngineAPI} is going to be reused across many {@link DifferenceHandlerAPI}'s.
+ * A {@link DifferenceEngineAPI} is thread safe because it is stateless.
+ * It is designed to be able to compute many differences between {@link AreaAPI}'s.
  */
-public abstract class DifferenceEngineBase implements DifferenceEngine
+public abstract class DifferenceEngineBase implements DifferenceEngineAPI
 {
 }

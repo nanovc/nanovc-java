@@ -21,14 +21,14 @@ package io.nanovc;
  * @param <TCommit>  The specific type of commit that is created in the repo.
  */
 public abstract class RepoBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends Commit
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends CommitAPI
     >
-    implements Repo<
-    TContent,
-    TArea,
-    TCommit
-    >
+    implements RepoAPI<
+        TContent,
+        TArea,
+        TCommit
+        >
 {
 }

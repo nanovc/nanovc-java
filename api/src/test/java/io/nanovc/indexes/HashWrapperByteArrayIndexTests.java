@@ -1,5 +1,6 @@
 package io.nanovc.indexes;
 
+import io.nanovc.ByteArrayIndex;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

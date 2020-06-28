@@ -13,10 +13,8 @@
 package io.nanovc.memory.strings;
 
 import io.nanovc.*;
-import io.nanovc.SearchQuery;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.content.StringContent;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.memory.*;
 
 /**
@@ -30,12 +28,12 @@ import io.nanovc.memory.*;
  */
 public abstract class StringMemoryRepoHandlerBase<
     TContent extends StringContent,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
-    TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>,
-    TEngine extends MemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
+    TRepo extends StringMemoryRepoAPI<TContent, TArea, TCommit>,
+    TEngine extends StringMemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
     extends MemoryRepoHandlerBase<
     TContent,
@@ -66,8 +64,8 @@ public abstract class StringMemoryRepoHandlerBase<
      * @param byteArrayIndex The index to use for managing byte arrays in the in-memory repo. Pass null to create a new default index.
      * @param clock          The clock to use for creating timestamps.
      * @param repoEngine     The repo engine to use internally. Pass null to create a new default engine.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public StringMemoryRepoHandlerBase(
@@ -75,11 +73,11 @@ public abstract class StringMemoryRepoHandlerBase<
         AreaFactory<TContent, TArea> areaFactory,
         TRepo repo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         TEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(contentFactory, areaFactory, repo, byteArrayIndex, clock, repoEngine, differenceHandler, comparisonHandler, mergeHandler);

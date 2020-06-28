@@ -1,6 +1,7 @@
 package io.nanovc.memory;
 
-import io.nanovc.Commit;
+import io.nanovc.CommitAPI;
+import io.nanovc.CommitTags;
 import io.nanovc.RepoPath;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.searches.commits.SimpleSearchQueryDefinition;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests the API for searching through {@link Commit}'s.
+ * Tests the API for searching through {@link CommitAPI}'s.
  */
 public class MemoryCommitSearchTests extends MemoryNanoVersionControlTestsBase
 {
@@ -28,15 +29,15 @@ public class MemoryCommitSearchTests extends MemoryNanoVersionControlTestsBase
         contentArea.putBytes(RepoPath.atRoot(), new byte[0]);
 
         // Commit the content to a branch several times to create some history:
-        MemoryCommit commit1 = nanoRepo.commitToBranch(contentArea, "master", "First Commit");
-        MemoryCommit commit2 = nanoRepo.commitToBranch(contentArea, "master", "Second Commit");
-        MemoryCommit commit3 = nanoRepo.commitToBranch(contentArea, "master", "Third Commit");
+        MemoryCommit commit1 = nanoRepo.commitToBranch(contentArea, "master", "First Commit", CommitTags.none());
+        MemoryCommit commit2 = nanoRepo.commitToBranch(contentArea, "master", "Second Commit", CommitTags.none());
+        MemoryCommit commit3 = nanoRepo.commitToBranch(contentArea, "master", "Third Commit", CommitTags.none());
 
         // Tag the second commit:
         nanoRepo.tagCommit(commit2, "Interesting");
 
         // Create a dangling commit:
-        nanoRepo.commit(contentArea, "Dingly-Dangly");
+        nanoRepo.commit(contentArea, "Dingly-Dangly", CommitTags.withDescription("This represents a dangling commit that does not have a branch or tag pointing at it."));
 
         // Create the search query:
         SimpleSearchQueryDefinition searchQueryDefinition = new SimpleSearchQueryDefinition(

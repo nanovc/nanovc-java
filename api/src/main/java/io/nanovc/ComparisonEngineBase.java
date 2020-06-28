@@ -13,15 +13,16 @@
 package io.nanovc;
 
 /**
- * A base class that actually computes the comparisons between two {@link Area}'s of {@link Content}.
- * This represents the internal API for a {@link ComparisonHandler}.
- * It must contain ALL the actual logic for computing the comparisons between two {@link Area}'s.
- * Please make sure that the {@link ComparisonHandler} does not contain any actual functionality because it means that new higher level engines can't be created and swapped out because they might have a dependency on the {@link ComparisonHandler}.
- * A {@link ComparisonEngine} does not contain any state. Just the logic of how to compute the comparisons.
- * This is good where one {@link ComparisonEngine} is going to be reused across many {@link ComparisonHandler}'s.
- * A {@link ComparisonEngine} is thread safe because it is stateless.
- * It is designed to be able to compute many comparisons between {@link Area}'s.
+ * A base class that actually computes the comparisons between two {@link AreaAPI}'s of {@link ContentAPI}.
+ * This represents the internal API for a {@link ComparisonHandlerAPI}.
+ * It must contain ALL the actual logic for computing the comparisons between two {@link AreaAPI}'s.
+ * Please make sure that the {@link ComparisonHandlerAPI} does not contain any actual functionality because it means that new higher level engines can't be created and swapped out because they might have a dependency on the {@link ComparisonHandlerAPI}.
+ * A {@link ComparisonEngineAPI} does not contain any state. Just the logic of how to compute the comparisons.
+ * This is good where one {@link ComparisonEngineAPI} is going to be reused across many {@link ComparisonHandlerAPI}'s.
+ * A {@link ComparisonEngineAPI} is thread safe because it is stateless.
+ * It is designed to be able to compute many comparisons between {@link AreaAPI}'s.
  */
-public abstract class ComparisonEngineBase implements ComparisonEngine
+public abstract class ComparisonEngineBase
+    implements ComparisonEngineAPI
 {
 }

@@ -16,6 +16,7 @@ package io.nanovc;
  * A base class for an engine that merges commits.
  * The merge engine represents the internal API between the handler and the engine.
  */
-public class MergeEngineBase implements MergeEngine
+public class MergeEngineBase
+    implements MergeEngineAPI
 {
 }

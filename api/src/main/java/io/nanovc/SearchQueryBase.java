@@ -13,7 +13,7 @@
 package io.nanovc;
 
 /**
- * This contains the arguments for a search of {@link Commit}'s.
+ * This contains the arguments for a search of {@link CommitAPI}'s.
  * This is created for each search.
  * It stores the state of the search for each query.
  * You need one instance of this per query.
@@ -22,18 +22,19 @@ package io.nanovc;
  * This is part of the {@link CRUSHED#READ} concepts.
  * @param <TCommit>  The specific type of commit that is created in the repo.
  */
-public abstract class SearchQueryBase<TCommit extends Commit> implements SearchQuery<TCommit>
+public abstract class SearchQueryBase<TCommit extends CommitAPI>
+    implements SearchQueryAPI<TCommit>
 {
     /**
      * The definition that was used to create this search query.
      */
-    public SearchQueryDefinition definition;
+    public SearchQueryDefinitionAPI definition;
 
     /**
      * Creates a new search query.
      * @param definition The definition that was used to create this definition.
      */
-    public SearchQueryBase(SearchQueryDefinition definition)
+    public SearchQueryBase(SearchQueryDefinitionAPI definition)
     {
         this.definition = definition;
     }
@@ -42,7 +43,7 @@ public abstract class SearchQueryBase<TCommit extends Commit> implements SearchQ
      * Gets the definition that was used to create this search query.
      */
     @Override
-    public SearchQueryDefinition getDefinition()
+    public SearchQueryDefinitionAPI getDefinition()
     {
         return this.definition;
     }

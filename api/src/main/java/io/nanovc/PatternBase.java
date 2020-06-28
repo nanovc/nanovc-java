@@ -19,14 +19,15 @@ import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
 /**
- * A base class for specific types of patterns in a {@link Repo}.
+ * A base class for specific types of patterns in a {@link RepoAPI}.
  * We use glob like syntax eg: *.json or **.json (to cross path boundaries).
  * Absolute paths start with a / ({@link PathBase#DELIMITER})
  * Relative paths do not start with a / ({@link PathBase#DELIMITER})
  * @param <TSelf> The specific type of pattern being implemented. This is needed so that we can get chained calls with the specific type of pattern.
  * @param <TPath> The specific type of path being matched. This is needed so that we can get chained calls with the specific type of pattern and path.
  */
-public abstract class PatternBase<TSelf extends Pattern<TSelf, TPath>, TPath extends Path<TPath>> implements Pattern<TSelf, TPath>
+public abstract class PatternBase<TSelf extends PatternAPI<TSelf, TPath>, TPath extends PathAPI<TPath>>
+    implements PatternAPI<TSelf, TPath>
 {
     /**
      * The original glob pattern that was used to define this pattern.
@@ -55,7 +56,7 @@ public abstract class PatternBase<TSelf extends Pattern<TSelf, TPath>, TPath ext
      * @return The content that matched the pattern.
      */
     @Override
-    public <T extends Content> List<AreaEntry<T>> match(Collection<AreaEntry<T>> contentToSearch)
+    public <T extends ContentAPI> List<AreaEntry<T>> match(Collection<AreaEntry<T>> contentToSearch)
     {
         // Create the result:
         List<AreaEntry<T>> matchedContent = new ArrayList<>();
@@ -81,7 +82,7 @@ public abstract class PatternBase<TSelf extends Pattern<TSelf, TPath>, TPath ext
      * @return True if the content matches the pattern.
      */
     @Override
-    public <T extends Content> boolean matches(AreaEntry<T> areaEntryToCheck)
+    public <T extends ContentAPI> boolean matches(AreaEntry<T> areaEntryToCheck)
     {
         // Check whether the content matches the pattern:
         Matcher matcher = regex.matcher(areaEntryToCheck.path.toAbsolutePath().path);
@@ -123,7 +124,7 @@ public abstract class PatternBase<TSelf extends Pattern<TSelf, TPath>, TPath ext
      * @return The stream of content that matched the pattern.
      */
     @Override
-    public <T extends Content> Stream<AreaEntry<T>> matchStream(Stream<AreaEntry<T>> contentToSearch)
+    public <T extends ContentAPI> Stream<AreaEntry<T>> matchStream(Stream<AreaEntry<T>> contentToSearch)
     {
         return contentToSearch.filter(areaEntry ->
         {

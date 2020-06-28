@@ -13,19 +13,19 @@
 package io.nanovc;
 
 /**
- * This contains the result of a search for {@link Commit}'s.
- * Use a {@link SearchQuery} to find the commits.
+ * This contains the result of a search for {@link CommitAPI}'s.
+ * Use a {@link SearchQueryAPI} to find the commits.
  * This is part of the {@link CRUSHED#READ} concepts.
  */
 public abstract class SearchResultsBase<
-    TCommit extends Commit,
-    TSearchQuery extends SearchQuery<TCommit>
+    TCommit extends CommitAPI,
+    TSearchQuery extends SearchQueryAPI<TCommit>
     >
     implements
-    SearchResults<
-        TCommit,
-        TSearchQuery
-        >
+    SearchResultsAPI<
+            TCommit,
+            TSearchQuery
+            >
 {
     /**
      * The query that was run to produce these results.

@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests for {@link Difference}'s.
+ * Tests for {@link DifferenceAPI}'s.
  */
 public class DifferenceTests extends NanoVersionControlTestsBase
 {
@@ -40,9 +40,9 @@ public class DifferenceTests extends NanoVersionControlTestsBase
     }
 
     /**
-     * A mock implementation of the {@link Difference} API.
+     * A mock implementation of the {@link DifferenceAPI} API.
      */
-    private static class MockDifference implements Difference
+    private static class MockDifference implements DifferenceAPI
     {
         /**
          * The internal storage for the difference state.

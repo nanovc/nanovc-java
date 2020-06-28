@@ -1,18 +1,20 @@
 package io.nanovc.areas;
 
-import io.nanovc.Area;
+import io.nanovc.AreaAPI;
 import io.nanovc.AreaEntry;
-import io.nanovc.Content;
+import io.nanovc.ContentAPI;
 import io.nanovc.RepoPath;
 import io.nanovc.content.ByteArrayContent;
 
 /**
  * An area for storing byte arrays.
- * It is backed by a hash map.
+ * It is backed by a {@link HashMapArea} which is efficient to access but does not preserve its order.
  * The key is the absolute repo path for the content.
  * The value is the {@link ByteArrayContent}.
  */
-public class ByteArrayHashMapArea extends HashMapArea<ByteArrayContent> implements ByteArrayArea
+public class ByteArrayHashMapArea
+    extends HashMapArea<ByteArrayContent>
+    implements ByteArrayAreaAPI
 {
     /**
      * Creates a new {@link ByteArrayContent} instance for the given value.
@@ -78,7 +80,7 @@ public class ByteArrayHashMapArea extends HashMapArea<ByteArrayContent> implemen
      * @param area The area to either cast or wrap as a ByteArrayHashMapArea.
      * @return The given area either casted to a {@link ByteArrayHashMapArea} if it already is one or a new copy with the same content.
      */
-    public static ByteArrayHashMapArea castOrClone(Area<? extends Content> area)
+    public static ByteArrayHashMapArea castOrClone(AreaAPI<? extends ContentAPI> area)
     {
         if (area instanceof ByteArrayHashMapArea) return (ByteArrayHashMapArea) area;
         else
@@ -87,7 +89,7 @@ public class ByteArrayHashMapArea extends HashMapArea<ByteArrayContent> implemen
 
             // Create a copy of the area:
             ByteArrayHashMapArea clone = new ByteArrayHashMapArea();
-            for (AreaEntry<? extends Content> entry : area)
+            for (AreaEntry<? extends ContentAPI> entry : area)
             {
                 clone.putContent(entry.path, new ByteArrayContent(entry.content.asByteArray()));
             }

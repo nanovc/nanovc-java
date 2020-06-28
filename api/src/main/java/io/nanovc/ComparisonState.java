@@ -13,7 +13,7 @@
 package io.nanovc;
 
 /**
- * The comparison state between two pieces of {@link Content} in an {@link Area}.
+ * The comparison state between two pieces of {@link ContentAPI} in an {@link AreaAPI}.
  * This is similar to {@link DifferenceState} except it contains {@link ComparisonState#UNCHANGED}.
  */
 public enum ComparisonState

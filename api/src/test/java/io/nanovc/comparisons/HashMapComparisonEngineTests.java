@@ -1,8 +1,8 @@
 package io.nanovc.comparisons;
 
-import io.nanovc.Comparison;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.ComparisonState;
-import io.nanovc.areas.StringArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.areas.StringHashMapArea;
 import org.junit.jupiter.api.Test;
 
@@ -124,7 +124,7 @@ public class HashMapComparisonEngineTests
      * @param comparisonConsumer       The comparison that was computed by the engine for the two areas.
      * @param expectedComparisonString The expected list string for the comparison.
      */
-    public void assertComparison(Consumer<StringArea> firstAreaInitializer, Consumer<StringArea> secondAreaInitializer, Consumer<Comparison> comparisonConsumer, String expectedComparisonString)
+    public void assertComparison(Consumer<StringAreaAPI> firstAreaInitializer, Consumer<StringAreaAPI> secondAreaInitializer, Consumer<ComparisonAPI> comparisonConsumer, String expectedComparisonString)
     {
         // Create the engine under test:
         HashMapComparisonEngine engine = new HashMapComparisonEngine();
@@ -142,7 +142,7 @@ public class HashMapComparisonEngineTests
         secondAreaInitializer.accept(secondArea);
 
         // Get the comparisons between the two areas:
-        Comparison comparison = engine.compare(firstArea, secondArea);
+        ComparisonAPI comparison = engine.compare(firstArea, secondArea);
 
         // Make sure we got a comparison structure:
         assertNotNull(comparison, "We were expecting a comparison to be computed that was empty. Instead, we got null.");

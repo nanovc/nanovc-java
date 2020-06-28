@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests repository patterns.
- * Patterns are used to define a range of paths in a {@link Repo}.
+ * Patterns are used to define a range of paths in a {@link RepoAPI}.
  */
 public class RepoPatternTests extends NanoVersionControlTestsBase
 {
@@ -32,7 +32,7 @@ public class RepoPatternTests extends NanoVersionControlTestsBase
     public void PatternMatching()
     {
         // Create the content:
-        List<AreaEntry<Content>> content = new ArrayList<>();
+        List<AreaEntry<ContentAPI>> content = new ArrayList<>();
         content.add(new AreaEntry<>(RepoPath.at("/"), null));
         content.add(new AreaEntry<>(RepoPath.at("/a"), null));
         content.add(new AreaEntry<>(RepoPath.at("/a/1.json"), null));
@@ -68,13 +68,13 @@ public class RepoPatternTests extends NanoVersionControlTestsBase
      * @param globPattern The repo pattern to test.
      * @param expectedMatch The comma separated paths of the expected matches.
      */
-    private void assertContentMatches(List<AreaEntry<Content>> content, String globPattern, String expectedMatch)
+    private void assertContentMatches(List<AreaEntry<ContentAPI>> content, String globPattern, String expectedMatch)
     {
         // Create the pattern:
         RepoPattern repoPattern = RepoPattern.matching(globPattern);
 
         // Get the matches:
-        List<AreaEntry<Content>> matches = repoPattern.match(content);
+        List<AreaEntry<ContentAPI>> matches = repoPattern.match(content);
 
         // Make sure the matches are as expected:
         assertEquals(expectedMatch, matches.stream().map(areaEntry -> areaEntry.path.toAbsolutePath().path).collect(Collectors.joining(",")));

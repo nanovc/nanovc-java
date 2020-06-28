@@ -12,15 +12,15 @@
 
 package io.nanovc.searches.commits.expressions;
 
-import io.nanovc.Commit;
+import io.nanovc.CommitAPI;
 import io.nanovc.reflection.ClassType;
 
 import java.util.List;
 
 /**
- * A base class for expressions that return a list of {@link Commit}'s.
+ * A base class for expressions that return a list of {@link CommitAPI}'s.
  */
-public abstract class CommitsExpression extends Expression<List<Commit>>
+public abstract class CommitsExpression extends Expression<List<CommitAPI>>
 {
     /**
      * Creates a new expression with the specific return type.
@@ -29,7 +29,7 @@ public abstract class CommitsExpression extends Expression<List<Commit>>
      */
     public CommitsExpression()
     {
-        super(ClassType.of(List.class, Commit.class));
+        super(ClassType.of(List.class, CommitAPI.class));
     }
 
     //#region Expression Factory Methods (for convenience)

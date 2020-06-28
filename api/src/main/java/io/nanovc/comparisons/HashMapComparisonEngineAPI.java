@@ -12,19 +12,20 @@
 
 package io.nanovc.comparisons;
 
-import io.nanovc.Area;
-import io.nanovc.Comparison;
-import io.nanovc.ComparisonEngine;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ComparisonAPI;
+import io.nanovc.ComparisonEngineAPI;
+import io.nanovc.ContentAPI;
 
 /**
- * A comparison engine that uses hash maps to compute the comparisons between two {@link Area}'s of {@link Content}.
+ * A comparison engine that uses hash maps to compute the comparisons between two {@link AreaAPI}'s of {@link ContentAPI}.
  * This {@link HashMapComparisonEngineAPI} does not contain any state. Just the logic of how to compute the comparisons.
  * This is good where one {@link HashMapComparisonEngineAPI} is going to be reused across many {@link HashMapComparisonHandler}'s.
  * This {@link HashMapComparisonEngineAPI} is thread safe because it is stateless.
- * It is designed to be able to compute many comparisons between {@link Area}'s.
+ * It is designed to be able to compute many comparisons between {@link AreaAPI}'s.
  */
-public interface HashMapComparisonEngineAPI extends ComparisonEngine
+public interface HashMapComparisonEngineAPI
+    extends ComparisonEngineAPI
 {
     /**
      * Computes a comparison between the given areas.
@@ -33,6 +34,6 @@ public interface HashMapComparisonEngineAPI extends ComparisonEngine
      * @param toArea   The second are to find comparisons to.
      * @return The comparisons between the given areas.
      */
-    Comparison compare(Area<? extends Content> fromArea, Area<? extends Content> toArea);
+    ComparisonAPI compare(AreaAPI<? extends ContentAPI> fromArea, AreaAPI<? extends ContentAPI> toArea);
 }
 

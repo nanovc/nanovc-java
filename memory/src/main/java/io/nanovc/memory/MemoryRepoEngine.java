@@ -12,9 +12,9 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
+import io.nanovc.SearchQueryDefinitionAPI;
 
 /**
  * The engine for working with a nano version control repository in memory.
@@ -26,8 +26,8 @@ import io.nanovc.SearchQueryDefinition;
  * @param <TArea>    The specific type of area that is stored for each commit in the repo.
  */
 public class MemoryRepoEngine<
-    TContent extends Content,
-    TArea extends Area<TContent>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>
     >
     extends MemoryRepoEngineBase<
     TContent,
@@ -68,7 +68,7 @@ public class MemoryRepoEngine<
      * @return A new search query.
      */
     @Override
-    public MemorySearchQuery createSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchQuery createSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return new MemorySearchQuery(searchQueryDefinition);
     }

@@ -12,9 +12,10 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Clock;
-import io.nanovc.Timestamp;
-import io.nanovc.areas.StringArea;
+import io.nanovc.ClockBase;
+import io.nanovc.CommitTags;
+import io.nanovc.TimestampBase;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.areas.StringHashMapArea;
 import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.clocks.SimulatedClockWithVMNanos;
@@ -29,7 +30,7 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests the {@link MemoryRepoEngine} for {@link Timestamp} functionality.
+ * Tests the {@link MemoryRepoEngine} for {@link TimestampBase} functionality.
  */
 public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTestsBase
 {
@@ -37,7 +38,7 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
     @Test
     public void testCreation()
     {
-        new MemoryRepoEngine<StringContent, StringArea>();
+        new MemoryRepoEngine<StringContent, StringAreaAPI>();
     }
 
     /**
@@ -47,10 +48,10 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
     public void testCommitsHaveTimestamps()
     {
         // Create the engine under test:
-        MemoryRepoEngine<StringContent, StringArea> engine = new MemoryRepoEngine<>();
+        MemoryRepoEngine<StringContent, StringAreaAPI> engine = new MemoryRepoEngine<>();
 
         // Create a repo that we are testing with:
-        MemoryRepo<StringContent, StringArea> repo = engine.createRepo();
+        MemoryRepo<StringContent, StringAreaAPI> repo = engine.createRepo();
 
         // Create a clock that will give us timestamps:
         ClockWithVMNanos clock = new ClockWithVMNanos();
@@ -69,10 +70,10 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
     public void testOptimizingTimestamps_1_Commit()
     {
         // Create the engine under test:
-        MemoryRepoEngine<StringContent, StringArea> engine = new MemoryRepoEngine<>();
+        MemoryRepoEngine<StringContent, StringAreaAPI> engine = new MemoryRepoEngine<>();
 
         // Create a repo that we are testing with:
-        MemoryRepo<StringContent, StringArea> repo = engine.createRepo();
+        MemoryRepo<StringContent, StringAreaAPI> repo = engine.createRepo();
 
         // Create a clock that will give us timestamps:
         ClockWithVMNanos clock = new ClockWithVMNanos();
@@ -106,10 +107,10 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
     public void testOptimizingTimestamps_2_Commits()
     {
         // Create the engine under test:
-        MemoryRepoEngine<StringContent, StringArea> engine = new MemoryRepoEngine<>();
+        MemoryRepoEngine<StringContent, StringAreaAPI> engine = new MemoryRepoEngine<>();
 
         // Create a repo that we are testing with:
-        MemoryRepo<StringContent, StringArea> repo = engine.createRepo();
+        MemoryRepo<StringContent, StringAreaAPI> repo = engine.createRepo();
 
         // Create a clock that will give us timestamps:
         SimulatedClockWithVMNanos clock = new SimulatedClockWithVMNanos(0L, 500_000L, 0L, Instant.EPOCH, 0L);
@@ -153,10 +154,10 @@ public class MemoryRepoEngineTests_Timestamps extends MemoryNanoVersionControlTe
      * @param clock
      * @return The commit that was created.
      */
-    protected MemoryCommit createCommit(MemoryRepoEngine<StringContent, StringArea> engine, MemoryRepo<StringContent, StringArea> repo, Clock<? extends Timestamp> clock)
+    protected MemoryCommit createCommit(MemoryRepoEngine<StringContent, StringAreaAPI> engine, MemoryRepo<StringContent, StringAreaAPI> repo, ClockBase<? extends TimestampBase> clock)
     {
         // Create a new commit:
-        MemoryCommit commit = engine.commit(new StringHashMapArea(), "Commit", repo, PassThroughByteArrayIndex.instance, clock);
+        MemoryCommit commit = engine.commit(new StringHashMapArea(), "Commit", CommitTags.none(), repo, PassThroughByteArrayIndex.instance, clock);
 
         return commit;
     }

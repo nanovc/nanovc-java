@@ -14,14 +14,15 @@ package io.nanovc;
 
 /**
  * The base class for comparison handlers.
- * This represents the public API when computing {@link Comparison}'s.
- * It holds common state being worked on and the {@link ComparisonEngine} that contains the specific algorithm that we are interested in when computing comparisons.
- * The core functionality is delegated to the {@link ComparisonEngine} which is stateless and can be reused across multiple threads.
+ * This represents the public API when computing {@link ComparisonAPI}'s.
+ * It holds common state being worked on and the {@link ComparisonEngineAPI} that contains the specific algorithm that we are interested in when computing comparisons.
+ * The core functionality is delegated to the {@link ComparisonEngineAPI} which is stateless and can be reused across multiple threads.
  *
  * @param <TEngine>  The specific type of engine that computes the comparisons.
  */
 
-public abstract class ComparisonHandlerBase<TEngine extends ComparisonEngine> implements ComparisonHandler<TEngine>
+public abstract class ComparisonHandlerBase<TEngine extends ComparisonEngineAPI>
+    implements ComparisonHandlerAPI<TEngine>
 {
     /**
      * The engine that actually computes the comparisons for this handler.

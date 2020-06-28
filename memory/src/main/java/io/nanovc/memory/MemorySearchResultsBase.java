@@ -12,26 +12,29 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Commit;
-import io.nanovc.SearchQuery;
+import io.nanovc.SearchQueryAPI;
 import io.nanovc.SearchResultsBase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This contains the result of a search for {@link Commit}'s.
- * Use a {@link SearchQuery} to find the commits.
+ * This contains the result of a search for {@link MemoryCommitAPI}'s.
+ * Use a {@link SearchQueryAPI} to find the commits.
  */
 public abstract class MemorySearchResultsBase<
-    TCommit extends Commit,
-    TSearchQuery extends SearchQuery<TCommit>
+    TCommit extends MemoryCommitAPI<?>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>
     >
     extends
     SearchResultsBase<
-            TCommit,
-            TSearchQuery
-            >
+        TCommit,
+        TSearchQuery
+        >
+    implements MemorySearchResultsAPI<
+    TCommit,
+    TSearchQuery
+    >
 {
     /**
      * The list of commits for this set of results.

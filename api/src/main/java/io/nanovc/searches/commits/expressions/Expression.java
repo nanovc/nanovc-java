@@ -12,11 +12,11 @@
 
 package io.nanovc.searches.commits.expressions;
 
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.SearchQueryDefinitionAPI;
 import io.nanovc.reflection.ClassType;
 
 /**
- * The base class for expressions for {@link SearchQueryDefinition}'s.
+ * The base class for expressions for {@link SearchQueryDefinitionAPI}'s.
  * @param <T> The type of value that this expression returns.
  */
 public abstract class Expression<T>

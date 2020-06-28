@@ -15,13 +15,15 @@ package io.nanovc.comparisons;
 import io.nanovc.*;
 
 /**
- * The base class for comparison handlers.
- * This represents the public API when computing {@link Comparison}'s.
- * It holds common state being worked on and the {@link ComparisonEngine} that contains the specific algorithm that we are interested in when computing comparisons.
- * The core functionality is delegated to the {@link ComparisonEngine} which is stateless and can be reused across multiple threads.
+ * The base class for comparison handlers that use {@link java.util.HashMap}'s internally.
+ * This represents the public API when computing {@link ComparisonAPI}'s.
+ * It holds common state being worked on and the {@link ComparisonEngineAPI} that contains the specific algorithm that we are interested in when computing comparisons.
+ * The core functionality is delegated to the {@link ComparisonEngineAPI} which is stateless and can be reused across multiple threads.
  * @param <TEngine>  The specific type of engine that computes the comparisons.
  */
-public abstract class HashMapComparisonHandlerBase<TEngine extends HashMapComparisonEngineAPI> extends ComparisonHandlerBase<TEngine>
+public abstract class HashMapComparisonHandlerBase<TEngine extends HashMapComparisonEngineAPI>
+    extends ComparisonHandlerBase<TEngine>
+    implements HashMapComparisonHandlerAPI<TEngine>
 {
     /**
      * Creates a new handler with the given engine for computing the comparisons.
@@ -41,7 +43,7 @@ public abstract class HashMapComparisonHandlerBase<TEngine extends HashMapCompar
      * @return The comparison between the given areas.
      */
     @Override
-    public Comparison compare(Area<? extends Content> fromArea, Area<? extends Content> toArea)
+    public ComparisonAPI compare(AreaAPI<? extends ContentAPI> fromArea, AreaAPI<? extends ContentAPI> toArea)
     {
         return this.getEngine().compare(fromArea, toArea);
     }

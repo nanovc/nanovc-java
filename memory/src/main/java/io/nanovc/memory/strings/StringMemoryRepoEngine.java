@@ -12,7 +12,7 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.SearchQueryDefinitionAPI;
 import io.nanovc.areas.StringHashMapArea;
 import io.nanovc.content.StringContent;
 import io.nanovc.memory.MemoryCommit;
@@ -33,7 +33,7 @@ public class StringMemoryRepoEngine
     MemoryCommit,
     MemorySearchQuery,
     MemorySearchResults,
-    io.nanovc.memory.strings.StringMemoryRepo
+    StringMemoryRepo
     >
 {
     /**
@@ -42,9 +42,9 @@ public class StringMemoryRepoEngine
      * @return The Repo that has been created and is now associated with this engine.
      */
     @Override
-    public io.nanovc.memory.strings.StringMemoryRepo createRepo()
+    public StringMemoryRepo createRepo()
     {
-        return new io.nanovc.memory.strings.StringMemoryRepo();
+        return new StringMemoryRepo();
     }
 
     /**
@@ -65,7 +65,7 @@ public class StringMemoryRepoEngine
      * @return A new search query.
      */
     @Override
-    public MemorySearchQuery createSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchQuery createSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return new MemorySearchQuery(searchQueryDefinition);
     }

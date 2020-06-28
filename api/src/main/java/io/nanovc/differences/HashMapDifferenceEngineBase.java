@@ -17,13 +17,15 @@ import io.nanovc.*;
 import java.util.Arrays;
 
 /**
- * A base class for a difference engine that uses hash maps to compute the differences between two {@link Area}'s of {@link Content}.
+ * A base class for a difference engine that uses hash maps to compute the differences between two {@link AreaAPI}'s of {@link ContentAPI}.
  * This {@link HashMapDifferenceEngineBase} does not contain any state. Just the logic of how to compute the differences.
  * This is good where one {@link HashMapDifferenceEngineBase} is going to be reused across many {@link HashMapDifferenceHandler}'s.
  * This {@link HashMapDifferenceEngineBase} is thread safe because it is stateless.
- * It is designed to be able to compute many differences between {@link Area}'s.
+ * It is designed to be able to compute many differences between {@link AreaAPI}'s.
  */
-public abstract class HashMapDifferenceEngineBase extends DifferenceEngineBase implements HashMapDifferenceEngineAPI
+public abstract class HashMapDifferenceEngineBase
+    extends DifferenceEngineBase
+    implements HashMapDifferenceEngineAPI
 {
 
     /**
@@ -33,19 +35,19 @@ public abstract class HashMapDifferenceEngineBase extends DifferenceEngineBase i
      * @param toArea   The second are to find differences to.
      * @return The differences between the given areas.
      */
-    public Difference computeDifference(Area<? extends Content> fromArea, Area<? extends Content> toArea)
+    public DifferenceAPI computeDifference(AreaAPI<? extends ContentAPI> fromArea, AreaAPI<? extends ContentAPI> toArea)
     {
         // Create the difference:
         HashMapDifference difference = new HashMapDifference();
 
         // Go through each piece of content in the first area:
-        for (AreaEntry<? extends Content> fromEntry : fromArea)
+        for (AreaEntry<? extends ContentAPI> fromEntry : fromArea)
         {
             // Get the path that we are looking at:
             RepoPath path = fromEntry.path;
 
             // Check whether the second area has this path:
-            Content toContent = toArea.getContent(path);
+            ContentAPI toContent = toArea.getContent(path);
             if (toContent == null)
             {
                 // There was no content in the "to" area, thus implying that it was deleted.
@@ -56,7 +58,7 @@ public abstract class HashMapDifferenceEngineBase extends DifferenceEngineBase i
                 // There was content at the same path. We don't know if it is the same or not yet.
 
                 // Get the "from" content so we can compare it to the other area:
-                Content fromContent = fromEntry.content;
+                ContentAPI fromContent = fromEntry.content;
 
                 // Get the bytes for each piece of content:
                 byte[] fromBytes = fromContent.asByteArray();
@@ -72,7 +74,7 @@ public abstract class HashMapDifferenceEngineBase extends DifferenceEngineBase i
         // Now we know what content was deleted, changed and unchanged. We don't know what was added.
 
         // Go through each entry in the "to" area to see if anything was added:
-        for (AreaEntry<? extends Content> toEntry : toArea)
+        for (AreaEntry<? extends ContentAPI> toEntry : toArea)
         {
             // Get the path that we are looking at:
             RepoPath path = toEntry.path;

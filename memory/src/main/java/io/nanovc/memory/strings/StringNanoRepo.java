@@ -13,18 +13,18 @@
 package io.nanovc.memory.strings;
 
 import io.nanovc.*;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.areas.StringHashMapArea;
 import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.content.StringContent;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
-import io.nanovc.memory.*;
+import io.nanovc.memory.MemoryCommit;
+import io.nanovc.memory.MemorySearchQuery;
+import io.nanovc.memory.MemorySearchResults;
 import io.nanovc.merges.LastWinsMergeHandler;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -36,21 +36,21 @@ import java.util.Set;
  */
 public class StringNanoRepo extends StringMemoryRepo
     implements StringMemoryRepoHandlerAPI<
+    StringContent,
+    StringHashMapArea,
+    MemoryCommit,
+    MemorySearchQuery,
+    MemorySearchResults,
+    StringMemoryRepo,
+    StringMemoryRepoEngineAPI<
         StringContent,
         StringHashMapArea,
         MemoryCommit,
         MemorySearchQuery,
         MemorySearchResults,
-        StringMemoryRepo,
-        StringMemoryRepoEngineAPI<
-            StringContent,
-            StringHashMapArea,
-            MemoryCommit,
-            MemorySearchQuery,
-            MemorySearchResults,
-            StringMemoryRepo
-            >
+        StringMemoryRepo
         >
+    >
 {
     /**
      * The byte array index that is used to de-duplicate arrays of bytes that we have seen before.
@@ -82,49 +82,44 @@ public class StringNanoRepo extends StringMemoryRepo
         > COMMON_ENGINE = new StringMemoryRepoEngine();
 
     /**
-     * The clock that we use when we create commits.
-     */
-    private Clock<? extends Timestamp> clock = COMMON_CLOCK;
-
-    /**
      * A common clock that is used as the default for Nano Repos.
      */
     public static final ClockWithVMNanos COMMON_CLOCK = new ClockWithVMNanos();
 
     /**
-     * The encoding to use when committing strings.
+     * The clock that we use when we create commits.
      */
-    private Charset encoding = StandardCharsets.UTF_8;
-
-    /**
-     * The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     */
-    private DifferenceHandler<? extends DifferenceEngine> differenceHandler = COMMON_DIFFERENCE_HANDLER;
+    private ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
 
     /**
      * A common difference handler that is used as the default for Nano Repos.
      */
-    public static final HashMapDifferenceHandler COMMON_DIFFERENCE_HANDLER = new HashMapDifferenceHandler();
+    public static final DifferenceHandlerAPI<? extends DifferenceEngineAPI> COMMON_DIFFERENCE_HANDLER = HashMapDifferenceHandler.COMMON_DIFFERENCE_HANDLER;
 
     /**
-     * The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    private ComparisonHandler<? extends ComparisonEngine> comparisonHandler = COMMON_COMPARISON_HANDLER;
+    protected DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler = COMMON_DIFFERENCE_HANDLER;
 
     /**
      * A common comparison handler that is used as the default for Nano Repos.
      */
-    public static final HashMapComparisonHandler COMMON_COMPARISON_HANDLER = new HashMapComparisonHandler();
+    public static final ComparisonHandlerAPI<? extends ComparisonEngineAPI> COMMON_COMPARISON_HANDLER = HashMapComparisonHandler.COMMON_COMPARISON_HANDLER;
 
     /**
-     * The handler to use for merges.
+     * The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    private MergeHandler<? extends MergeEngine> mergeHandler = COMMON_MERGE_HANDLER;
+    protected ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler = COMMON_COMPARISON_HANDLER;
 
     /**
      * A common merge handler that is used as the default for Nano Repos.
      */
-    public static final LastWinsMergeHandler COMMON_MERGE_HANDLER = new LastWinsMergeHandler();
+    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = LastWinsMergeHandler.COMMON_MERGE_HANDLER;
+
+    /**
+     * The handler to use for merging commits.
+     */
+    protected MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler = COMMON_MERGE_HANDLER;
 
     /**
      * Creates a new repo for strings and reuses the given byte array index.
@@ -146,20 +141,19 @@ public class StringNanoRepo extends StringMemoryRepo
 
     /**
      * Creates a new repo for strings.
-     * @param byteArrayIndex The byte array index to reuse. This allows us to keep a shared pool of byte arrays for the content that is created. This index could be shared across multiple repos to save memory. Plug in an alternative handler or use {@link HashWrapperByteArrayIndex}.
-     * @param engine The engine to use for the version control functionality. All of the version control logic is delegated to this engine. You can plug in an alternative engine to modify the behaviour for this repo. Plug in an alternative handler or use {@link #COMMON_ENGINE}.
-     * @param clock The clock to use when creating commits for this repo. Plug in an alternative handler or use {@link #COMMON_CLOCK}.
-     * @param encoding The encoding to use to store the strings in this repo as bytes in the content areas of commits. Plug in an alternative handler or use {@link StandardCharsets#UTF_8}.
+     *
+     * @param byteArrayIndex    The byte array index to reuse. This allows us to keep a shared pool of byte arrays for the content that is created. This index could be shared across multiple repos to save memory. Plug in an alternative handler or use {@link HashWrapperByteArrayIndex}.
+     * @param engine            The engine to use for the version control functionality. All of the version control logic is delegated to this engine. You can plug in an alternative engine to modify the behaviour for this repo. Plug in an alternative handler or use {@link #COMMON_ENGINE}.
+     * @param clock             The clock to use when creating commits for this repo. Plug in an alternative clock or use {@link #COMMON_CLOCK}.
      * @param differenceHandler The handler to use when computing differences between commits. Plug in an alternative handler or use {@link #COMMON_DIFFERENCE_HANDLER}.
      * @param comparisonHandler The handler to use when computing comparisons between commits. Plug in an alternative handler or use {@link #COMMON_COMPARISON_HANDLER}.
-     * @param mergeHandler The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
+     * @param mergeHandler      The handler to use when merging commits. Plug in an alternative handler or use {@link #COMMON_MERGE_HANDLER}.
      */
-    public StringNanoRepo(ByteArrayIndex byteArrayIndex, StringMemoryRepoEngineAPI<StringContent, StringHashMapArea, MemoryCommit, MemorySearchQuery, MemorySearchResults, StringMemoryRepo> engine, Clock<? extends Timestamp> clock, Charset encoding, DifferenceHandler<? extends DifferenceEngine> differenceHandler, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, MergeHandler<? extends MergeEngine> mergeHandler)
+    public StringNanoRepo(ByteArrayIndex byteArrayIndex, StringMemoryRepoEngineAPI<StringContent, StringHashMapArea, MemoryCommit, MemorySearchQuery, MemorySearchResults, StringMemoryRepo> engine, ClockBase<? extends TimestampBase> clock, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.byteArrayIndex = byteArrayIndex;
         this.engine = engine;
         this.clock = clock;
-        this.encoding = encoding;
         this.differenceHandler = differenceHandler;
         this.comparisonHandler = comparisonHandler;
         this.mergeHandler = mergeHandler;
@@ -173,7 +167,7 @@ public class StringNanoRepo extends StringMemoryRepo
     @Override
     public StringHashMapArea createArea()
     {
-        return new StringHashMapArea(this.getEncoding());
+        return new StringHashMapArea();
     }
 
     /**
@@ -181,12 +175,13 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message)
+    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.getEngine().commit(contentAreaToCommit, message, this, this.getByteArrayIndex(), this.getClock());
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.getByteArrayIndex(), this.getClock());
     }
 
     /**
@@ -195,13 +190,14 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, MemoryCommit parentCommit)
+    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit parentCommit)
     {
-        return this.getEngine().commit(contentAreaToCommit, message, this, this.getByteArrayIndex(), this.getClock(), parentCommit);
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.getByteArrayIndex(), this.getClock(), parentCommit);
     }
 
     /**
@@ -210,14 +206,15 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
+    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
-        return this.getEngine().commit(contentAreaToCommit, message, this, this.getByteArrayIndex(), this.getClock(), firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.getByteArrayIndex(), this.getClock(), firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -226,14 +223,49 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
+     * @return The commit for this content area.
+     */
+    @Override public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, List<MemoryCommit> parentCommits)
+    {
+        // Determine how many parent commits there are to decide how to route this to the engine:
+        if (parentCommits == null)
+        {
+            // There is no list of parent commits.
+            return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+        }
+        else
+        {
+            // There is a list of parent commits.
+            // Determine how to pass the list to the engine as efficiently as possible:
+            switch (parentCommits.size())
+            {
+                case 0:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+                case 1:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                default:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+            }
+        }
+    }
+
+    /**
+     * Commit the given content to the repo.
+     * It tracks the given commits as the parents.
+     *
+     * @param contentAreaToCommit The content area to commit to version control.
+     * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
+    public MemoryCommit commit(StringHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
     {
-        return this.getEngine().commit(contentAreaToCommit, message, this, this.getByteArrayIndex(), this.getClock(), firstParentCommit, otherParentCommits);
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.getByteArrayIndex(), this.getClock(), firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -242,12 +274,13 @@ public class StringNanoRepo extends StringMemoryRepo
      * @param contentAreaToCommit The content area to commit to version control.
      * @param branch              The branch to commit to. If the branch doesn't exist, it is created.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public MemoryCommit commitToBranch(StringHashMapArea contentAreaToCommit, String branch, String message)
+    public MemoryCommit commitToBranch(StringHashMapArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.getEngine().commitToBranch(contentAreaToCommit, branch, message, this, this.getByteArrayIndex(), this.getClock());
+        return this.getEngine().commitToBranch(contentAreaToCommit, branch, message, commitTags, this, this.getByteArrayIndex(), this.getClock());
     }
 
     /**
@@ -344,7 +377,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The differences between the given areas.
      */
     @Override
-    public Difference computeDifferenceBetweenAreas(Area<? extends StringContent> fromArea, Area<? extends StringContent> toArea)
+    public DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends StringContent> fromArea, AreaAPI<? extends StringContent> toArea)
     {
         return this.getEngine().computeDifferenceBetweenAreas(fromArea, toArea, this.getDifferenceHandler());
     }
@@ -358,7 +391,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The differences between the given commits.
      */
     @Override
-    public Difference computeDifferenceBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
+    public DifferenceAPI computeDifferenceBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
         return this.getEngine().computeDifferenceBetweenCommits(fromCommit, toCommit, this.getDifferenceHandler(), this, this::createArea, this::createContent);
     }
@@ -371,7 +404,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The differences between the given branches.
      */
     @Override
-    public Difference computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
+    public DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.getEngine().computeDifferenceBetweenBranches(fromBranchName, toBranchName, getDifferenceHandler(), this, this::createArea, this::createContent);
     }
@@ -385,7 +418,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The comparisons between the given areas.
      */
     @Override
-    public Comparison computeComparisonBetweenAreas(Area<? extends StringContent> fromArea, Area<? extends StringContent> toArea)
+    public ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends StringContent> fromArea, AreaAPI<? extends StringContent> toArea)
     {
         return this.getEngine().computeComparisonBetweenAreas(fromArea, toArea, getComparisonHandler());
     }
@@ -399,7 +432,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The comparisons between the given commits.
      */
     @Override
-    public Comparison computeComparisonBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
+    public ComparisonAPI computeComparisonBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
         return this.getEngine().computeComparisonBetweenCommits(fromCommit, toCommit, getComparisonHandler(), this, this::createArea, this::createContent);
     }
@@ -412,7 +445,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The comparisons between the given branches.
      */
     @Override
-    public Comparison computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
+    public ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.getEngine().computeComparisonBetweenBranches(fromBranchName, toBranchName, getComparisonHandler(), this, this::createArea, this::createContent);
     }
@@ -425,7 +458,7 @@ public class StringNanoRepo extends StringMemoryRepo
      */
     protected StringContent createContent(byte[] contentBytes)
     {
-        return new StringContent(contentBytes, this.getEncoding());
+        return new StringContent(contentBytes);
     }
 
     /**
@@ -457,7 +490,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return A compatible area for the repo handler which is either a cast of the same instance or a completely new clone of it if it is an incompatible type.
      */
     @Override
-    public StringHashMapArea castOrCloneArea(Area<? extends Content> areaToCastOrClone)
+    public StringHashMapArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
     {
         return this.engine.castOrCloneArea(areaToCastOrClone, this::createArea, this::createContent, this.byteArrayIndex);
     }
@@ -509,45 +542,45 @@ public class StringNanoRepo extends StringMemoryRepo
     }
 
     /**
-     * Gets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public DifferenceHandler<? extends DifferenceEngine> getDifferenceHandler()
+    public DifferenceHandlerAPI<? extends DifferenceEngineAPI> getDifferenceHandler()
     {
         return this.differenceHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setDifferenceHandler(DifferenceHandler<? extends DifferenceEngine> differenceHandler)
+    public void setDifferenceHandler(DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler)
     {
         this.differenceHandler = differenceHandler;
     }
 
     /**
-     * Gets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public ComparisonHandler<? extends ComparisonEngine> getComparisonHandler()
+    public ComparisonHandlerAPI<? extends ComparisonEngineAPI> getComparisonHandler()
     {
         return this.comparisonHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setComparisonHandler(ComparisonHandler<? extends ComparisonEngine> comparisonHandler)
+    public void setComparisonHandler(ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler)
     {
         this.comparisonHandler = comparisonHandler;
     }
@@ -558,7 +591,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The handler to use for merges.
      */
     @Override
-    public MergeHandler<? extends MergeEngine> getMergeHandler()
+    public MergeHandlerAPI<? extends MergeEngineAPI> getMergeHandler()
     {
         return this.mergeHandler;
     }
@@ -569,7 +602,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @param mergeHandler The handler to use for merges.
      */
     @Override
-    public void setMergeHandler(MergeHandler<? extends MergeEngine> mergeHandler)
+    public void setMergeHandler(MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.mergeHandler = mergeHandler;
     }
@@ -583,7 +616,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchQuery prepareSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return this.getEngine().prepareSearchQuery(searchQueryDefinition);
     }
@@ -610,7 +643,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery, SearchParameters overrideParameters)
+    public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery, SearchParametersAPI overrideParameters)
     {
         return this.getEngine().searchWithQuery(searchQuery, overrideParameters, this, this::createArea, this::createContent);
     }
@@ -622,7 +655,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults search(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchResults search(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         MemorySearchQuery searchQuery = this.engine.prepareSearchQuery(searchQueryDefinition);
         return this.engine.searchWithQuery(searchQuery, null, this, this::createArea, this::createContent);
@@ -636,7 +669,7 @@ public class StringNanoRepo extends StringMemoryRepo
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public MemorySearchResults search(SearchQueryDefinition searchQueryDefinition, SearchParameters overrideParameters)
+    public MemorySearchResults search(SearchQueryDefinitionAPI searchQueryDefinition, SearchParametersAPI overrideParameters)
     {
         MemorySearchQuery searchQuery = this.engine.prepareSearchQuery(searchQueryDefinition);
         return this.engine.searchWithQuery(searchQuery, overrideParameters, this, this::createArea, this::createContent);
@@ -649,12 +682,13 @@ public class StringNanoRepo extends StringMemoryRepo
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit that was performed for the merge.
      */
     @Override
-    public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message)
+    public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
-        return this.getEngine().mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
+        return this.getEngine().mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
     }
 
 
@@ -683,7 +717,7 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @return The clock that we use when we create commits.
      */
-    public Clock<? extends Timestamp> getClock()
+    public ClockAPI<? extends TimestampAPI> getClock()
     {
         return clock;
     }
@@ -693,29 +727,8 @@ public class StringNanoRepo extends StringMemoryRepo
      *
      * @param clock The clock that we use when we create commits.
      */
-    public void setClock(Clock<? extends Timestamp> clock)
+    public void setClock(ClockAPI<? extends TimestampAPI> clock)
     {
         this.clock = clock;
     }
-
-    /**
-     * Gets the encoding to use when committing strings.
-     *
-     * @return The encoding to use when committing strings.
-     */
-    public Charset getEncoding()
-    {
-        return encoding;
-    }
-
-    /**
-     * Sets the encoding to use when committing strings.
-     *
-     * @param encoding The encoding to use when committing strings.
-     */
-    public void setEncoding(Charset encoding)
-    {
-        this.encoding = encoding;
-    }
-
 }

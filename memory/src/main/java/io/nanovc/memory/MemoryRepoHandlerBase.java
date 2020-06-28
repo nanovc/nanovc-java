@@ -13,9 +13,9 @@
 package io.nanovc.memory;
 
 import io.nanovc.*;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.merges.LastWinsMergeHandler;
 
 import java.util.Arrays;
@@ -24,25 +24,25 @@ import java.util.Set;
 
 /**
  * The repo handler for working with {@link MemoryRepoBase}'s.
- * This represents the public API when working with {@link Repo}'s.
- * It holds common state including the {@link Repo} being worked on and the {@link RepoEngine} that contains the specific algorithm that we are interested in when working with the repo.
+ * This represents the public API when working with {@link RepoAPI}'s.
+ * It holds common state including the {@link RepoAPI} being worked on and the {@link RepoEngineAPI} that contains the specific algorithm that we are interested in when working with the repo.
  * You can swap out the repo that is being worked on in cases where a correctly configured repo handler must work on multiple repo's.
- * The core functionality is delegated to the {@link RepoEngine} which is stateless and can be reused for multiple {@link Repo}'s and {@link RepoHandler}'s.
+ * The core functionality is delegated to the {@link RepoEngineAPI} which is stateless and can be reused for multiple {@link RepoAPI}'s and {@link RepoHandlerAPI}'s.
  *
- * @param <TContent>     The specific type of content that is stored in area for each commit in the repo.
- * @param <TArea>        The specific type of area that is stored for each commit in the repo.
- * @param <TCommit>      The specific type of commit that is created in the repo.
- * @param <TSearchQuery> The specific type of search query that this engine returns.
+ * @param <TContent>       The specific type of content that is stored in area for each commit in the repo.
+ * @param <TArea>          The specific type of area that is stored for each commit in the repo.
+ * @param <TCommit>        The specific type of commit that is created in the repo.
+ * @param <TSearchQuery>   The specific type of search query that this engine returns.
  * @param <TSearchResults> The specific type of search results that we expect to get.
- * @param <TRepo>        The specific type of repo that this handler manages.
- * @param <TEngine>      The specific type of engine that manipulates the repo.
+ * @param <TRepo>          The specific type of repo that this handler manages.
+ * @param <TEngine>        The specific type of engine that manipulates the repo.
  */
 public abstract class MemoryRepoHandlerBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>,
     TEngine extends MemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
@@ -85,7 +85,7 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * The clock to use for creating timestamps.
      */
-    public Clock<? extends Timestamp> clock;
+    public ClockAPI<? extends TimestampAPI> clock;
 
     /**
      * A constructor that initialises the MemoryRepoHandler with the specified repo and repoEngine.
@@ -96,8 +96,8 @@ public abstract class MemoryRepoHandlerBase<
      * @param byteArrayIndex    The index to use for managing byte arrays in the in-memory repo. Pass null to create a new default index.
      * @param clock             The clock to use for creating timestamps.
      * @param repoEngine        The repo engine to use internally. Pass null to create a new default engine.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public MemoryRepoHandlerBase(
@@ -105,11 +105,11 @@ public abstract class MemoryRepoHandlerBase<
         AreaFactory<TContent, TArea> areaFactory,
         TRepo repo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         TEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(repo, repoEngine, differenceHandler, comparisonHandler, mergeHandler);
@@ -224,6 +224,7 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * Initialise the repository before it gets used for other functionality.
      * Sub classes should provide specific initialisation logic.
+     *
      * @param repo The repository to initialise.
      */
     protected void initRepo(TRepo repo)
@@ -254,12 +255,13 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -268,13 +270,14 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param parentCommit        The parent commit that we want to make this commit from.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit parentCommit)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit parentCommit)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, parentCommit);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommit);
     }
 
     /**
@@ -283,14 +286,15 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, TCommit... otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, TCommit... otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -299,14 +303,49 @@ public abstract class MemoryRepoHandlerBase<
      *
      * @param contentAreaToCommit The content area to commit to version control.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
      * @param otherParentCommits  The other parents to have in addition to the first parent commit.
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
+        return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
+    }
+
+    /**
+     * Commit the given content to the repo.
+     * It tracks the given commits as the parents.
+     *
+     * @param contentAreaToCommit The content area to commit to version control.
+     * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param parentCommits       The parents of this commit. Consider using the other overloads when there is are one or a few parent commits.
+     * @return The commit for this content area.
+     */
+    @Override public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, List<TCommit> parentCommits)
+    {
+        // Determine how many parent commits there are to decide how to route this to the engine:
+        if (parentCommits == null)
+        {
+            // There is no list of parent commits.
+            return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
+        }
+        else
+        {
+            // There is a list of parent commits.
+            // Determine how to pass the list to the engine as efficiently as possible:
+            switch (parentCommits.size())
+            {
+                case 0:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
+                case 1:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                default:
+                    return this.engine.commit(contentAreaToCommit, message, commitTags, this.repo, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+            }
+        }
     }
 
     /**
@@ -315,12 +354,13 @@ public abstract class MemoryRepoHandlerBase<
      * @param contentAreaToCommit The content area to commit to version control.
      * @param branch              The branch to commit to. If the branch doesn't exist, it is created.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit for this content.
      */
     @Override
-    public TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message)
+    public TCommit commitToBranch(TArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitToBranch(contentAreaToCommit, branch, message, this.repo, this.byteArrayIndex, this.clock);
+        return this.engine.commitToBranch(contentAreaToCommit, branch, message, commitTags, this.repo, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -368,7 +408,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The differences between the given areas.
      */
     @Override
-    public Difference computeDifferenceBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea)
+    public DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea)
     {
         return this.engine.computeDifferenceBetweenAreas(fromArea, toArea, differenceHandler);
     }
@@ -382,7 +422,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The differences between the given commits.
      */
     @Override
-    public Difference computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit)
+    public DifferenceAPI computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit)
     {
         return this.engine.computeDifferenceBetweenCommits(fromCommit, toCommit, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory);
     }
@@ -395,7 +435,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The differences between the given branches.
      */
     @Override
-    public Difference computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
+    public DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.engine.computeDifferenceBetweenBranches(fromBranchName, toBranchName, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory);
     }
@@ -409,7 +449,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The comparisons between the given areas.
      */
     @Override
-    public Comparison computeComparisonBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea)
+    public ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea)
     {
         return this.engine.computeComparisonBetweenAreas(fromArea, toArea, this.comparisonHandler);
     }
@@ -423,7 +463,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The comparisons between the given commits.
      */
     @Override
-    public Comparison computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit)
+    public ComparisonAPI computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit)
     {
         return this.engine.computeComparisonBetweenCommits(fromCommit, toCommit, this.comparisonHandler, this.repo, this.areaFactory, this.contentFactory);
     }
@@ -436,7 +476,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The comparisons between the given branches.
      */
     @Override
-    public Comparison computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
+    public ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
     {
         return this.engine.computeComparisonBetweenBranches(fromBranchName, toBranchName, this.comparisonHandler, this.repo, this.areaFactory, this.contentFactory);
     }
@@ -472,7 +512,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchQuery prepareSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public TSearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return this.engine.prepareSearchQuery(searchQueryDefinition);
     }
@@ -499,7 +539,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParameters overrideParameters)
+    public TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParametersAPI overrideParameters)
     {
         return this.engine.searchWithQuery(searchQuery, overrideParameters, this.repo, this.areaFactory, this.contentFactory);
     }
@@ -511,7 +551,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchResults search(SearchQueryDefinition searchQueryDefinition)
+    public TSearchResults search(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         TSearchQuery searchQuery = this.engine.prepareSearchQuery(searchQueryDefinition);
         return this.engine.searchWithQuery(searchQuery, null, this.repo, this.areaFactory, this.contentFactory);
@@ -525,7 +565,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchResults search(SearchQueryDefinition searchQueryDefinition, SearchParameters overrideParameters)
+    public TSearchResults search(SearchQueryDefinitionAPI searchQueryDefinition, SearchParametersAPI overrideParameters)
     {
         TSearchQuery searchQuery = this.engine.prepareSearchQuery(searchQueryDefinition);
         return this.engine.searchWithQuery(searchQuery, overrideParameters, this.repo, this.areaFactory, this.contentFactory);
@@ -535,15 +575,17 @@ public abstract class MemoryRepoHandlerBase<
     /**
      * Merges one branch into another.
      * The merge handler is used to resolve any merge conflicts if there are any.
+     *
      * @param destinationBranchName The branch that we should merge into.
-     * @param sourceBranchName The branch that we should merge from.
-     * @param message The commit message to use for the merge.
+     * @param sourceBranchName      The branch that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @return The commit that was performed for the merge.
      */
     @Override
-    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message)
+    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
-        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
+        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -566,7 +608,7 @@ public abstract class MemoryRepoHandlerBase<
      * @return A compatible area for the repo handler which is either a cast of the same instance or a completely new clone of it if it is an incompatible type.
      */
     @Override
-    public TArea castOrCloneArea(Area<? extends Content> areaToCastOrClone)
+    public TArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
     {
         return this.engine.castOrCloneArea(areaToCastOrClone, this.areaFactory, this.contentFactory, this.byteArrayIndex);
     }

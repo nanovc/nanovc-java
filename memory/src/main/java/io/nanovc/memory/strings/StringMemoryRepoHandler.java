@@ -16,7 +16,7 @@ import io.nanovc.*;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.areas.StringHashMapArea;
 import io.nanovc.content.StringContent;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 import io.nanovc.memory.*;
 
 /**
@@ -45,18 +45,18 @@ public class StringMemoryRepoHandler
      * @param byteArrayIndex   The index to use for managing byte arrays in the in-memory repo. Pass null to create a new default index.
      * @param clock            The clock to use for creating timestamps.
      * @param repoEngine       The repo engine to use internally.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public StringMemoryRepoHandler(
         io.nanovc.memory.strings.StringMemoryRepo stringMemoryRepo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         StringMemoryRepoEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(StringContent::new, StringHashMapArea::new, stringMemoryRepo, byteArrayIndex, clock, repoEngine, differenceHandler, comparisonHandler, mergeHandler);

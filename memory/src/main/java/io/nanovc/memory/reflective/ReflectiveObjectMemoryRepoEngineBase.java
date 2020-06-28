@@ -13,11 +13,11 @@
 package io.nanovc.memory.reflective;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
-import io.nanovc.memory.MemoryCommitBase;
+import io.nanovc.areas.StringAreaAPI;
+import io.nanovc.memory.MemoryCommitAPI;
 import io.nanovc.memory.MemoryRepoEngineBase;
-import io.nanovc.memory.MemorySearchQueryBase;
-import io.nanovc.memory.MemorySearchResultsBase;
+import io.nanovc.memory.MemorySearchQueryAPI;
+import io.nanovc.memory.MemorySearchResultsAPI;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,11 +38,11 @@ import java.util.Objects;
  * @param <TRepo>    The specific type of repo that this engine is for.
  */
 public abstract class ReflectiveObjectMemoryRepoEngineBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends MemorySearchQueryBase<TCommit>,
-    TSearchResults extends MemorySearchResultsBase<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends ReflectiveObjectMemoryRepoBase<TContent, TArea, TCommit>
     >
     extends MemoryRepoEngineBase<
@@ -234,6 +234,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      *
      * @param object         The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -242,7 +243,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -251,7 +252,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
         serializeObjectToContentArea(object, area, contentFactory, repo);
 
         // Commit the area:
-        return commit(area, message, repo, byteArrayIndex, clock);
+        return commit(area, message, commitTags, repo, byteArrayIndex, clock);
     }
 
     /**
@@ -261,6 +262,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      *
      * @param object         The object to commit to the repo.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -270,7 +272,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit)
+    public TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit parentCommit)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -279,7 +281,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
         serializeObjectToContentArea(object, area, contentFactory, repo);
 
         // Commit the area:
-        return commit(area, message, repo, byteArrayIndex, clock, parentCommit);
+        return commit(area, message, commitTags, repo, byteArrayIndex, clock, parentCommit);
     }
 
     /**
@@ -289,6 +291,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      *
      * @param object             The object to commit to the repo.
      * @param message            The commit message.
+     * @param commitTags         The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex     The byte array index to use when creating snap-shots for the content.
      * @param clock              The clock to use for generating the timestamp for the commit.
@@ -299,7 +302,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObject(Object object, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commitObject(Object object, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -308,7 +311,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
         serializeObjectToContentArea(object, area, contentFactory, repo);
 
         // Commit the area:
-        return commit(area, message, repo, byteArrayIndex, clock, firstParentCommit, otherParentCommits);
+        return commit(area, message, commitTags, repo, byteArrayIndex, clock, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -317,6 +320,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @param object         The object to commit to the repo.
      * @param branchName     The name of the branch to commit to. The branch is created if it doesn't already exist.
      * @param message        The commit message.
+     * @param commitTags     The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo           The repo to commit the content area to.
      * @param byteArrayIndex The byte array index to use when creating snap-shots for the content.
      * @param clock          The clock to use for generating the timestamp for the commit.
@@ -325,7 +329,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commitObjectToBranch(Object object, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public TCommit commitObjectToBranch(Object object, String branchName, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Create a new content area for the destination of the checkout:
         TArea area = createArea(areaFactory);
@@ -334,7 +338,7 @@ public abstract class ReflectiveObjectMemoryRepoEngineBase<
         serializeObjectToContentArea(object, area, contentFactory, repo);
 
         // Commit the area:
-        return commitToBranch(area, branchName, message, repo, byteArrayIndex, clock);
+        return commitToBranch(area, branchName, message, commitTags, repo, byteArrayIndex, clock);
     }
 
     /**

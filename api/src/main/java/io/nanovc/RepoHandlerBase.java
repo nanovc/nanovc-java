@@ -13,14 +13,12 @@
 package io.nanovc;
 
 
-import java.time.ZonedDateTime;
-
 /**
  * The base class for repo handlers.
- * This represents the public API when working with {@link Repo}'s.
- * It holds common state including the {@link Repo} being worked on and the {@link RepoEngine} that contains the specific algorithm that we are interested in when working with the repo.
+ * This represents the public API when working with {@link RepoAPI}'s.
+ * It holds common state including the {@link RepoAPI} being worked on and the {@link RepoEngineAPI} that contains the specific algorithm that we are interested in when working with the repo.
  * You can swap out the repo that is being worked on in cases where a correctly configured repo handler must work on multiple repo's.
- * The core functionality is delegated to the {@link RepoEngine} which is stateless and can be reused for multiple {@link Repo}'s and {@link RepoHandler}'s.
+ * The core functionality is delegated to the {@link RepoEngineAPI} which is stateless and can be reused for multiple {@link RepoAPI}'s and {@link RepoHandlerAPI}'s.
  *
  * @param <TContent>     The specific type of content that is stored in area for each commit in the repo.
  * @param <TArea>        The specific type of area that is stored for each commit in the repo.
@@ -30,23 +28,23 @@ import java.time.ZonedDateTime;
  * @param <TEngine>      The specific type of engine that manipulates the repo.
  */
 public abstract class RepoHandlerBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends Commit,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
-    TRepo extends Repo<TContent, TArea, TCommit>,
-    TEngine extends RepoEngine<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends CommitAPI,
+    TSearchQuery extends SearchQueryAPI<TCommit>,
+    TSearchResults extends SearchResultsAPI<TCommit, TSearchQuery>,
+    TRepo extends RepoAPI<TContent, TArea, TCommit>,
+    TEngine extends RepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
-    implements RepoHandler<
-    TContent,
-    TArea,
-    TCommit,
-    TSearchQuery,
-    TSearchResults,
-    TRepo,
-    TEngine
-    >
+    implements RepoHandlerAPI<
+        TContent,
+        TArea,
+        TCommit,
+        TSearchQuery,
+        TSearchResults,
+        TRepo,
+        TEngine
+        >
 {
 
     /**
@@ -63,52 +61,35 @@ public abstract class RepoHandlerBase<
     protected TEngine engine;
 
     /**
-     * The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    protected DifferenceHandler<? extends DifferenceEngine> differenceHandler;
+    protected DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler;
 
     /**
-     * The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
-    protected ComparisonHandler<? extends ComparisonEngine> comparisonHandler;
+    protected ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler;
 
     /**
      * The handler to use for merging commits.
      */
-    protected MergeHandler<? extends MergeEngine> mergeHandler;
+    protected MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler;
 
     /**
-     * The author that is used when creating new commits.
-     */
-    protected String author;
-
-    /**
-     * The committer that is used when creating new commits.
-     */
-    protected String committer;
-
-    /**
-     * The override for time for commits.
-     * This is useful to set in testing situations.
-     * If this is null then the actual time when the commit is performed is used instead.
-     */
-    protected ZonedDateTime nowOverride;
-
-    /**
-     * Creates a new handler for Nano Version Control around the given {@link Repo} and {@link RepoEngine}.
+     * Creates a new handler for Nano Version Control around the given {@link RepoAPI} and {@link RepoEngineAPI}.
      *
      * @param repo              The repo to manage.
      * @param repoEngine        The repo engine to use internally.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
      */
     public RepoHandlerBase(
         TRepo repo,
         TEngine repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         this.repo = repo;
@@ -173,45 +154,45 @@ public abstract class RepoHandlerBase<
     }
 
     /**
-     * Gets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public DifferenceHandler<? extends DifferenceEngine> getDifferenceHandler()
+    public DifferenceHandlerAPI<? extends DifferenceEngineAPI> getDifferenceHandler()
     {
         return this.differenceHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setDifferenceHandler(DifferenceHandler<? extends DifferenceEngine> differenceHandler)
+    public void setDifferenceHandler(DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler)
     {
         this.differenceHandler = differenceHandler;
     }
 
     /**
-     * Gets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Gets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @return The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @return The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public ComparisonHandler<? extends ComparisonEngine> getComparisonHandler()
+    public ComparisonHandlerAPI<? extends ComparisonEngineAPI> getComparisonHandler()
     {
         return this.comparisonHandler;
     }
 
     /**
-     * Sets the handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * Sets the handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     @Override
-    public void setComparisonHandler(ComparisonHandler<? extends ComparisonEngine> comparisonHandler)
+    public void setComparisonHandler(ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler)
     {
         this.comparisonHandler = comparisonHandler;
     }
@@ -222,7 +203,7 @@ public abstract class RepoHandlerBase<
      * @return The handler to use for merges.
      */
     @Override
-    public MergeHandler<? extends MergeEngine> getMergeHandler()
+    public MergeHandlerAPI<? extends MergeEngineAPI> getMergeHandler()
     {
         return this.mergeHandler;
     }
@@ -233,7 +214,7 @@ public abstract class RepoHandlerBase<
      * @param mergeHandler The handler to use for merges.
      */
     @Override
-    public void setMergeHandler(MergeHandler<? extends MergeEngine> mergeHandler)
+    public void setMergeHandler(MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.mergeHandler = mergeHandler;
     }

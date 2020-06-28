@@ -2,7 +2,6 @@ package io.nanovc.content;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,9 +15,7 @@ public class StringContentTests
     public void creationTest()
     {
         new StringContent("");
-        new StringContent("", StandardCharsets.UTF_8);
         new StringContent(new byte[0]);
-        new StringContent(new byte[0], StandardCharsets.UTF_8);
     }
 
     @Test
@@ -27,14 +24,6 @@ public class StringContentTests
         assertStringEncoding(null, StringContent::new, new byte[0], StringContent::new, "");
         assertStringEncoding("", StringContent::new, new byte[0], StringContent::new, "");
         assertStringEncoding("A", StringContent::new, new byte[] { 65 }, StringContent::new, "A");
-    }
-
-    @Test
-    public void utf8EncodingTests()
-    {
-        assertStringEncoding(null, s -> new StringContent(s, StandardCharsets.UTF_8) , new byte[0], bytes -> new StringContent(bytes, StandardCharsets.UTF_8), "");
-        assertStringEncoding("", s -> new StringContent(s, StandardCharsets.UTF_8) , new byte[0], bytes -> new StringContent(bytes, StandardCharsets.UTF_8), "");
-        assertStringEncoding("A", s -> new StringContent(s, StandardCharsets.UTF_8) , new byte[] { 65 }, bytes -> new StringContent(bytes, StandardCharsets.UTF_8), "A");
     }
 
     /**

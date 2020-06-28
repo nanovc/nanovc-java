@@ -12,8 +12,8 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.Area;
-import io.nanovc.Content;
+import io.nanovc.AreaAPI;
+import io.nanovc.ContentAPI;
 
 /**
  * A repository of data that is only stored in memory.
@@ -23,8 +23,8 @@ import io.nanovc.Content;
  * @param <TArea>    The specific type of area that is stored for each commit in the repo.
  */
 public class MemoryRepo<
-    TContent extends Content,
-    TArea extends Area<TContent>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>
     >
     extends MemoryRepoBase<
     TContent,

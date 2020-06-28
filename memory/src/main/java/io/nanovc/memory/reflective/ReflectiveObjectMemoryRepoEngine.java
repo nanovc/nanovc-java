@@ -12,7 +12,7 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.SearchQueryDefinitionAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.memory.MemoryCommit;
@@ -65,7 +65,7 @@ public class ReflectiveObjectMemoryRepoEngine
      * @return A new search query.
      */
     @Override
-    public MemorySearchQuery createSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public MemorySearchQuery createSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         return new MemorySearchQuery(searchQueryDefinition);
     }

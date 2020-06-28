@@ -12,6 +12,8 @@
 
 package io.nanovc.indexes;
 
+import io.nanovc.ByteArrayIndex;
+
 import java.util.HashMap;
 
 /**

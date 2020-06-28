@@ -17,7 +17,8 @@ package io.nanovc;
  * The merge handler represents the public API between the handler and the engine.
  * @param <TEngine> The specific type of engine that this handler holds.
  */
-public abstract class MergeHandlerBase<TEngine extends MergeEngine> implements MergeHandler<TEngine>
+public abstract class MergeHandlerBase<TEngine extends MergeEngineAPI>
+    implements MergeHandlerAPI<TEngine>
 {
     /**
      * The merge engine that is being held by this handler.

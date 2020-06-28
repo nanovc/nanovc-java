@@ -13,7 +13,7 @@
 package io.nanovc.memory;
 
 import io.nanovc.*;
-import io.nanovc.indexes.ByteArrayIndex;
+import io.nanovc.ByteArrayIndex;
 
 /**
  * The repo handler for working with {@link MemoryRepoBase}'s.
@@ -26,8 +26,8 @@ import io.nanovc.indexes.ByteArrayIndex;
  * @param <TArea>    The specific type of area that is stored for each commit in the repo.
  */
 public class MemoryRepoHandler<
-    TContent extends Content,
-    TArea extends Area<TContent>
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>
     >
     extends MemoryRepoHandlerBase<
     TContent,
@@ -48,8 +48,8 @@ public class MemoryRepoHandler<
      * @param byteArrayIndex          The index to use for managing byte arrays in the in-memory repo.
      * @param clock                   The clock to use for creating timestamps.
      * @param repoEngine              The repo engine to use internally.
-     * @param differenceHandler       The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
-     * @param comparisonHandler       The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler       The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
+     * @param comparisonHandler       The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler            The handler to use for merging commits.
      */
     public MemoryRepoHandler(
@@ -57,11 +57,11 @@ public class MemoryRepoHandler<
         AreaFactory<TContent, TArea> areaFactory,
         MemoryRepo<TContent, TArea> tContentTAreaMemoryRepo,
         ByteArrayIndex byteArrayIndex,
-        Clock<? extends Timestamp> clock,
+        ClockBase<? extends TimestampBase> clock,
         MemoryRepoEngine<TContent, TArea> repoEngine,
-        DifferenceHandler<? extends DifferenceEngine> differenceHandler,
-        ComparisonHandler<? extends ComparisonEngine> comparisonHandler,
-        MergeHandler<? extends MergeEngine> mergeHandler
+        DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
+        ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
+        MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
         super(contentFactory, areaFactory, tContentTAreaMemoryRepo, byteArrayIndex, clock, repoEngine, differenceHandler, comparisonHandler, mergeHandler);

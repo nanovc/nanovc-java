@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests for {@link Comparison}'s.
+ * Tests for {@link ComparisonAPI}'s.
  */
 public class ComparisonTests extends NanoVersionControlTestsBase
 {
@@ -42,9 +42,9 @@ public class ComparisonTests extends NanoVersionControlTestsBase
     }
 
     /**
-     * A mock implementation of the {@link Comparison} API.
+     * A mock implementation of the {@link ComparisonAPI} API.
      */
-    private static class MockComparison implements Comparison
+    private static class MockComparison implements ComparisonAPI
     {
         /**
          * The internal storage for the comparison state.

@@ -12,8 +12,10 @@
 
 package io.nanovc.searches.commits.expressions;
 
+import io.nanovc.RepoAPI;
+
 /**
- * An expression to get all the commits in a branch of a {@link io.nanovc.Repo}.
+ * An expression to get all the commits in a branch of a {@link RepoAPI}.
  */
 public class BranchCommitsExpression extends CommitsExpression
 {

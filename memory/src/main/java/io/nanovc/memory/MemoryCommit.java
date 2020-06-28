@@ -16,7 +16,8 @@ package io.nanovc.memory;
  * An in-memory commit in a {@link MemoryRepo}.
  * It stores information about who saved the snapshots of content, when they were saved, and why they were saved.
  */
-public class MemoryCommit extends MemoryCommitBase<MemoryCommit>
+public class MemoryCommit
+    extends MemoryCommitBase<MemoryCommit>
 {
     // Members are inherited from the base class.
 }

@@ -12,7 +12,7 @@
 
 package io.nanovc.memory;
 
-import io.nanovc.SearchQueryDefinition;
+import io.nanovc.SearchQueryDefinitionAPI;
 
 /**
  * A search query for {@link MemoryCommit}'s.
@@ -24,7 +24,7 @@ public class MemorySearchQuery extends MemorySearchQueryBase<MemoryCommit>
      *
      * @param definition The definition that was used to create this definition.
      */
-    public MemorySearchQuery(SearchQueryDefinition definition)
+    public MemorySearchQuery(SearchQueryDefinitionAPI definition)
     {
         super(definition);
     }

@@ -12,7 +12,8 @@
 
 package io.nanovc.memory.reflective;
 
-import io.nanovc.Difference;
+import io.nanovc.CommitTags;
+import io.nanovc.DifferenceAPI;
 import io.nanovc.Record;
 import io.nanovc.areas.ByteArrayHashMapArea;
 import io.nanovc.clocks.ClockWithVMNanos;
@@ -27,7 +28,8 @@ import io.nanovc.memory.MemorySearchResults;
 import io.nanovc.merges.LastWinsMergeHandler;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * Tests the {@link ReflectiveObjectMemoryRepoHandler}.
@@ -81,13 +83,13 @@ public class ReflectiveObjectMemoryRepoHandlerTests extends MemoryRepoHandlerTes
         employee.lastName = "Machowski";
 
         // Commit the employee:
-        MemoryCommit commit1 = handler.commitObject(employee, "First Commit");
+        MemoryCommit commit1 = handler.commitObject(employee, "First Commit", CommitTags.none());
 
         // Modify the employee:
         employee.firstName = "Luke";
 
         // Commit the employee again:
-        MemoryCommit commit2 = handler.commitObject(employee, "Second Commit");
+        MemoryCommit commit2 = handler.commitObject(employee, "Second Commit", CommitTags.none());
 
         // Checkout the employee:
         Employee employeeAt1 = (Employee) handler.checkoutObject(commit1);
@@ -112,7 +114,7 @@ public class ReflectiveObjectMemoryRepoHandlerTests extends MemoryRepoHandlerTes
         assertEquals("Machowski", employeeAt2.lastName);
 
         // Do a diff between the two commits:
-        Difference differences = handler.computeDifferenceBetweenCommits(commit1, commit2);
+        DifferenceAPI differences = handler.computeDifferenceBetweenCommits(commit1, commit2);
         String diffs = differences.asListString();
         String expectedDiffs = "/fields/firstName : Changed";
         assertEquals(expectedDiffs, diffs);

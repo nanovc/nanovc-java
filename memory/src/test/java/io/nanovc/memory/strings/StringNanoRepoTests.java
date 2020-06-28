@@ -12,17 +12,17 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.Comparison;
+import io.nanovc.ByteArrayIndex;
+import io.nanovc.CommitTags;
+import io.nanovc.ComparisonAPI;
 import io.nanovc.RepoPath;
 import io.nanovc.areas.StringHashMapArea;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the creation of {@link StringNanoRepo}'s.
@@ -38,7 +38,6 @@ public class StringNanoRepoTests
             new HashWrapperByteArrayIndex(),
             StringNanoRepo.COMMON_ENGINE,
             StringNanoRepo.COMMON_CLOCK,
-            StandardCharsets.UTF_8,
             StringNanoRepo.COMMON_DIFFERENCE_HANDLER,
             StringNanoRepo.COMMON_COMPARISON_HANDLER,
             StringNanoRepo.COMMON_MERGE_HANDLER
@@ -60,7 +59,7 @@ public class StringNanoRepoTests
         contentArea.putString("Mistake", "Honest");
 
         // Commit the content:
-        MemoryCommit commit1 = repo.commit(contentArea, "First commit!");
+        MemoryCommit commit1 = repo.commit(contentArea, "First commit!", CommitTags.none());
 
         // Modify content:
         contentArea.putString("Hello", "Nano World");
@@ -75,10 +74,10 @@ public class StringNanoRepoTests
         contentArea.putString(RepoPath.at("🔧").resolve("👍"), "I ❤ NanoVC‼");
 
         // Commit again, but this time to a branch:
-        MemoryCommit commit2 = repo.commitToBranch(contentArea, "master", "Second commit.");
+        MemoryCommit commit2 = repo.commitToBranch(contentArea, "master", "Second commit.", CommitTags.withAuthor("Luke"));
 
         // Get the difference between the two commits:
-        Comparison comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
+        ComparisonAPI comparison = repo.computeComparisonBetweenCommits(commit1, commit2);
         assertEquals(
             "/Hello : Changed\n" +
             "/Hello/Info : Added\n" +
@@ -100,13 +99,13 @@ public class StringNanoRepoTests
         area.putString("/", "Hello World!");
 
         // Commit the content:
-        MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit");
+        MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit", CommitTags.none());
 
         // Change the content:
         area.putString("/A", "A1");
 
         // Commit the changed content:
-        MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit");
+        MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit", CommitTags.none());
 
         // Create another branch:
         repo.createBranchAtCommit(first_commit, "alternate");
@@ -115,10 +114,10 @@ public class StringNanoRepoTests
         area.putString("/A", "A2");
 
         // Commit the change:
-        MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit");
+        MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit", CommitTags.none());
 
         // Merge the changes:
-        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
         // Get the merged content:
         StringHashMapArea mergedContent = repo.checkout(merge_commit);
@@ -154,13 +153,13 @@ public class StringNanoRepoTests
             area.putString("/", "Hello World!");
 
             // Commit the content:
-            MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit");
+            MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit", CommitTags.none());
 
             // Change the content:
             area.putString("/A", "A1" + (i % 100));
 
             // Commit the changed content:
-            MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit");
+            MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit", CommitTags.none());
 
             // Create another branch:
             repo.createBranchAtCommit(first_commit, "alternate");
@@ -169,10 +168,10 @@ public class StringNanoRepoTests
             area.putString("/A", "A2" + (i % 100));
 
             // Commit the change:
-            MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit");
+            MemoryCommit memoryCommit = repo.commitToBranch(area, "alternate", "Alternate commit", CommitTags.none());
 
             // Merge the changes:
-            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
             // Get the merged content:
             StringHashMapArea mergedContent = repo.checkout(merge_commit);

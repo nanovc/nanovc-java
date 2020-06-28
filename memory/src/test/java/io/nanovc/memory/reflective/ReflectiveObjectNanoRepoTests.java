@@ -12,14 +12,16 @@
 
 package io.nanovc.memory.reflective;
 
+import io.nanovc.ByteArrayIndex;
+import io.nanovc.CommitTags;
 import io.nanovc.Record;
 import io.nanovc.areas.ByteArrayHashMapArea;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the creation of {@link ReflectiveObjectNanoRepo}'s.
@@ -53,13 +55,13 @@ public class ReflectiveObjectNanoRepoTests
         employee.lastName = "Machowski";
 
         // Commit the content:
-        MemoryCommit first_commit = repo.commitObjectToBranch(employee, "master", "First commit");
+        MemoryCommit first_commit = repo.commitObjectToBranch(employee, "master", "First commit", CommitTags.none());
 
         // Change the content:
         employee.firstName = "Luke";
 
         // Commit the changed content:
-        MemoryCommit second_commit = repo.commitObjectToBranch(employee, "master", "Second Commit");
+        MemoryCommit second_commit = repo.commitObjectToBranch(employee, "master", "Second Commit", CommitTags.none());
 
         // Create another branch:
         repo.createBranchAtCommit(first_commit, "alternate");
@@ -68,10 +70,10 @@ public class ReflectiveObjectNanoRepoTests
         employee.lastName = "Sky Walker";
 
         // Commit the change:
-        MemoryCommit memoryCommit = repo.commitObjectToBranch(employee, "alternate", "Alternate commit");
+        MemoryCommit memoryCommit = repo.commitObjectToBranch(employee, "alternate", "Alternate commit", CommitTags.none());
 
         // Merge the changes:
-        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+        MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
         // Get the merged content:
         ByteArrayHashMapArea mergedContent = repo.checkout(merge_commit);
@@ -112,13 +114,13 @@ public class ReflectiveObjectNanoRepoTests
             employee.lastName = "Smith";
 
             // Commit the content:
-            MemoryCommit first_commit = repo.commitObjectToBranch(employee, "master", "First commit");
+            MemoryCommit first_commit = repo.commitObjectToBranch(employee, "master", "First commit", CommitTags.none());
 
             // Change the content:
             employee.lastName = "Smith " + (i + 1);
 
             // Commit the changed content:
-            MemoryCommit second_commit = repo.commitObjectToBranch(employee, "master", "Second Commit");
+            MemoryCommit second_commit = repo.commitObjectToBranch(employee, "master", "Second Commit", CommitTags.none());
 
             // Create another branch:
             repo.createBranchAtCommit(first_commit, "alternate");
@@ -127,10 +129,10 @@ public class ReflectiveObjectNanoRepoTests
             employee.firstName = "John" + (i + 1);
 
             // Commit the change:
-            MemoryCommit memoryCommit = repo.commitObjectToBranch(employee, "alternate", "Alternate commit");
+            MemoryCommit memoryCommit = repo.commitObjectToBranch(employee, "alternate", "Alternate commit", CommitTags.none());
 
             // Merge the changes:
-            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master");
+            MemoryCommit merge_commit = repo.mergeIntoBranchFromAnotherBranch("master", "alternate", "Merging Alternate Branch into Master", CommitTags.none());
 
             // Get the merged content:
             Employee mergedEmployee = (Employee) repo.checkoutObject(merge_commit);

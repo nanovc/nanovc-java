@@ -13,12 +13,12 @@
 package io.nanovc.memory;
 
 import io.nanovc.*;
-import io.nanovc.areas.ByteArrayArea;
+import io.nanovc.areas.ByteArrayAreaAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.clocks.ClockWithVMNanos;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.epochs.EpochWithVMNanos;
-import io.nanovc.indexes.ByteArrayIndex;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.searches.commits.HashMapSearchParameters;
 import io.nanovc.searches.commits.expressions.AllRepoCommitsExpression;
@@ -42,11 +42,11 @@ import java.util.*;
  * @param <TRepo>    The specific type of repo that this engine is for.
  */
 public abstract class MemoryRepoEngineBase<
-    TContent extends Content,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
+    TContent extends ContentAPI,
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
     TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>
     >
     extends RepoEngineBase<
@@ -96,7 +96,7 @@ public abstract class MemoryRepoEngineBase<
      *
      * @return A new empty area for snapshots.
      */
-    public ByteArrayArea createSnapshotArea()
+    public ByteArrayAreaAPI createSnapshotArea()
     {
         return new ByteArrayHashMapArea();
     }
@@ -107,15 +107,16 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Save this commit as a new dangling commit for the repo because there is no branch or tag pointing at it:
         repo.getDanglingCommits().add(commit);
@@ -131,6 +132,7 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
@@ -138,15 +140,15 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, TCommit parentCommit)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit parentCommit)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Keep track of the parent commit:
-        commit.firstParent = parentCommit;
+        commit.setFirstParent(parentCommit);
 
-        // Get the dangline commits for the repo:
+        // Get the dangling commits for the repo:
         LinkedHashSet<TCommit> danglingCommits = repo.getDanglingCommits();
 
         // Save this commit as a new dangling commit for the repo because there is no branch or tag pointing at it:
@@ -166,6 +168,7 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo               The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
@@ -174,14 +177,14 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit for this content area.
      */
     @Override
-    public TCommit commit(TArea contentAreaToCommit, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits)
+    public TCommit commit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock, TCommit firstParentCommit, List<TCommit> otherParentCommits)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Keep track of the parent commits:
-        commit.firstParent = firstParentCommit;
-        commit.otherParents = otherParentCommits;
+        commit.setFirstParent(firstParentCommit);
+        commit.setOtherParents(otherParentCommits);
 
         // Get the dangling commits for the repo:
         LinkedHashSet<TCommit> danglingCommits = repo.getDanglingCommits();
@@ -203,15 +206,16 @@ public abstract class MemoryRepoEngineBase<
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param branchName          The name of the branch to commit to. The branch is created if it doesn't already exist.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, TRepo repo, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock)
+    public TCommit commitToBranch(TArea contentAreaToCommit, String branchName, String message, StringAreaAPI commitTags, TRepo repo, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Create the specific commit:
-        TCommit commit = constructCommit(contentAreaToCommit, message, byteArrayIndex, clock);
+        TCommit commit = constructCommit(contentAreaToCommit, message, commitTags, byteArrayIndex, clock);
 
         // Check whether we already have this branch and get the last commit if we do:
         TCommit previousCommit = repo.getBranchTips().get(branchName);
@@ -220,7 +224,7 @@ public abstract class MemoryRepoEngineBase<
             // We have a commit for this branch already.
 
             // Save a reference to the previous commit as the parent for the new commit:
-            commit.firstParent = previousCommit;
+            commit.setFirstParent(previousCommit);
         }
 
         // Save this commit as the tip for this branch:
@@ -253,26 +257,30 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
+     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @return The commit for this content area.
      */
-    public TCommit constructCommit(TArea contentAreaToCommit, String message, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock)
+    public TCommit constructCommit(TArea contentAreaToCommit, String message, StringAreaAPI commitTags, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Get the timestamp of this commit:
-        Timestamp timestamp = clock.now();
+        TimestampAPI timestamp = clock.now();
 
         // Create the specific commit:
         TCommit commit = this.createCommit();
 
         // Save the timestamp:
-        commit.timestamp = timestamp;
+        commit.setTimestamp(timestamp);
 
         // Save the commit message:
-        commit.message = message;
+        commit.setMessage(message);
+
+        // Save the commit tags (making sure that we have something):
+        commit.setCommitTags(commitTags == null ? CommitTags.none() : commitTags);
 
         // Create an area for this snapshot:
-        ByteArrayArea snapshotArea = createSnapshotArea();
+        ByteArrayAreaAPI snapshotArea = createSnapshotArea();
 
         // Go through each entry in the content area that we need to commit:
         for (AreaEntry<TContent> areaEntry : contentAreaToCommit)
@@ -289,7 +297,7 @@ public abstract class MemoryRepoEngineBase<
         // Now we have created the snapshot.
 
         // Save the snapshot on the memory commit:
-        commit.snapshot = snapshotArea;
+        commit.setSnapshot(snapshotArea);
 
         // Return the commit that was created:
         return commit;
@@ -307,7 +315,7 @@ public abstract class MemoryRepoEngineBase<
     public void checkoutIntoArea(TCommit commit, TRepo repo, TArea areaToUpdate, ContentFactory<TContent> contentFactory)
     {
         // Go through the content in the snapshot for the commit:
-        for (AreaEntry<ByteArrayContent> snapshotEntry : commit.snapshot)
+        for (AreaEntry<ByteArrayContent> snapshotEntry : commit.getSnapshot())
         {
             // Create the specifically typed content for the destination area:
             TContent destinationContent = createContent(snapshotEntry.content.getEfficientByteArray(), contentFactory);
@@ -353,7 +361,7 @@ public abstract class MemoryRepoEngineBase<
      * @return A new clock for creating timestamps.
      */
     @Override
-    public Clock<? extends Timestamp> createClock()
+    public ClockAPI<? extends TimestampAPI> createClock()
     {
         return new ClockWithVMNanos();
     }
@@ -473,10 +481,10 @@ public abstract class MemoryRepoEngineBase<
         for (TCommit commit : commits)
         {
             // Check whether the commit has a timestamp that has a Virtual Machine nano time:
-            if (commit.timestamp instanceof TimestampWithVMNanos)
+            if (commit.getTimestamp() instanceof TimestampWithVMNanos)
             {
                 // This timestamp has Virtual Machine nano time:
-                TimestampWithVMNanos timestampWithVMNanos = (TimestampWithVMNanos) commit.timestamp;
+                TimestampWithVMNanos timestampWithVMNanos = (TimestampWithVMNanos) commit.getTimestamp();
 
                 // Save this commit as one of the ones that we are processing:
                 commitsToProcess.add(commit);
@@ -514,10 +522,10 @@ public abstract class MemoryRepoEngineBase<
         for (TCommit commit : commitsToProcess)
         {
             // Check whether the commit has a timestamp that has a Virtual Machine nano time:
-            if (commit.timestamp instanceof TimestampWithVMNanos)
+            if (commit.getTimestamp() instanceof TimestampWithVMNanos)
             {
                 // This timestamp has Virtual Machine nano time:
-                TimestampWithVMNanos timestampWithVMNanos = (TimestampWithVMNanos) commit.timestamp;
+                TimestampWithVMNanos timestampWithVMNanos = (TimestampWithVMNanos) commit.getTimestamp();
 
                 // Check whether the epoch is different to the best epoch:
                 if (timestampWithVMNanos.epoch != bestEpochWithVMNanos)
@@ -528,7 +536,7 @@ public abstract class MemoryRepoEngineBase<
                     TimestampWithVMNanos rebasedTimestamp = new TimestampWithVMNanos(bestEpochWithVMNanos, timestampWithVMNanos.nanoTime);
 
                     // Update the timestamp on the commit:
-                    commit.timestamp = rebasedTimestamp;
+                    commit.setTimestamp(rebasedTimestamp);
                 }
             }
         }
@@ -540,11 +548,11 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromArea          The first area to find differences from.
      * @param toArea            The second area to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @return The differences between the given areas.
      */
     @Override
-    public Difference computeDifferenceBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea, DifferenceHandler<? extends DifferenceEngine> differenceHandler)
+    public DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler)
     {
         return differenceHandler.computeDifference(fromArea, toArea);
     }
@@ -555,14 +563,14 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromCommit        The first commit to find differences from.
      * @param toCommit          The second commit to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The differences between the given commits.
      */
     @Override
-    public Difference computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public DifferenceAPI computeDifferenceBetweenCommits(TCommit fromCommit, TCommit toCommit, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Get the areas for each commit:
         TArea fromArea = checkout(fromCommit, repo, areaFactory, contentFactory);
@@ -577,14 +585,14 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromBranchName    The first branch to find differences from.
      * @param toBranchName      The second branch to find differences to.
-     * @param differenceHandler The handler to use for {@link Difference}s between {@link Area}s of {@link Content}.
+     * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The differences between the given branches.
      */
     @Override
-    public Difference computeDifferenceBetweenBranches(String fromBranchName, String toBranchName, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Get the commits for each branch:
         TCommit fromCommit = getLatestCommitForBranch(fromBranchName, repo);
@@ -600,11 +608,11 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromArea          The first area to find comparisons from.
      * @param toArea            The second area to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @return The comparisons between the given areas.
      */
     @Override
-    public Comparison computeComparisonBetweenAreas(Area<? extends TContent> fromArea, Area<? extends TContent> toArea, ComparisonHandler<? extends ComparisonEngine> comparisonHandler)
+    public ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends TContent> fromArea, AreaAPI<? extends TContent> toArea, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler)
     {
         return comparisonHandler.compare(fromArea, toArea);
     }
@@ -615,14 +623,14 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromCommit        The first commit to find comparisons from.
      * @param toCommit          The second commit to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The comparisons between the given commits.
      */
     @Override
-    public Comparison computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public ComparisonAPI computeComparisonBetweenCommits(TCommit fromCommit, TCommit toCommit, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Get the areas for each commit:
         TArea fromArea = checkout(fromCommit, repo, areaFactory, contentFactory);
@@ -637,14 +645,14 @@ public abstract class MemoryRepoEngineBase<
      *
      * @param fromBranchName    The first branch to find comparisons from.
      * @param toBranchName      The second branch to find comparisons to.
-     * @param comparisonHandler The handler to use for {@link Comparison}s between {@link Area}s of {@link Content}.
+     * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param repo              The repo to check out from.
      * @param areaFactory       The user specified factory method for the specific type of content area to create.
      * @param contentFactory    The content factory to use when populating the content area.
      * @return The comparisons between the given branches.
      */
     @Override
-    public Comparison computeComparisonBetweenBranches(String fromBranchName, String toBranchName, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Get the commits for each branch:
         TCommit fromCommit = getLatestCommitForBranch(fromBranchName, repo);
@@ -663,7 +671,7 @@ public abstract class MemoryRepoEngineBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchQuery prepareSearchQuery(SearchQueryDefinition searchQueryDefinition)
+    public TSearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
         // Create the specific search query instance:
         TSearchQuery searchQuery = createSearchQuery(searchQueryDefinition);
@@ -685,13 +693,13 @@ public abstract class MemoryRepoEngineBase<
      * @return The query for the search. This query can be evaluated multiple times on different repos. The query needs to be evaluated to get the results.
      */
     @Override
-    public TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParameters overrideParameters, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
+    public TSearchResults searchWithQuery(TSearchQuery searchQuery, SearchParametersAPI overrideParameters, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory)
     {
         // Create the specific search results:
         TSearchResults searchResults = createSearchResults(searchQuery);
 
         // Get the default parameters from the search query definition:
-        SearchParameters parameters = searchQuery.getDefinition().getParameters();
+        SearchParametersAPI parameters = searchQuery.getDefinition().getParameters();
 
         // Check whether we need to override the parameters:
         if (overrideParameters != null)
@@ -712,7 +720,7 @@ public abstract class MemoryRepoEngineBase<
         List<TCommit> commitsToAddTo = searchResults.getCommits();
 
         // Get the expression to search for:
-        Expression<Commit> singleCommitExpression = searchQuery.getDefinition().getSingleCommitExpression();
+        Expression<CommitAPI> singleCommitExpression = searchQuery.getDefinition().getSingleCommitExpression();
         if (singleCommitExpression != null)
         {
             // We must search for a single commit.
@@ -723,7 +731,7 @@ public abstract class MemoryRepoEngineBase<
         else
         {
             // Get the expression for the list of commits:
-            Expression<List<Commit>> listOfCommitsExpression = searchQuery.getDefinition().getListOfCommitsExpression();
+            Expression<List<CommitAPI>> listOfCommitsExpression = searchQuery.getDefinition().getListOfCommitsExpression();
 
             // Start walking the expression to get a list of commits:
             walkListOfCommitsSearchExpression(listOfCommitsExpression, parameters, repo, commitsToAddTo);
@@ -732,7 +740,7 @@ public abstract class MemoryRepoEngineBase<
         return searchResults;
     }
 
-    public void walkListOfCommitsSearchExpression(Expression<List<Commit>> expression, SearchParameters parameters, TRepo repo, List<TCommit> commitsToAddTo)
+    public void walkListOfCommitsSearchExpression(Expression<List<CommitAPI>> expression, SearchParametersAPI parameters, TRepo repo, List<TCommit> commitsToAddTo)
     {
 
         switch (expression.getClass().getSimpleName())
@@ -743,7 +751,7 @@ public abstract class MemoryRepoEngineBase<
         }
     }
 
-    public void walkSingleCommitSearchExpression(Expression<Commit> expression, SearchParameters parameters, TRepo repo, List<TCommit> commitsToAddTo)
+    public void walkSingleCommitSearchExpression(Expression<CommitAPI> expression, SearchParametersAPI parameters, TRepo repo, List<TCommit> commitsToAddTo)
     {
         switch (expression.getClass().getSimpleName())
         {
@@ -753,7 +761,7 @@ public abstract class MemoryRepoEngineBase<
         }
     }
 
-    public void walkTipOfExpression(TipOfExpression expression, SearchParameters parameters, TRepo repo, List<TCommit> commitsToAddTo)
+    public void walkTipOfExpression(TipOfExpression expression, SearchParametersAPI parameters, TRepo repo, List<TCommit> commitsToAddTo)
     {
         // Get the operand to evaluate to get the list of commits to add to.
         CommitsExpression operand = expression.getOperand();
@@ -772,10 +780,10 @@ public abstract class MemoryRepoEngineBase<
         commitsToAddTo.add(lastCommit);
     }
 
-    public void walkAllRepoCommitsExpression(AllRepoCommitsExpression expression, SearchParameters parameters, TRepo repo, List<TCommit> commitsToAddTo)
+    public void walkAllRepoCommitsExpression(AllRepoCommitsExpression expression, SearchParametersAPI parameters, TRepo repo, List<TCommit> commitsToAddTo)
     {
         // Create a set of the commits that are ordered by the timestamp:
-        TreeSet<TCommit> commitSet = new TreeSet<>(Comparator.comparing(tCommit -> tCommit.timestamp.getInstant()));
+        TreeSet<TCommit> commitSet = new TreeSet<>(Comparator.comparing(tCommit -> tCommit.getTimestamp().getInstant()));
 
         // Keep track of commit instances we have already walked so that we don't traverse loops in the graph of commits:
         IdentityHashMap<TCommit, TCommit> identities = new IdentityHashMap<>();
@@ -825,17 +833,19 @@ public abstract class MemoryRepoEngineBase<
         commitSetToAddTo.add(currentCommit);
 
         // Check if we have a parent commit to walk recursively:
-        if (currentCommit.firstParent != null)
+        TCommit firstParent = currentCommit.getFirstParent();
+        if (firstParent != null)
         {
             // Walk it's first parent recursively:
-            extractCommitsRecursively(currentCommit.firstParent, previouslySeenIdentities, commitSetToAddTo);
+            extractCommitsRecursively(firstParent, previouslySeenIdentities, commitSetToAddTo);
         }
 
         // Walk any other parents recursively:
-        if (currentCommit.otherParents != null && currentCommit.otherParents.size() > 0)
+        List<TCommit> otherParents = currentCommit.getOtherParents();
+        if (otherParents != null && otherParents.size() > 0)
         {
             // We have other parents to walk recursively.
-            for (TCommit otherParent : currentCommit.otherParents)
+            for (TCommit otherParent : otherParents)
             {
                 // Walk the other parent recursively:
                 extractCommitsRecursively(otherParent, previouslySeenIdentities, commitSetToAddTo);
@@ -851,6 +861,7 @@ public abstract class MemoryRepoEngineBase<
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param mergeHandler          The handler to use for dealing with the merge logic.
      * @param comparisonHandler     The handler to use for comparing content between content areas.
      * @param differenceHandler     The handler to use for finding differences between content areas.
@@ -862,14 +873,14 @@ public abstract class MemoryRepoEngineBase<
      * @return The commit that was performed for the merge.
      */
     @Override
-    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, MergeHandler<? extends MergeEngine> mergeHandler, ComparisonHandler<? extends ComparisonEngine> comparisonHandler, DifferenceHandler<? extends DifferenceEngine> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, Clock<? extends Timestamp> clock)
+    public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
     {
         // Get the commits for each branch:
         TCommit sourceCommit = getLatestCommitForBranch(sourceBranchName, repo);
         TCommit destinationCommit = getLatestCommitForBranch(destinationBranchName, repo);
 
         // Get the difference between the destination and source commits:
-        Difference differenceBetweenCommits = computeDifferenceBetweenCommits(destinationCommit, sourceCommit, differenceHandler, repo, areaFactory, contentFactory);
+        DifferenceAPI differenceBetweenCommits = computeDifferenceBetweenCommits(destinationCommit, sourceCommit, differenceHandler, repo, areaFactory, contentFactory);
 
         // Check if there are any differences so that we can construct the content area that we want to commit:
         TArea mergedArea;
@@ -885,7 +896,7 @@ public abstract class MemoryRepoEngineBase<
             TArea destinationArea = checkout(destinationCommit, repo, areaFactory, contentFactory);
 
             // Get the full comparison between the source and destination commits so that the merge is easier to perform:
-            Comparison comparisonBetweenSourceAndDestination = computeComparisonBetweenAreas(destinationArea, sourceArea, comparisonHandler);
+            ComparisonAPI comparisonBetweenSourceAndDestination = computeComparisonBetweenAreas(destinationArea, sourceArea, comparisonHandler);
 
             // Find the common ancestor of the two commits:
             TCommit commonAncestorCommit = findCommonAncestorOfCommits(sourceCommit, destinationCommit);
@@ -916,10 +927,10 @@ public abstract class MemoryRepoEngineBase<
                 TArea commonAncestorArea = checkout(commonAncestorCommit, repo, areaFactory, contentFactory);
 
                 // Get the difference between the common ancestor and the source commit:
-                Difference differenceBetweenAncestorAndSource = computeDifferenceBetweenAreas(commonAncestorArea, sourceArea, differenceHandler);
+                DifferenceAPI differenceBetweenAncestorAndSource = computeDifferenceBetweenAreas(commonAncestorArea, sourceArea, differenceHandler);
 
                 // Get the difference between the common ancestor and the destination commit:
-                Difference differenceBetweenAncestorAndDestination = computeDifferenceBetweenAreas(commonAncestorArea, destinationArea, differenceHandler);
+                DifferenceAPI differenceBetweenAncestorAndDestination = computeDifferenceBetweenAreas(commonAncestorArea, destinationArea, differenceHandler);
 
                 // Perform the merge:
                 mergeHandler.mergeIntoAreaWithThreeWayDiff(
@@ -944,11 +955,11 @@ public abstract class MemoryRepoEngineBase<
 
 
         // Commit the merged area:
-        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, repo, byteArrayIndex, clock);
+        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, commitTags, repo, byteArrayIndex, clock);
 
         // Add the source commit as another parent so that we can keep track of where we merged from:
-        mergeCommit.otherParents = new ArrayList<>();
-        mergeCommit.otherParents.add(sourceCommit);
+        mergeCommit.setOtherParents(new ArrayList<>());
+        mergeCommit.getOtherParents().add(sourceCommit);
 
         // Return the merged commit:
         return mergeCommit;
@@ -1005,10 +1016,11 @@ public abstract class MemoryRepoEngineBase<
         // If we get here then this commit is not the common ancestor.
 
         // Check if we have a parent commit to walk recursively:
-        if (currentCommit.firstParent != null)
+        TCommit firstParent = currentCommit.getFirstParent();
+        if (firstParent != null)
         {
             // Walk it's first parent recursively:
-            TCommit commonAncestor = findCommonAncestorOfCommitsRecursive(currentCommit.firstParent, previouslySeenIdentities, otherCommitsToSearchAgainst);
+            TCommit commonAncestor = findCommonAncestorOfCommitsRecursive(firstParent, previouslySeenIdentities, otherCommitsToSearchAgainst);
 
             // Check if we found the first common ancestor:
             if (commonAncestor != null)
@@ -1019,10 +1031,11 @@ public abstract class MemoryRepoEngineBase<
         }
 
         // Walk any other parents recursively:
-        if (currentCommit.otherParents != null && currentCommit.otherParents.size() > 0)
+        List<TCommit> otherParents = currentCommit.getOtherParents();
+        if (otherParents != null && otherParents.size() > 0)
         {
             // We have other parents to walk recursively.
-            for (TCommit otherParent : currentCommit.otherParents)
+            for (TCommit otherParent : otherParents)
             {
                 // Walk the other parent recursively:
                 TCommit commonAncestor = findCommonAncestorOfCommitsRecursive(otherParent, previouslySeenIdentities, otherCommitsToSearchAgainst);
@@ -1051,13 +1064,13 @@ public abstract class MemoryRepoEngineBase<
      * @return A compatible area for the repo handler which is either a cast of the same instance or a completely new clone of it if it is an incompatible type.
      */
     @Override
-    public TArea castOrCloneArea(Area<? extends Content> areaToCastOrClone, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    public TArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
     {
         // Create the area that we want:
         TArea clonedArea = areaFactory.createArea();
 
         // Start cloning the content:
-        for (AreaEntry<? extends Content> areaEntry : areaToCastOrClone)
+        for (AreaEntry<? extends ContentAPI> areaEntry : areaToCastOrClone)
         {
             // Check whether we have already seen these bytes in the byte index:
             byte[] bytes = byteArrayIndex.addOrLookup(areaEntry.content.asByteArray());

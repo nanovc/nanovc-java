@@ -1,6 +1,6 @@
 package io.nanovc.differences;
 
-import io.nanovc.Difference;
+import io.nanovc.DifferenceAPI;
 import io.nanovc.areas.StringHashMapArea;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class HashMapDifferenceHandlerTests
         StringHashMapArea secondArea = new StringHashMapArea();
 
         // Get the differences between the two areas:
-        Difference difference = handler.computeDifference(firstArea, secondArea);
+        DifferenceAPI difference = handler.computeDifference(firstArea, secondArea);
 
         // Make sure we got a difference structure:
         assertNotNull(difference, "We were expecting a difference to be computed that was empty. Instead, we got null.");

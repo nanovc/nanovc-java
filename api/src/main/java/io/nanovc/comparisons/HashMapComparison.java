@@ -23,7 +23,9 @@ import java.util.stream.Stream;
  * The key is the absolute repo path for the content.
  * The value is the {@link ComparisonState}.
  */
-public class HashMapComparison extends HashMap<String, ComparisonState> implements Comparison
+public class HashMapComparison
+    extends HashMap<String, ComparisonState>
+    implements ComparisonAPI
 {
     /**
      * Creates and puts the given content into this map.

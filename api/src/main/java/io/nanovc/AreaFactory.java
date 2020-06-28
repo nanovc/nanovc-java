@@ -18,7 +18,7 @@ package io.nanovc;
  * @param <TArea>    The specific type of area that is stored for each commit in the repo.
  */
 @FunctionalInterface
-public interface AreaFactory<TContent extends Content, TArea extends Area<TContent>>
+public interface AreaFactory<TContent extends ContentAPI, TArea extends AreaAPI<TContent>>
 {
     /**
      * Creates the area for the specific type of content.

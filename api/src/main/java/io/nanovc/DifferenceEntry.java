@@ -13,8 +13,9 @@
 package io.nanovc;
 
 /**
- * An entry in a {@link Difference} which defines the path for each piece of {@link Content} in both {@link Area}'s that had a difference.
+ * An entry in a {@link DifferenceAPI} which defines the path for each piece of {@link ContentAPI} in both {@link AreaAPI}'s that had a difference.
  */
+@Record
 public class DifferenceEntry
 {
     /**

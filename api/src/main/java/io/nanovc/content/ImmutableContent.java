@@ -12,13 +12,14 @@
 
 package io.nanovc.content;
 
-import io.nanovc.Content;
+import io.nanovc.ContentAPI;
 
 /**
  * Marks content as immutable, meaning that it can't be changed once the instance is created.
  * This interface is useful for flagging that the content is immutable because we can then make certain performance-related assumptions around the instance.
  * NOTE: A consideration was made to use annotations but that would require reflection which would be costly to interrogate in a tight performance loop.
  */
-public interface ImmutableContent extends Content
+public interface ImmutableContent
+    extends ContentAPI
 {
 }

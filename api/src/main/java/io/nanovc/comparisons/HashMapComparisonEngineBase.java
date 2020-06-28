@@ -17,13 +17,15 @@ import io.nanovc.*;
 import java.util.Arrays;
 
 /**
- * A base class for a comparison engine that uses hash maps to compute the comparisons between two {@link Area}'s of {@link Content}.
+ * A base class for a comparison engine that uses hash maps to compute the comparisons between two {@link AreaAPI}'s of {@link ContentAPI}.
  * This {@link HashMapComparisonEngineBase} does not contain any state. Just the logic of how to compute the comparisons.
  * This is good where one {@link HashMapComparisonEngineBase} is going to be reused across many {@link HashMapComparisonHandler}'s.
  * This {@link HashMapComparisonEngineBase} is thread safe because it is stateless.
- * It is designed to be able to compute many comparisons between {@link Area}'s.
+ * It is designed to be able to compute many comparisons between {@link AreaAPI}'s.
  */
-public abstract class HashMapComparisonEngineBase extends ComparisonEngineBase implements HashMapComparisonEngineAPI
+public abstract class HashMapComparisonEngineBase
+    extends ComparisonEngineBase
+    implements HashMapComparisonEngineAPI
 {
 
     /**
@@ -33,19 +35,19 @@ public abstract class HashMapComparisonEngineBase extends ComparisonEngineBase i
      * @param toArea   The second are to find comparisons to.
      * @return The comparisons between the given areas.
      */
-    public Comparison compare(Area<? extends Content> fromArea, Area<? extends Content> toArea)
+    public ComparisonAPI compare(AreaAPI<? extends ContentAPI> fromArea, AreaAPI<? extends ContentAPI> toArea)
     {
         // Create the comparison:
         HashMapComparison comparison = new HashMapComparison();
 
         // Go through each piece of content in the first area:
-        for (AreaEntry<? extends Content> fromEntry : fromArea)
+        for (AreaEntry<? extends ContentAPI> fromEntry : fromArea)
         {
             // Get the path that we are looking at:
             RepoPath path = fromEntry.path;
 
             // Check whether the second area has this path:
-            Content toContent = toArea.getContent(path);
+            ContentAPI toContent = toArea.getContent(path);
             if (toContent == null)
             {
                 // There was no content in the "to" area, thus implying that it was deleted.
@@ -56,7 +58,7 @@ public abstract class HashMapComparisonEngineBase extends ComparisonEngineBase i
                 // There was content at the same path. We don't know if it is the same or not yet.
 
                 // Get the "from" content so we can compare it to the other area:
-                Content fromContent = fromEntry.content;
+                ContentAPI fromContent = fromEntry.content;
 
                 // Get the bytes for each piece of content:
                 byte[] fromBytes = fromContent.asByteArray();
@@ -72,7 +74,7 @@ public abstract class HashMapComparisonEngineBase extends ComparisonEngineBase i
         // Now we know what content was deleted, changed and unchanged. We don't know what was added.
 
         // Go through each entry in the "to" area to see if anything was added:
-        for (AreaEntry<? extends Content> toEntry : toArea)
+        for (AreaEntry<? extends ContentAPI> toEntry : toArea)
         {
             // Get the absolute path of this entry:
             String absolutePath = toEntry.path.toAbsolutePath().path;

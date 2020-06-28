@@ -12,7 +12,7 @@
 
 package io.nanovc.epochs;
 
-import io.nanovc.Epoch;
+import io.nanovc.EpochBase;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -42,14 +42,8 @@ import java.time.Instant;
  * The whole purpose and criteria of such definitions are to clarify and co-ordinate scholarship about a period, at times, across disciplines.
  * <p>
  * https://en.wikipedia.org/wiki/Epoch_(reference_date)
- * <p>
- * The reason why we don't go with an interface for the time framework is because we don't really intend it to be extended.
- * We imagine that engines and handlers are not that interested in specific sub types.
- * The specific sub types are needed to be dealt with specifically for key algorithms around creating time stamps etc.
- * Instead the high precision timing requirements for nano version control are met with the simple time framework fleshed out here.
- * Time will tell whether this call is right :)
  */
-public class EpochWithVMNanos extends Epoch
+public class EpochWithVMNanos extends EpochBase
 {
     /**
      * This is a snapshot of the high precision nano time from the Java Virtual Machine just before the {@link #globalTime} was measured.

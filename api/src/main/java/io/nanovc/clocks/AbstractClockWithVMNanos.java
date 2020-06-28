@@ -12,7 +12,7 @@
 
 package io.nanovc.clocks;
 
-import io.nanovc.Clock;
+import io.nanovc.ClockBase;
 import io.nanovc.epochs.EpochWithVMNanos;
 import io.nanovc.timestamps.TimestampWithVMNanos;
 
@@ -22,7 +22,7 @@ import io.nanovc.timestamps.TimestampWithVMNanos;
  * We want this behaviour because we can then control the data structures required to store each timestamp (eg: so they can fit in an int).
  * The sub class must decide how it gets the Virtual Machine nano seconds for the clock.
  */
-public abstract class AbstractClockWithVMNanos extends Clock<TimestampWithVMNanos>
+public abstract class AbstractClockWithVMNanos extends ClockBase<TimestampWithVMNanos>
 {
     /**
      * This is the last epoch that was created by this clock.

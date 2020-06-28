@@ -1,8 +1,8 @@
 package io.nanovc.differences;
 
-import io.nanovc.Difference;
+import io.nanovc.DifferenceAPI;
 import io.nanovc.DifferenceState;
-import io.nanovc.areas.StringArea;
+import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.areas.StringHashMapArea;
 import org.junit.jupiter.api.Test;
 
@@ -123,7 +123,7 @@ public class HashMapDifferenceEngineTests
      * @param differenceConsumer       The difference that was computed by the engine for the two areas.
      * @param expectedDifferenceString The expected list string for the difference.
      */
-    public void assertDifference(Consumer<StringArea> firstAreaInitializer, Consumer<StringArea> secondAreaInitializer, Consumer<Difference> differenceConsumer, String expectedDifferenceString)
+    public void assertDifference(Consumer<StringAreaAPI> firstAreaInitializer, Consumer<StringAreaAPI> secondAreaInitializer, Consumer<DifferenceAPI> differenceConsumer, String expectedDifferenceString)
     {
         // Create the engine under test:
         HashMapDifferenceEngine engine = new HashMapDifferenceEngine();
@@ -141,7 +141,7 @@ public class HashMapDifferenceEngineTests
         secondAreaInitializer.accept(secondArea);
 
         // Get the differences between the two areas:
-        Difference difference = engine.computeDifference(firstArea, secondArea);
+        DifferenceAPI difference = engine.computeDifference(firstArea, secondArea);
 
         // Make sure we got a difference structure:
         assertNotNull(difference, "We were expecting a difference to be computed that was empty. Instead, we got null.");

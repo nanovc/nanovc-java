@@ -12,9 +12,7 @@
 
 package io.nanovc.memory.strings;
 
-import io.nanovc.Area;
-import io.nanovc.SearchQuery;
-import io.nanovc.SearchResults;
+import io.nanovc.AreaAPI;
 import io.nanovc.areas.HashMapArea;
 import io.nanovc.content.StringContent;
 import io.nanovc.memory.*;
@@ -30,12 +28,12 @@ import io.nanovc.memory.*;
  */
 public interface StringMemoryRepoHandlerAPI<
     TContent extends StringContent,
-    TArea extends Area<TContent>,
-    TCommit extends MemoryCommitBase<TCommit>,
-    TSearchQuery extends SearchQuery<TCommit>,
-    TSearchResults extends SearchResults<TCommit, TSearchQuery>,
-    TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>,
-    TEngine extends MemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
+    TArea extends AreaAPI<TContent>,
+    TCommit extends MemoryCommitAPI<TCommit>,
+    TSearchQuery extends MemorySearchQueryAPI<TCommit>,
+    TSearchResults extends MemorySearchResultsAPI<TCommit, TSearchQuery>,
+    TRepo extends StringMemoryRepoAPI<TContent, TArea, TCommit>,
+    TEngine extends StringMemoryRepoEngineAPI<TContent, TArea, TCommit, TSearchQuery, TSearchResults, TRepo>
     >
     extends MemoryRepoHandlerAPI<
     TContent,
