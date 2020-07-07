@@ -602,6 +602,16 @@ public abstract class MemoryRepoHandlerBase<
     }
 
     /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(String branchName)
+    {
+        this.engine.removeBranch(repo, branchName);
+    }
+
+    /**
      * Casts or clones the given area to the specific type required by this repo handler.
      *
      * @param areaToCastOrClone The area to cast if it is already the required type or to clone if it is a different area type.

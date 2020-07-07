@@ -153,6 +153,11 @@ public class RepoHandlerAPITests
 
         }
 
+        @Override public void removeBranch(String branchName)
+        {
+
+        }
+
         @Override public MockCommit getLatestCommitForBranch(String branchName)
         {
             return null;

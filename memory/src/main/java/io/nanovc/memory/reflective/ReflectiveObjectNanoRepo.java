@@ -221,7 +221,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ByteArrayHashMapArea createArea()
     {
-        return this.engine.createArea(ByteArrayHashMapArea::new);
+        return this.getEngine().createArea(ByteArrayHashMapArea::new);
     }
 
     /**
@@ -235,7 +235,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -251,7 +251,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit parentCommit)
     {
-        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommit);
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommit);
     }
 
     /**
@@ -268,7 +268,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -287,7 +287,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
         if (parentCommits == null)
         {
             // There is no list of parent commits.
-            return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+            return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
         }
         else
         {
@@ -296,11 +296,11 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
             switch (parentCommits.size())
             {
                 case 0:
-                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
+                    return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock);
                 case 1:
-                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
+                    return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0));
                 default:
-                    return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
+                    return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, parentCommits.get(0), parentCommits.subList(1, parentCommits.size()));
             }
         }
     }
@@ -319,7 +319,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commit(ByteArrayHashMapArea contentAreaToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
     {
-        return this.engine.commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
+        return this.getEngine().commit(contentAreaToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -334,7 +334,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitToBranch(ByteArrayHashMapArea contentAreaToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitToBranch(contentAreaToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock);
+        return this.getEngine().commitToBranch(contentAreaToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -347,7 +347,17 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public void createBranchAtCommit(MemoryCommit commit, String branchName)
     {
-        this.engine.createBranchAtCommit(commit, branchName, this);
+        this.getEngine().createBranchAtCommit(commit, branchName, this);
+    }
+
+    /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(String branchName)
+    {
+        this.getEngine().removeBranch(this, branchName);
     }
 
     /**
@@ -359,7 +369,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit getLatestCommitForBranch(String branchName)
     {
-        return this.engine.getLatestCommitForBranch(branchName, this);
+        return this.getEngine().getLatestCommitForBranch(branchName, this);
     }
 
     /**
@@ -371,7 +381,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public void checkoutIntoArea(MemoryCommit commit, ByteArrayHashMapArea areaToUpdate)
     {
-        this.engine.checkoutIntoArea(commit, this, areaToUpdate, ByteArrayContent::new);
+        this.getEngine().checkoutIntoArea(commit, this, areaToUpdate, ByteArrayContent::new);
     }
 
     /**
@@ -383,7 +393,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ByteArrayHashMapArea checkout(MemoryCommit commit)
     {
-        return this.engine.checkout(commit, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().checkout(commit, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -396,7 +406,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public void tagCommit(MemoryCommit commit, String tagName)
     {
-        this.engine.tagCommit(this, commit, tagName);
+        this.getEngine().tagCommit(this, commit, tagName);
     }
 
     /**
@@ -408,7 +418,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit getCommitForTag(String tagName)
     {
-        return this.engine.getCommitForTag(this, tagName);
+        return this.getEngine().getCommitForTag(this, tagName);
     }
 
     /**
@@ -419,7 +429,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public void removeTag(String tagName)
     {
-        this.engine.removeTag(this, tagName);
+        this.getEngine().removeTag(this, tagName);
     }
 
     /**
@@ -433,7 +443,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public DifferenceAPI computeDifferenceBetweenAreas(AreaAPI<? extends ByteArrayContent> fromArea, AreaAPI<? extends ByteArrayContent> toArea)
     {
-        return this.engine.computeDifferenceBetweenAreas(fromArea, toArea, this.differenceHandler);
+        return this.getEngine().computeDifferenceBetweenAreas(fromArea, toArea, this.differenceHandler);
     }
 
     /**
@@ -447,7 +457,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public DifferenceAPI computeDifferenceBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
-        return this.engine.computeDifferenceBetweenCommits(fromCommit, toCommit, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().computeDifferenceBetweenCommits(fromCommit, toCommit, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -460,7 +470,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public DifferenceAPI computeDifferenceBetweenBranches(String fromBranchName, String toBranchName)
     {
-        return this.engine.computeDifferenceBetweenBranches(fromBranchName, toBranchName, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().computeDifferenceBetweenBranches(fromBranchName, toBranchName, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -474,7 +484,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ComparisonAPI computeComparisonBetweenAreas(AreaAPI<? extends ByteArrayContent> fromArea, AreaAPI<? extends ByteArrayContent> toArea)
     {
-        return this.engine.computeComparisonBetweenAreas(fromArea, toArea, this.comparisonHandler);
+        return this.getEngine().computeComparisonBetweenAreas(fromArea, toArea, this.comparisonHandler);
     }
 
     /**
@@ -488,7 +498,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ComparisonAPI computeComparisonBetweenCommits(MemoryCommit fromCommit, MemoryCommit toCommit)
     {
-        return this.engine.computeComparisonBetweenCommits(fromCommit, toCommit, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().computeComparisonBetweenCommits(fromCommit, toCommit, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -501,7 +511,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ComparisonAPI computeComparisonBetweenBranches(String fromBranchName, String toBranchName)
     {
-        return this.engine.computeComparisonBetweenBranches(fromBranchName, toBranchName, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().computeComparisonBetweenBranches(fromBranchName, toBranchName, this.comparisonHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -515,7 +525,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -531,7 +541,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit parentCommit)
     {
-        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, parentCommit);
+        return this.getEngine().commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, parentCommit);
     }
 
     /**
@@ -548,7 +558,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, MemoryCommit... otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message,commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, Arrays.asList(otherParentCommits));
+        return this.getEngine().commitObject(objectToCommit, message,commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, Arrays.asList(otherParentCommits));
     }
 
     /**
@@ -565,7 +575,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitObject(Object objectToCommit, String message, StringAreaAPI commitTags, MemoryCommit firstParentCommit, List<MemoryCommit> otherParentCommits)
     {
-        return this.engine.commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, otherParentCommits);
+        return this.getEngine().commitObject(objectToCommit, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new, firstParentCommit, otherParentCommits);
     }
 
     /**
@@ -580,7 +590,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit commitObjectToBranch(Object objectToCommit, String branch, String message, StringAreaAPI commitTags)
     {
-        return this.engine.commitObjectToBranch(objectToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().commitObjectToBranch(objectToCommit, branch, message, commitTags, this, this.byteArrayIndex, this.clock, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -592,7 +602,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public Object checkoutObject(MemoryCommit memoryCommit)
     {
-        return this.engine.checkoutObject(memoryCommit, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().checkoutObject(memoryCommit, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -603,7 +613,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public Set<String> getBranchNames()
     {
-        return this.engine.getBranchNames(this);
+        return this.getEngine().getBranchNames(this);
     }
 
     /**
@@ -614,7 +624,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public Set<String> getTagNames()
     {
-        return this.engine.getTagNames(this);
+        return this.getEngine().getTagNames(this);
     }
 
     /**
@@ -694,7 +704,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemorySearchQuery prepareSearchQuery(SearchQueryDefinitionAPI searchQueryDefinition)
     {
-        return this.engine.prepareSearchQuery(searchQueryDefinition);
+        return this.getEngine().prepareSearchQuery(searchQueryDefinition);
     }
 
     /**
@@ -707,7 +717,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery)
     {
-        return this.engine.searchWithQuery(searchQuery, null, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().searchWithQuery(searchQuery, null, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -721,7 +731,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemorySearchResults searchWithQuery(MemorySearchQuery searchQuery, SearchParametersAPI overrideParameters)
     {
-        return this.engine.searchWithQuery(searchQuery, overrideParameters, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
+        return this.getEngine().searchWithQuery(searchQuery, overrideParameters, this, ByteArrayHashMapArea::new, ByteArrayContent::new);
     }
 
     /**
@@ -764,7 +774,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
-        return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new, this.byteArrayIndex, this.clock);
+        return this.getEngine().mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this, ByteArrayHashMapArea::new, ByteArrayContent::new, this.byteArrayIndex, this.clock);
     }
 
     /**
@@ -776,7 +786,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     @Override
     public ByteArrayHashMapArea castOrCloneArea(AreaAPI<? extends ContentAPI> areaToCastOrClone)
     {
-        return this.engine.castOrCloneArea(areaToCastOrClone, this::createArea, ByteArrayContent::new, this.byteArrayIndex);
+        return this.getEngine().castOrCloneArea(areaToCastOrClone, this::createArea, ByteArrayContent::new, this.byteArrayIndex);
     }
 
     /**

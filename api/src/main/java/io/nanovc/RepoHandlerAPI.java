@@ -130,6 +130,12 @@ public interface RepoHandlerAPI<
     void createBranchAtCommit(TCommit commit, String branchName);
 
     /**
+     * Removes the branch with the given name from the repo.
+     * @param branchName The name of the branch to remove.
+     */
+    void removeBranch(String branchName);
+
+    /**
      * Gets the latest commit for the branch with the given name.
      *
      * @param branchName The name of the branch to get the latest commit for.

@@ -297,6 +297,16 @@ public class StringNanoRepo extends StringMemoryRepo
     }
 
     /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(String branchName)
+    {
+        this.getEngine().removeBranch(this, branchName);
+    }
+
+    /**
      * Gets the latest commit for the branch with the given name.
      *
      * @param branchName The name of the branch to get the latest commit for.

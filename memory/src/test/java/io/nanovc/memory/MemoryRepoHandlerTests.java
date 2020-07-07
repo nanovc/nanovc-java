@@ -24,7 +24,7 @@ import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.merges.LastWinsMergeHandler;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests common usage scenarios for the {@link MemoryRepoHandler}.
@@ -108,4 +108,175 @@ public class MemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         );
     }
 
+    /**
+     * This tests that a dangling commit should be removed from the dangling commits list once a branch is created for it.
+     */
+    @Test
+    public void testDanglingCommitShouldBeRemovedAfterCreatingBranch()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create an area where we can commit content:
+        StringHashMapArea contentArea = repoHandler.createArea();
+
+        // Add content to the area:
+        contentArea.putString("Hello", "World");
+
+        // Get the repo so we can confirm the internal state:
+        MemoryRepo<StringContent, StringHashMapArea> repo = repoHandler.getRepo();
+
+        // Confirm that the
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Commit the content:
+        MemoryCommit commit1 = repoHandler.commit(contentArea, "First commit!", CommitTags.none());
+
+        // Confirm that we have a dangling commit:
+        assertEquals(1, repo.getDanglingCommits().size());
+        assertTrue(repo.getDanglingCommits().contains(commit1));
+
+        // Create a branch for the commit:
+        repoHandler.createBranchAtCommit(commit1, "master");
+
+        // Confirm that we no longer have a dangling commit:
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Confirm that the commit is a branch:
+        assertEquals(1, repo.getBranchTips().size());
+        assertSame(commit1, repo.getBranchTips().get("master"));
+    }
+
+    /**
+     * This tests that a dangling commit should be removed from the dangling commits list once a tag is created for it.
+     */
+    @Test
+    public void testDanglingCommitShouldBeRemovedAfterCreatingTag()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create an area where we can commit content:
+        StringHashMapArea contentArea = repoHandler.createArea();
+
+        // Add content to the area:
+        contentArea.putString("Hello", "World");
+
+        // Get the repo so we can confirm the internal state:
+        MemoryRepo<StringContent, StringHashMapArea> repo = repoHandler.getRepo();
+
+        // Confirm that the
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Commit the content:
+        MemoryCommit commit1 = repoHandler.commit(contentArea, "First commit!", CommitTags.none());
+
+        // Confirm that we have a dangling commit:
+        assertEquals(1, repo.getDanglingCommits().size());
+        assertTrue(repo.getDanglingCommits().contains(commit1));
+
+        // Create a tag for the commit:
+        repoHandler.tagCommit(commit1, "tag");
+
+        // Confirm that we no longer have a dangling commit:
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Confirm that the commit is tagged:
+        assertEquals(1, repo.getTags().size());
+        assertSame(commit1, repo.getTags().get("tag"));
+    }
+
+    /**
+     * This tests that a dangling commit is flagged after removing a branch.
+     */
+    @Test
+    public void testDanglingCommitAfterRemovingBranch()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create an area where we can commit content:
+        StringHashMapArea contentArea = repoHandler.createArea();
+
+        // Add content to the area:
+        contentArea.putString("Hello", "World");
+
+        // Get the repo so we can confirm the internal state:
+        MemoryRepo<StringContent, StringHashMapArea> repo = repoHandler.getRepo();
+
+        // Confirm that the
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Commit the content:
+        MemoryCommit commit1 = repoHandler.commitToBranch(contentArea, "master", "First commit!", CommitTags.none());
+
+        // Confirm that we don't have a dangling commit:
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Confirm that the commit is a branch:
+        assertEquals(1, repo.getBranchTips().size());
+        assertSame(commit1, repo.getBranchTips().get("master"));
+
+        // Remove the branch:
+        repoHandler.removeBranch("master");
+
+        // Confirm that we have a dangling commit now:
+        assertEquals(1, repo.getDanglingCommits().size());
+        assertTrue(repo.getDanglingCommits().contains(commit1));
+
+        // Confirm that there are no branches:
+        assertEquals(0, repo.getBranchTips().size());
+    }
+
+    /**
+     * This tests that a dangling commit is flagged after removing a tag.
+     */
+    @Test
+    public void testDanglingCommitAfterRemovingTag()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create an area where we can commit content:
+        StringHashMapArea contentArea = repoHandler.createArea();
+
+        // Add content to the area:
+        contentArea.putString("Hello", "World");
+
+        // Get the repo so we can confirm the internal state:
+        MemoryRepo<StringContent, StringHashMapArea> repo = repoHandler.getRepo();
+
+        // Confirm that the
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Commit the content:
+        MemoryCommit commit1 = repoHandler.commit(contentArea, "First commit!", CommitTags.none());
+
+        // Confirm that we have a dangling commit:
+        assertEquals(1, repo.getDanglingCommits().size());
+        assertTrue(repo.getDanglingCommits().contains(commit1));
+
+        // Confirm that there are no tags:
+        assertEquals(0, repo.getTags().size());
+
+        // Create a tag:
+        repoHandler.tagCommit(commit1, "tag");
+
+        // Confirm that we don't have a dangling commit:
+        assertEquals(0, repo.getDanglingCommits().size());
+
+        // Confirm that the commit is a tag:
+        assertEquals(1, repo.getTags().size());
+        assertSame(commit1, repo.getTags().get("tag"));
+
+        // Remove the tag:
+        repoHandler.removeTag("tag");
+
+        // Confirm that we have a dangling commit now:
+        assertEquals(1, repo.getDanglingCommits().size());
+        assertTrue(repo.getDanglingCommits().contains(commit1));
+
+        // Confirm that there are no tags:
+        assertEquals(0, repo.getTags().size());
+    }
 }
