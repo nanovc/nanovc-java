@@ -83,11 +83,6 @@ public abstract class MemoryRepoHandlerBase<
     public ByteArrayIndex byteArrayIndex;
 
     /**
-     * The clock to use for creating timestamps.
-     */
-    public ClockAPI<? extends TimestampAPI> clock;
-
-    /**
      * A constructor that initialises the MemoryRepoHandler with the specified repo and repoEngine.
      *
      * @param contentFactory    The user specified factory method for the specific type of content to create.
@@ -105,18 +100,17 @@ public abstract class MemoryRepoHandlerBase<
         AreaFactory<TContent, TArea> areaFactory,
         TRepo repo,
         ByteArrayIndex byteArrayIndex,
-        ClockBase<? extends TimestampBase> clock,
+        ClockAPI<? extends TimestampAPI> clock,
         TEngine repoEngine,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
         MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
     )
     {
-        super(repo, repoEngine, differenceHandler, comparisonHandler, mergeHandler);
+        super(repo, repoEngine, clock, differenceHandler, comparisonHandler, mergeHandler);
         this.contentFactory = contentFactory;
         this.areaFactory = areaFactory;
         this.byteArrayIndex = byteArrayIndex;
-        this.clock = clock;
 
         // Make sure the dependencies for this handler exist:
         ensureDependenciesExist();

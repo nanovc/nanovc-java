@@ -77,7 +77,7 @@ public abstract class ReflectiveObjectMemoryRepoHandlerBase<
         AreaFactory<TContent, TArea> areaFactory,
         TRepo repo,
         ByteArrayIndex byteArrayIndex,
-        ClockBase<? extends TimestampBase> clock,
+        ClockAPI<? extends TimestampAPI> clock,
         TEngine repoEngine,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,

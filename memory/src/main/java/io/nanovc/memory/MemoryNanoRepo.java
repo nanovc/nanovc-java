@@ -556,6 +556,26 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     }
 
     /**
+     * Gets the clock to use for creating timestamps.
+     *
+     * @return The clock to use for creating timestamps.
+     */
+    @Override public ClockAPI<? extends TimestampAPI> getClock()
+    {
+        return this.clock;
+    }
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     *
+     * @param clock The clock to use for creating timestamps.
+     */
+    @Override public void setClock(ClockAPI<? extends TimestampAPI> clock)
+    {
+        this.clock = clock;
+    }
+
+    /**
      * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
      * @return The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.

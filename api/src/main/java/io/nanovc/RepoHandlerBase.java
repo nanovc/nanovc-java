@@ -61,6 +61,11 @@ public abstract class RepoHandlerBase<
     protected TEngine engine;
 
     /**
+     * The clock to use for creating timestamps.
+     */
+    protected ClockAPI<? extends TimestampAPI> clock;
+
+    /**
      * The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      */
     protected DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler;
@@ -80,6 +85,7 @@ public abstract class RepoHandlerBase<
      *
      * @param repo              The repo to manage.
      * @param repoEngine        The repo engine to use internally.
+     * @param clock             The clock to use for creating timestamps.
      * @param differenceHandler The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param comparisonHandler The handler to use for {@link ComparisonAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      * @param mergeHandler      The handler to use for merging commits.
@@ -87,6 +93,7 @@ public abstract class RepoHandlerBase<
     public RepoHandlerBase(
         TRepo repo,
         TEngine repoEngine,
+        ClockAPI<? extends TimestampAPI> clock,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
         MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler
@@ -94,6 +101,7 @@ public abstract class RepoHandlerBase<
     {
         this.repo = repo;
         this.engine = repoEngine;
+        this.clock = clock;
         this.differenceHandler = differenceHandler;
         this.comparisonHandler = comparisonHandler;
         this.mergeHandler = mergeHandler;
@@ -151,6 +159,26 @@ public abstract class RepoHandlerBase<
     public void setEngine(TEngine engine)
     {
         this.engine = engine;
+    }
+
+    /**
+     * Gets the clock to use for creating timestamps.
+     * @return The clock to use for creating timestamps.
+     */
+    @Override
+    public ClockAPI<? extends TimestampAPI> getClock()
+    {
+        return clock;
+    }
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     * @param clock The clock to use for creating timestamps.
+     */
+    @Override
+    public void setClock(ClockAPI<? extends TimestampAPI> clock)
+    {
+        this.clock = clock;
     }
 
     /**

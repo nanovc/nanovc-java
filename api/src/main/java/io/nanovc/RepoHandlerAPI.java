@@ -293,6 +293,18 @@ public interface RepoHandlerAPI<
     void setEngine(TEngine engine);
 
     /**
+     * Gets the clock to use for creating timestamps.
+     * @return The clock to use for creating timestamps.
+     */
+    ClockAPI<? extends TimestampAPI> getClock();
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     * @param clock The clock to use for creating timestamps.
+     */
+    void setClock(ClockAPI<? extends TimestampAPI> clock);
+
+    /**
      * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.
      *
      * @return The handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.

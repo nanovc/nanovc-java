@@ -156,7 +156,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
         MemorySearchQuery,
         MemorySearchResults,
         ReflectiveObjectMemoryRepo
-        > engine, ClockBase<? extends TimestampBase> clock, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
+        > engine, ClockAPI<? extends TimestampAPI> clock, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler)
     {
         this.byteArrayIndex = byteArrayIndex;
         this.engine = engine;
@@ -847,5 +847,25 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
         > engine)
     {
         this.engine = engine;
+    }
+
+    /**
+     * Gets the clock to use for creating timestamps.
+     *
+     * @return The clock to use for creating timestamps.
+     */
+    @Override public ClockAPI<? extends TimestampAPI> getClock()
+    {
+        return this.clock;
+    }
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     *
+     * @param clock The clock to use for creating timestamps.
+     */
+    @Override public void setClock(ClockAPI<? extends TimestampAPI> clock)
+    {
+        this.clock = clock;
     }
 }

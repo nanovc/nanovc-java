@@ -16,13 +16,15 @@ import io.nanovc.ByteArrayIndex;
 import io.nanovc.CommitTags;
 import io.nanovc.ComparisonAPI;
 import io.nanovc.areas.ByteArrayHashMapArea;
+import io.nanovc.clocks.SimulatedInstantClock;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+
 import static io.nanovc.memory.ByteHelper.bytes;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests common usage scenarios for the {@link MemoryRepoHandler}.
@@ -120,6 +122,38 @@ public class MemoryNanoRepoTests extends MemoryNanoVersionControlTestsBase
         // Make sure the content is as expected:
         assertEquals("/ : byte[12] ➡ 'Hello World!'\n" +
                      "/A : byte[2] ➡ 'A2'", mergedContent.asListString());
+    }
+
+    @Test
+    public void testOverridingClock()
+    {
+        // Create the repo:
+        MemoryNanoRepo repo = new MemoryNanoRepo();
+
+        // Create an area for us to put content:
+        ByteArrayHashMapArea area = repo.createArea();
+        area.putBytes("/", "Hello World!".getBytes());
+
+        // Commit the content:
+        MemoryCommit first_commit = repo.commitToBranch(area, "master", "First commit", CommitTags.none());
+
+        // Create a clock that we want to override with:
+        SimulatedInstantClock clock = new SimulatedInstantClock(Instant.ofEpochSecond(123456789L));
+
+        // Use the simulated clock:
+        repo.setClock(clock);
+
+        // Make sure the clock was set:
+        assertSame(clock, repo.getClock());
+
+        // Create another commit:
+        MemoryCommit second_commit = repo.commitToBranch(area, "master", "Second Commit", CommitTags.none());
+
+        // Make sure that the two timestamps are different:
+        assertNotEquals(first_commit.getTimestamp().getInstant(), second_commit.getTimestamp().getInstant());
+
+        // Make sure that the second commit has the same timestamp as the simulated clock:
+        assertEquals(clock.getNowOverride(), second_commit.getTimestamp().getInstant());
     }
 
     @Test

@@ -89,7 +89,7 @@ public class ByteArrayNanoRepo extends ByteArrayMemoryRepo
     /**
      * The clock that we use when we create commits.
      */
-    private ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
+    protected ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
 
     /**
      * A common difference handler that is used as the default for Nano Repos.
