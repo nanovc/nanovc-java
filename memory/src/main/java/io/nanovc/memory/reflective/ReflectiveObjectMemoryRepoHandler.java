@@ -53,7 +53,7 @@ public class ReflectiveObjectMemoryRepoHandler
     public ReflectiveObjectMemoryRepoHandler(
         ReflectiveObjectMemoryRepo repo,
         ByteArrayIndex byteArrayIndex,
-        ClockBase<? extends TimestampBase> clock,
+        ClockAPI<? extends TimestampAPI> clock,
         ReflectiveObjectMemoryRepoEngine repoEngine,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,

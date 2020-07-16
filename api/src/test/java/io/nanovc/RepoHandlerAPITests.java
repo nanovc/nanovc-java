@@ -65,6 +65,21 @@ public class RepoHandlerAPITests
         repoHandler.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags);
     }
 
+    @Test
+    public void clockTests()
+    {
+        MockRepoHandler repoHandler = new MockRepoHandler();
+
+        ClockAPI<? extends TimestampAPI> clock = null;
+
+        // Set the clock to use:
+        repoHandler.setClock(clock);
+
+        // Get the clock being used:
+        repoHandler.getClock();
+
+    }
+
     //#region Mock Implementation
 
     private static class MockCommit extends CommitBase
@@ -149,6 +164,11 @@ public class RepoHandlerAPITests
         }
 
         @Override public void createBranchAtCommit(MockCommit mockCommit, String branchName)
+        {
+
+        }
+
+        @Override public void removeBranch(String branchName)
         {
 
         }

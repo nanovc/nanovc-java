@@ -408,6 +408,13 @@ public interface MemoryRepoEngineAPI<
     void createBranchAtCommit(TCommit commit, String branchName, TRepo repo);
 
     /**
+     * Removes the branch with the given name from the repo.
+     * @param repo The repo to remove the branch from.
+     * @param branchName The name of the branch to remove.
+     */
+    void removeBranch(TRepo repo, String branchName);
+
+    /**
      * Casts or clones the given area to the specific type required by this repo handler.
      *
      * @param areaToCastOrClone The area to cast if it is already the required type or to clone if it is a different area type.

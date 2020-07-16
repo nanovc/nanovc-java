@@ -130,6 +130,12 @@ public interface RepoHandlerAPI<
     void createBranchAtCommit(TCommit commit, String branchName);
 
     /**
+     * Removes the branch with the given name from the repo.
+     * @param branchName The name of the branch to remove.
+     */
+    void removeBranch(String branchName);
+
+    /**
      * Gets the latest commit for the branch with the given name.
      *
      * @param branchName The name of the branch to get the latest commit for.
@@ -285,6 +291,18 @@ public interface RepoHandlerAPI<
      * @param engine The engine that is used to work with the repo.
      */
     void setEngine(TEngine engine);
+
+    /**
+     * Gets the clock to use for creating timestamps.
+     * @return The clock to use for creating timestamps.
+     */
+    ClockAPI<? extends TimestampAPI> getClock();
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     * @param clock The clock to use for creating timestamps.
+     */
+    void setClock(ClockAPI<? extends TimestampAPI> clock);
 
     /**
      * Gets the handler to use for {@link DifferenceAPI}s between {@link AreaAPI}s of {@link ContentAPI}.

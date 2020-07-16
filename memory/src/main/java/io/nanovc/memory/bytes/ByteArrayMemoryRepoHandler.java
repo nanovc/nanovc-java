@@ -52,7 +52,7 @@ public class ByteArrayMemoryRepoHandler
     public ByteArrayMemoryRepoHandler(
         ByteArrayMemoryRepo stringMemoryRepo,
         ByteArrayIndex byteArrayIndex,
-        ClockBase<? extends TimestampBase> clock,
+        ClockAPI<? extends TimestampAPI> clock,
         ByteArrayMemoryRepoEngine repoEngine,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,

@@ -324,6 +324,16 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     }
 
     /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(String branchName)
+    {
+        this.engine.removeBranch(this, branchName);
+    }
+
+    /**
      * Gets the latest commit for the branch with the given name.
      *
      * @param branchName The name of the branch to get the latest commit for.
@@ -543,6 +553,26 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     public void setEngine(MemoryRepoEngine<ByteArrayContent, ByteArrayHashMapArea> engine)
     {
         this.engine = engine;
+    }
+
+    /**
+     * Gets the clock to use for creating timestamps.
+     *
+     * @return The clock to use for creating timestamps.
+     */
+    @Override public ClockAPI<? extends TimestampAPI> getClock()
+    {
+        return this.clock;
+    }
+
+    /**
+     * Sets the clock to use for creating timestamps.
+     *
+     * @param clock The clock to use for creating timestamps.
+     */
+    @Override public void setClock(ClockAPI<? extends TimestampAPI> clock)
+    {
+        this.clock = clock;
     }
 
     /**

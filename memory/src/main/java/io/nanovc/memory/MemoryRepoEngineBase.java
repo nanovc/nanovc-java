@@ -248,6 +248,9 @@ public abstract class MemoryRepoEngineBase<
     {
         // Save this commit as the tip for this branch:
         repo.getBranchTips().put(branchName, commit);
+
+        // Make sure that this commit does not feature as a dangling commit:
+        repo.getDanglingCommits().remove(commit);
     }
 
     /**
@@ -303,6 +306,150 @@ public abstract class MemoryRepoEngineBase<
         return commit;
     }
 
+    /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param repo      The repo to remove the branch from.
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(TRepo repo, String branchName)
+    {
+        // Remove the branch if there is one:
+        TCommit removedCommit = repo.getBranchTips().remove(branchName);
+
+        // Confirm whether this is now a dangling commit:
+        if (removedCommit != null)
+        {
+            // We did remove a branch.
+
+            // Scan for this commit and add it as a dangling commit if necessary:
+            addDanglingCommitIfNotReferencedAnywhereElse(repo, removedCommit);
+        }
+    }
+
+    /**
+     * @param repo The repo to search through and update with a dangling commit.
+     * @param commitToSearchFor The commit to search for. If the commit is not found anywhere in the history of the branches, tags or existing dangling commits then it is added as a dangling commit.
+     */
+    protected void addDanglingCommitIfNotReferencedAnywhereElse(TRepo repo, TCommit commitToSearchFor)
+    {
+        // Create an identity map of all commits that we have already visited while searching:
+        IdentityHashMap<TCommit, TCommit> visitedCommits = new IdentityHashMap<>();
+
+        // Check whether we have the commit within any of the branches:
+        for (TCommit branchTip : repo.getBranchTips().values())
+        {
+            // Check whether the commit exists anywhere within this branches history:
+            if (scanForCommitRecursively(commitToSearchFor, branchTip, visitedCommits))
+            {
+                // We found the commit in this branches history.
+                // Break out early.
+                return;
+            }
+        }
+        // If we get here then the commit does not exist in the history of any of the branches.
+
+        // Check whether we have the commit within any of the tags:
+        for (TCommit tagTip : repo.getTags().values())
+        {
+            // Check whether the commit exists anywhere within this tags history:
+            if (scanForCommitRecursively(commitToSearchFor, tagTip, visitedCommits))
+            {
+                // We found the commit in this tags history.
+                // Break out early.
+                return;
+            }
+        }
+        // If we get here then the commit does not exist in the history of any of the branches or tags.
+
+        // Check whether we have the commit within any of the dangling commits:
+        for (TCommit danglingCommit : repo.getDanglingCommits())
+        {
+            // Check whether the commit exists anywhere within the history:
+            if (scanForCommitRecursively(commitToSearchFor, danglingCommit, visitedCommits))
+            {
+                // We found the commit in the history.
+                // Break out early.
+                return;
+            }
+        }
+        // If we get here then the commit does not exist in the history of any of the branches, tags or dangling commits.
+
+        // Add this commit as a dangling commit:
+        repo.getDanglingCommits().add(commitToSearchFor);
+    }
+
+    /**
+     * This scans for the given commit in the history of the starting commit.
+     * @param commitToSearchFor The commit to search for.
+     * @param commitToSearchFrom The commit to start searching from. All history is scanned depth first from this commit.
+     * @param visitedCommits The list of visited commits so that we don't scan through commits that we have seen before.
+     * @return True if the given commit was found anywhere in the history of the given commit. False if the given commit was not found.
+     */
+    protected boolean scanForCommitRecursively(TCommit commitToSearchFor, TCommit commitToSearchFrom, IdentityHashMap<TCommit, TCommit> visitedCommits)
+    {
+        // Check whether we have found the commit:
+        if (commitToSearchFor == commitToSearchFrom)
+        {
+            // We have found the commit.
+
+            // Add this to our visited commits:
+            visitedCommits.put(commitToSearchFor, commitToSearchFor);
+
+            // Flag that we found the commit:
+            return true;
+        }
+        else
+        {
+            // This is not the commit we are searching for.
+
+            // Check whether we have already searched this commit before:
+            if (visitedCommits.containsKey(commitToSearchFrom))
+            {
+                // We have already searched through this commit.
+                return false;
+            }
+            else
+            {
+                // We have not searched through this commit before.
+
+                // Scan through the first parent and check whether we found it:
+                if (scanForCommitRecursively(commitToSearchFor, commitToSearchFrom.getFirstParent(), visitedCommits))
+                {
+                    // We found the commit going down that branch.
+
+                    // Flag that we found it:
+                    return true;
+                }
+                else
+                {
+                    // We didn't find the commit down that branch.
+
+                    // Go through each of the other parents:
+                    List<TCommit> otherParents = commitToSearchFrom.getOtherParents();
+                    if (otherParents != null && otherParents.size() > 0)
+                    {
+                        // There are other parent commits to scan through.
+
+                        // Go through each parent commit and scan through it:
+                        for (TCommit otherParent : otherParents)
+                        {
+                            // Scan through the other parent and check whether we found it:
+                            if (scanForCommitRecursively(commitToSearchFor, otherParent, visitedCommits))
+                            {
+                                // We found the commit going down that branch.
+
+                                // Flag that we found it:
+                                return true;
+                            }
+                        }
+                    }
+                    // If we get here then we didn't find the commit.
+                    return false;
+                }
+            }
+        }
+    }
 
     /**
      * Checks out the content for the given commit into the given content area.
@@ -418,7 +565,11 @@ public abstract class MemoryRepoEngineBase<
      */
     public void tagCommit(TRepo repo, TCommit commit, String tagName)
     {
+        // Tag the given commit:
         repo.getTags().put(tagName, commit);
+
+        // Make sure to remove the commit from the list of dangling commits:
+        repo.getDanglingCommits().remove(commit);
     }
 
     /**
@@ -443,7 +594,17 @@ public abstract class MemoryRepoEngineBase<
     @Override
     public void removeTag(TRepo repo, String tagName)
     {
-        repo.getTags().remove(tagName);
+        // Remove the tagged commit:
+        TCommit removedCommit = repo.getTags().remove(tagName);
+
+        // Confirm whether this is now a dangling commit:
+        if (removedCommit != null)
+        {
+            // We did remove a branch.
+
+            // Scan for this commit and add it as a dangling commit if necessary:
+            addDanglingCommitIfNotReferencedAnywhereElse(repo, removedCommit);
+        }
     }
 
     /**

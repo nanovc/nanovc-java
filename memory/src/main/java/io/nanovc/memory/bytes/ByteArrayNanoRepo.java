@@ -89,7 +89,7 @@ public class ByteArrayNanoRepo extends ByteArrayMemoryRepo
     /**
      * The clock that we use when we create commits.
      */
-    private ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
+    protected ClockAPI<? extends TimestampAPI> clock = COMMON_CLOCK;
 
     /**
      * A common difference handler that is used as the default for Nano Repos.
@@ -294,6 +294,16 @@ public class ByteArrayNanoRepo extends ByteArrayMemoryRepo
     public void createBranchAtCommit(MemoryCommit commit, String branchName)
     {
         this.getEngine().createBranchAtCommit(commit, branchName, this);
+    }
+
+    /**
+     * Removes the branch with the given name from the repo.
+     *
+     * @param branchName The name of the branch to remove.
+     */
+    @Override public void removeBranch(String branchName)
+    {
+        this.getEngine().removeBranch(this, branchName);
     }
 
     /**

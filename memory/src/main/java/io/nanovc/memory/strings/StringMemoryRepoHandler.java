@@ -33,7 +33,7 @@ public class StringMemoryRepoHandler
     MemoryCommit,
     MemorySearchQuery,
     MemorySearchResults,
-    io.nanovc.memory.strings.StringMemoryRepo,
+    StringMemoryRepo,
     StringMemoryRepoEngine
     >
 {
@@ -52,7 +52,7 @@ public class StringMemoryRepoHandler
     public StringMemoryRepoHandler(
         io.nanovc.memory.strings.StringMemoryRepo stringMemoryRepo,
         ByteArrayIndex byteArrayIndex,
-        ClockBase<? extends TimestampBase> clock,
+        ClockAPI<? extends TimestampAPI> clock,
         StringMemoryRepoEngine repoEngine,
         DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler,
         ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler,
