@@ -23,7 +23,7 @@ import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import io.nanovc.memory.MemorySearchQuery;
 import io.nanovc.memory.MemorySearchResults;
-import io.nanovc.merges.LastWinsMergeHandler;
+import io.nanovc.merges.DiffFromCommonAncestorMergeHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -114,7 +114,7 @@ public class StringNanoRepo extends StringMemoryRepo
     /**
      * A common merge handler that is used as the default for Nano Repos.
      */
-    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = LastWinsMergeHandler.COMMON_MERGE_HANDLER;
+    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = DiffFromCommonAncestorMergeHandler.COMMON_MERGE_HANDLER;
 
     /**
      * The handler to use for merging commits.
@@ -699,6 +699,51 @@ public class StringNanoRepo extends StringMemoryRepo
     public MemoryCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
         return this.getEngine().mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
+    }
+
+    /**
+     * Merges a commit into a branch.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationBranchName The branch that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public MemoryCommit mergeIntoBranchFromCommit(String destinationBranchName, MemoryCommit sourceCommit, String message, StringAreaAPI commitTags)
+    {
+        return this.getEngine().mergeIntoBranchFromCommit(destinationBranchName, sourceCommit, message, commitTags, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
+    }
+
+    /**
+     * Merges a branch into a commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceBranchName  The branch that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public MemoryCommit mergeIntoCommitFromBranch(MemoryCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags)
+    {
+        return this.getEngine().mergeIntoCommitFromBranch(destinationCommit, sourceBranchName, message, commitTags, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
+    }
+
+    /**
+     * Merges a commit into another commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceCommit      The commit that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public MemoryCommit mergeCommits(MemoryCommit destinationCommit, MemoryCommit sourceCommit, String message, StringAreaAPI commitTags)
+    {
+        return this.getEngine().mergeCommits(destinationCommit, sourceCommit, message, commitTags, mergeHandler, getComparisonHandler(), getDifferenceHandler(), this, this::createArea, this::createContent, getByteArrayIndex(), getClock());
     }
 
 

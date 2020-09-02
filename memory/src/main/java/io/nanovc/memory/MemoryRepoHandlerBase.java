@@ -16,7 +16,7 @@ import io.nanovc.*;
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.merges.LastWinsMergeHandler;
+import io.nanovc.merges.DiffFromCommonAncestorMergeHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -172,7 +172,7 @@ public abstract class MemoryRepoHandlerBase<
         if (this.mergeHandler == null)
         {
             // Create a new merge handler:
-            this.mergeHandler = new LastWinsMergeHandler();
+            this.mergeHandler = new DiffFromCommonAncestorMergeHandler();
         }
 
         // Initialise the repo as well:
@@ -565,7 +565,6 @@ public abstract class MemoryRepoHandlerBase<
         return this.engine.searchWithQuery(searchQuery, overrideParameters, this.repo, this.areaFactory, this.contentFactory);
     }
 
-
     /**
      * Merges one branch into another.
      * The merge handler is used to resolve any merge conflicts if there are any.
@@ -580,6 +579,51 @@ public abstract class MemoryRepoHandlerBase<
     public TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags)
     {
         return this.engine.mergeIntoBranchFromAnotherBranch(destinationBranchName, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
+    }
+
+    /**
+     * Merges a commit into a branch.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationBranchName The branch that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeIntoBranchFromCommit(String destinationBranchName, TCommit sourceCommit, String message, StringAreaAPI commitTags)
+    {
+        return this.engine.mergeIntoBranchFromCommit(destinationBranchName, sourceCommit, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
+    }
+
+    /**
+     * Merges a branch into a commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceBranchName  The branch that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeIntoCommitFromBranch(TCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags)
+    {
+        return this.engine.mergeIntoCommitFromBranch(destinationCommit, sourceBranchName, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
+    }
+
+    /**
+     * Merges a commit into another commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceCommit      The commit that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeCommits(TCommit destinationCommit, TCommit sourceCommit, String message, StringAreaAPI commitTags)
+    {
+        return this.engine.mergeCommits(destinationCommit, sourceCommit, message, commitTags, this.mergeHandler, this.comparisonHandler, this.differenceHandler, this.repo, this.areaFactory, this.contentFactory, this.byteArrayIndex, this.clock);
     }
 
     /**

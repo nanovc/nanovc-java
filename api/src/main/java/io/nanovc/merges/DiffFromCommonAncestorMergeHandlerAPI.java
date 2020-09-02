@@ -12,29 +12,15 @@
 
 package io.nanovc.merges;
 
+import io.nanovc.MergeHandlerAPI;
+
 /**
- * A merge handler where the last change (in time) wins when a merge conflict is detected.
+ * A merge handler that performs a diff between the common ancestor of the commits.
+ *
+ * @param <TEngine> The specific diffing engine to use for merging commits.
  */
-public class LastWinsMergeHandler extends LastWinsMergeHandlerBase<LastWinsMergeEngineAPI>
+public interface DiffFromCommonAncestorMergeHandlerAPI<TEngine extends DiffFromCommonAncestorMergeEngineAPI>
+    extends MergeHandlerAPI<TEngine>
 {
-
-    /**
-     * Creates a new merge handler with the given engine.
-     * The change from the last commit wins.
-     *
-     * @param lastWinsMergeEngine The engine to use for this handler
-     */
-    public LastWinsMergeHandler(LastWinsMergeEngineAPI lastWinsMergeEngine)
-    {
-        super(lastWinsMergeEngine);
-    }
-
-    /**
-     * Creates a merge handler where the change from the last commit wins.
-     * A new engine is created automatically.
-     */
-    public LastWinsMergeHandler()
-    {
-        this(new LastWinsMergeEngine());
-    }
+    // Nothing additional to add to the API.
 }

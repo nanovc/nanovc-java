@@ -403,4 +403,40 @@ public interface RepoHandlerAPI<
      * @return The commit that was performed for the merge.
      */
     TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags);
+
+    /**
+     * Merges a commit into a branch.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationBranchName The branch that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeIntoBranchFromCommit(String destinationBranchName, TCommit sourceCommit, String message, StringAreaAPI commitTags);
+
+    /**
+     * Merges a branch into a commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit     The commit that we should merge into.
+     * @param sourceBranchName      The branch that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeIntoCommitFromBranch(TCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags);
+
+    /**
+     * Merges a commit into another commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit     The commit that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeCommits(TCommit destinationCommit, TCommit sourceCommit, String message, StringAreaAPI commitTags);
 }

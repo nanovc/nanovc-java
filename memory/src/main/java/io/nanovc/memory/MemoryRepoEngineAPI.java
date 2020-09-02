@@ -41,13 +41,13 @@ public interface MemoryRepoEngineAPI<
     TRepo extends MemoryRepoAPI<TContent, TArea, TCommit>
     >
     extends RepoEngineAPI<
-        TContent,
-        TArea,
-        TCommit,
-        TSearchQuery,
-        TSearchResults,
-        TRepo
-        >
+    TContent,
+    TArea,
+    TCommit,
+    TSearchQuery,
+    TSearchResults,
+    TRepo
+    >
 {
     /**
      * Creates a repo that is associated with this repo engine.
@@ -385,7 +385,7 @@ public interface MemoryRepoEngineAPI<
      * @param destinationBranchName The branch that we should merge into.
      * @param sourceBranchName      The branch that we should merge from.
      * @param message               The commit message to use for the merge.
-     * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
      * @param mergeHandler          The handler to use for dealing with the merge logic.
      * @param comparisonHandler     The handler to use for comparing content between content areas.
      * @param differenceHandler     The handler to use for finding differences between content areas.
@@ -399,9 +399,71 @@ public interface MemoryRepoEngineAPI<
     TCommit mergeIntoBranchFromAnotherBranch(String destinationBranchName, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
 
     /**
+     * Merges a commit into a branch.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationBranchName The branch that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler          The handler to use for dealing with the merge logic.
+     * @param comparisonHandler     The handler to use for comparing content between content areas.
+     * @param differenceHandler     The handler to use for finding differences between content areas.
+     * @param repo                  The repo that we are working on.
+     * @param areaFactory           The factory to use for creating content areas for the repo.
+     * @param contentFactory        The factory to use for extracting content from the areas.
+     * @param byteArrayIndex        The byte array index to use when creating snap-shots for the content.
+     * @param clock                 The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeIntoBranchFromCommit(String destinationBranchName, TCommit sourceCommit, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+
+    /**
+     * Merges a branch into a commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceBranchName  The branch that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler      The handler to use for dealing with the merge logic.
+     * @param comparisonHandler The handler to use for comparing content between content areas.
+     * @param differenceHandler The handler to use for finding differences between content areas.
+     * @param repo              The repo that we are working on.
+     * @param areaFactory       The factory to use for creating content areas for the repo.
+     * @param contentFactory    The factory to use for extracting content from the areas.
+     * @param byteArrayIndex    The byte array index to use when creating snap-shots for the content.
+     * @param clock             The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeIntoCommitFromBranch(TCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+
+    /**
+     * Merges a commit into another commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceCommit      The commit that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler      The handler to use for dealing with the merge logic.
+     * @param comparisonHandler The handler to use for comparing content between content areas.
+     * @param differenceHandler The handler to use for finding differences between content areas.
+     * @param repo              The repo that we are working on.
+     * @param areaFactory       The factory to use for creating content areas for the repo.
+     * @param contentFactory    The factory to use for extracting content from the areas.
+     * @param byteArrayIndex    The byte array index to use when creating snap-shots for the content.
+     * @param clock             The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    TCommit mergeCommits(TCommit destinationCommit, TCommit sourceCommit, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock);
+
+
+    /**
      * Creates a new branch with the given name and makes it point at the given commit.
      * If the repo already has a branch with this name then it is updated to point at this commit.
-     * @param commit The commit where the new branch should be created.
+     *
+     * @param commit     The commit where the new branch should be created.
      * @param branchName The name of the branch to create at the commit.
      * @param repo       The repo to update with the new branch.
      */
@@ -409,7 +471,8 @@ public interface MemoryRepoEngineAPI<
 
     /**
      * Removes the branch with the given name from the repo.
-     * @param repo The repo to remove the branch from.
+     *
+     * @param repo       The repo to remove the branch from.
      * @param branchName The name of the branch to remove.
      */
     void removeBranch(TRepo repo, String branchName);

@@ -277,6 +277,21 @@ public class RepoHandlerAPITests
         {
             return null;
         }
+
+        @Override public MockCommit mergeIntoBranchFromCommit(String destinationBranchName, MockCommit sourceCommit, String message, StringAreaAPI commitTags)
+        {
+            return null;
+        }
+
+        @Override public MockCommit mergeIntoCommitFromBranch(MockCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags)
+        {
+            return null;
+        }
+
+        @Override public MockCommit mergeCommits(MockCommit destinationCommit, MockCommit sourceCommit, String message, StringAreaAPI commitTags)
+        {
+            return null;
+        }
     }
 
     //#endregion

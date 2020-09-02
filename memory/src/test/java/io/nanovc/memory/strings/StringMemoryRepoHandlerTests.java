@@ -598,9 +598,8 @@ public class StringMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
 
         // Check out the merged commit and make sure the content is as expected:
         StringHashMapArea mergedArea = repoHandler.checkout(mergeCommit);
-        // NOTICE: The Root value is from the third commit because it made after the second commit.
-        assertEquals("/ : 'Root'\n" +
-                     "/a : 'A3'\n" +
+        assertEquals("/ : 'New Root'\n" +
+                     "/a : 'A2'\n" +
                      "/b : 'B1'\n" +
                      "/c : 'c1'\n" +
                      "/d : 'D2'\n" +
@@ -732,7 +731,7 @@ public class StringMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         // Check out the merged commit and make sure the content is as expected:
         StringHashMapArea mergedArea = repoHandler.checkout(mergeCommit);
         assertEquals("/ : 'New Root'\n" +
-                     "/a : 'A3'\n" +
+                     "/a : 'A2'\n" +
                      "/b : 'B1'", mergedArea.asListString());
     }
 
