@@ -608,8 +608,8 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         ByteArrayHashMapArea mergedArea = repoHandler.checkout(mergeCommit);
         // NOTICE: The Root value is from the third commit because it made after the second commit.
         assertEquals(
-            "/ : byte[4] ➡ 'Root'\n" +
-            "/a : byte[2] ➡ 'A3'\n" +
+            "/ : byte[8] ➡ 'New Root'\n" +
+            "/a : byte[2] ➡ 'A2'\n" +
             "/b : byte[2] ➡ 'B1'\n" +
             "/c : byte[2] ➡ 'c1'\n" +
             "/d : byte[2] ➡ 'D2'\n" +
@@ -747,7 +747,7 @@ public class ByteArrayMemoryRepoHandlerTests extends MemoryRepoHandlerTestBase<
         ByteArrayHashMapArea mergedArea = repoHandler.checkout(mergeCommit);
         assertEquals(
             "/ : byte[8] ➡ 'New Root'\n" +
-            "/a : byte[2] ➡ 'A3'\n" +
+            "/a : byte[2] ➡ 'A2'\n" +
             "/b : byte[2] ➡ 'B1'",
             mergedArea.asListString()
         );

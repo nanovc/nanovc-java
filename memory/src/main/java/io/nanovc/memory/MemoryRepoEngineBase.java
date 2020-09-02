@@ -133,7 +133,7 @@ public abstract class MemoryRepoEngineBase<
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
      * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
-     * @param repo               The repo to commit the content area to.
+     * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @param parentCommit        The parent commit that we want to make this commit from.
@@ -169,7 +169,7 @@ public abstract class MemoryRepoEngineBase<
      * @param contentAreaToCommit The content area to commit to the repo.
      * @param message             The commit message.
      * @param commitTags          The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
-     * @param repo               The repo to commit the content area to.
+     * @param repo                The repo to commit the content area to.
      * @param byteArrayIndex      The byte array index to use when creating snap-shots for the content.
      * @param clock               The clock to use for generating the timestamp for the commit.
      * @param firstParentCommit   The parent commit that we want to make this commit from.
@@ -309,7 +309,7 @@ public abstract class MemoryRepoEngineBase<
     /**
      * Removes the branch with the given name from the repo.
      *
-     * @param repo      The repo to remove the branch from.
+     * @param repo       The repo to remove the branch from.
      * @param branchName The name of the branch to remove.
      */
     @Override public void removeBranch(TRepo repo, String branchName)
@@ -328,7 +328,7 @@ public abstract class MemoryRepoEngineBase<
     }
 
     /**
-     * @param repo The repo to search through and update with a dangling commit.
+     * @param repo              The repo to search through and update with a dangling commit.
      * @param commitToSearchFor The commit to search for. If the commit is not found anywhere in the history of the branches, tags or existing dangling commits then it is added as a dangling commit.
      */
     protected void addDanglingCommitIfNotReferencedAnywhereElse(TRepo repo, TCommit commitToSearchFor)
@@ -381,9 +381,10 @@ public abstract class MemoryRepoEngineBase<
 
     /**
      * This scans for the given commit in the history of the starting commit.
-     * @param commitToSearchFor The commit to search for.
+     *
+     * @param commitToSearchFor  The commit to search for.
      * @param commitToSearchFrom The commit to start searching from. All history is scanned depth first from this commit.
-     * @param visitedCommits The list of visited commits so that we don't scan through commits that we have seen before.
+     * @param visitedCommits     The list of visited commits so that we don't scan through commits that we have seen before.
      * @return True if the given commit was found anywhere in the history of the given commit. False if the given commit was not found.
      */
     protected boolean scanForCommitRecursively(TCommit commitToSearchFor, TCommit commitToSearchFrom, IdentityHashMap<TCommit, TCommit> visitedCommits)
@@ -1048,6 +1049,139 @@ public abstract class MemoryRepoEngineBase<
         TCommit sourceCommit = getLatestCommitForBranch(sourceBranchName, repo);
         TCommit destinationCommit = getLatestCommitForBranch(destinationBranchName, repo);
 
+        // Merge the content areas:
+        TArea mergedArea = mergeCommits_Core(destinationCommit, sourceCommit, mergeHandler, comparisonHandler, differenceHandler, repo, areaFactory, contentFactory, byteArrayIndex);
+
+        // Commit the merged area:
+        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, commitTags, repo, byteArrayIndex, clock);
+
+        // Add the source commit as another parent so that we can keep track of where we merged from:
+        mergeCommit.setOtherParents(new ArrayList<>());
+        mergeCommit.getOtherParents().add(sourceCommit);
+
+        // Return the merged commit:
+        return mergeCommit;
+    }
+
+    /**
+     * Merges a commit into a branch.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationBranchName The branch that we should merge into.
+     * @param sourceCommit          The commit that we should merge from.
+     * @param message               The commit message to use for the merge.
+     * @param commitTags            The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler          The handler to use for dealing with the merge logic.
+     * @param comparisonHandler     The handler to use for comparing content between content areas.
+     * @param differenceHandler     The handler to use for finding differences between content areas.
+     * @param repo                  The repo that we are working on.
+     * @param areaFactory           The factory to use for creating content areas for the repo.
+     * @param contentFactory        The factory to use for extracting content from the areas.
+     * @param byteArrayIndex        The byte array index to use when creating snap-shots for the content.
+     * @param clock                 The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeIntoBranchFromCommit(String destinationBranchName, TCommit sourceCommit, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    {
+        // Get the commits for each branch:
+        TCommit destinationCommit = getLatestCommitForBranch(destinationBranchName, repo);
+
+        // Merge the content areas:
+        TArea mergedArea = mergeCommits_Core(destinationCommit, sourceCommit, mergeHandler, comparisonHandler, differenceHandler, repo, areaFactory, contentFactory, byteArrayIndex);
+
+        // Commit the merged area:
+        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, commitTags, repo, byteArrayIndex, clock);
+
+        // Add the source commit as another parent so that we can keep track of where we merged from:
+        mergeCommit.setOtherParents(new ArrayList<>());
+        mergeCommit.getOtherParents().add(sourceCommit);
+
+        // Return the merged commit:
+        return mergeCommit;
+    }
+
+    /**
+     * Merges a branch into a commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceBranchName  The branch that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler      The handler to use for dealing with the merge logic.
+     * @param comparisonHandler The handler to use for comparing content between content areas.
+     * @param differenceHandler The handler to use for finding differences between content areas.
+     * @param repo              The repo that we are working on.
+     * @param areaFactory       The factory to use for creating content areas for the repo.
+     * @param contentFactory    The factory to use for extracting content from the areas.
+     * @param byteArrayIndex    The byte array index to use when creating snap-shots for the content.
+     * @param clock             The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeIntoCommitFromBranch(TCommit destinationCommit, String sourceBranchName, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    {
+        // Get the commits for each branch:
+        TCommit sourceCommit = getLatestCommitForBranch(sourceBranchName, repo);
+
+        // Merge the content areas:
+        TArea mergedArea = mergeCommits_Core(destinationCommit, sourceCommit, mergeHandler, comparisonHandler, differenceHandler, repo, areaFactory, contentFactory, byteArrayIndex);
+
+        // Commit the merged area:
+        TCommit mergeCommit = commit(mergedArea, message, commitTags, repo, byteArrayIndex, clock, destinationCommit, Collections.singletonList(sourceCommit));
+
+        // Return the merged commit:
+        return mergeCommit;
+    }
+
+    /**
+     * Merges a commit into another commit.
+     * The merge handler is used to resolve any merge conflicts if there are any.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceCommit      The commit that we should merge from.
+     * @param message           The commit message to use for the merge.
+     * @param commitTags        The commit tags to add to this commit. This allows an arbitrary amount of information to be associated with this commit. See {@link CommitTags} for helper methods here. Any {@link StringAreaAPI} can be used here.
+     * @param mergeHandler      The handler to use for dealing with the merge logic.
+     * @param comparisonHandler The handler to use for comparing content between content areas.
+     * @param differenceHandler The handler to use for finding differences between content areas.
+     * @param repo              The repo that we are working on.
+     * @param areaFactory       The factory to use for creating content areas for the repo.
+     * @param contentFactory    The factory to use for extracting content from the areas.
+     * @param byteArrayIndex    The byte array index to use when creating snap-shots for the content.
+     * @param clock             The clock to use for generating the timestamp for the commit.
+     * @return The commit that was performed for the merge.
+     */
+    @Override public TCommit mergeCommits(TCommit destinationCommit, TCommit sourceCommit, String message, StringAreaAPI commitTags, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex, ClockAPI<? extends TimestampAPI> clock)
+    {
+        // Merge the content areas:
+        TArea mergedArea = mergeCommits_Core(destinationCommit, sourceCommit, mergeHandler, comparisonHandler, differenceHandler, repo, areaFactory, contentFactory, byteArrayIndex);
+
+        // Commit the merged area:
+        TCommit mergeCommit = commit(mergedArea, message, commitTags, repo, byteArrayIndex, clock, destinationCommit, Collections.singletonList(sourceCommit));
+
+        // Return the merged commit:
+        return mergeCommit;
+    }
+
+
+    /**
+     * The common logic for merging commits and getting the resulting content area.
+     * This does not commit anything. The calling method should decide how to commit the merged content.
+     * This is used by the other implementations.
+     *
+     * @param destinationCommit The commit that we should merge into.
+     * @param sourceCommit      The commit that we should merge from.
+     * @param mergeHandler      The handler to use for dealing with the merge logic.
+     * @param comparisonHandler The handler to use for comparing content between content areas.
+     * @param differenceHandler The handler to use for finding differences between content areas.
+     * @param repo              The repo that we are working on.
+     * @param areaFactory       The factory to use for creating content areas for the repo.
+     * @param contentFactory    The factory to use for extracting content from the areas.
+     * @param byteArrayIndex    The byte array index to use when creating snap-shots for the content.
+     * @return The merged content area.
+     */
+    private TArea mergeCommits_Core(TCommit destinationCommit, TCommit sourceCommit, MergeHandlerAPI<? extends MergeEngineAPI> mergeHandler, ComparisonHandlerAPI<? extends ComparisonEngineAPI> comparisonHandler, DifferenceHandlerAPI<? extends DifferenceEngineAPI> differenceHandler, TRepo repo, AreaFactory<TContent, TArea> areaFactory, ContentFactory<TContent> contentFactory, ByteArrayIndex byteArrayIndex)
+    {
         // Get the difference between the destination and source commits:
         DifferenceAPI differenceBetweenCommits = computeDifferenceBetweenCommits(destinationCommit, sourceCommit, differenceHandler, repo, areaFactory, contentFactory);
 
@@ -1121,17 +1255,7 @@ public abstract class MemoryRepoEngineBase<
             mergedArea = checkout(destinationCommit, repo, areaFactory, contentFactory);
         }
         // Now we have the merged content in the merge area that we want to commit.
-
-
-        // Commit the merged area:
-        TCommit mergeCommit = commitToBranch(mergedArea, destinationBranchName, message, commitTags, repo, byteArrayIndex, clock);
-
-        // Add the source commit as another parent so that we can keep track of where we merged from:
-        mergeCommit.setOtherParents(new ArrayList<>());
-        mergeCommit.getOtherParents().add(sourceCommit);
-
-        // Return the merged commit:
-        return mergeCommit;
+        return mergedArea;
     }
 
     /**

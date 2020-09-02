@@ -106,4 +106,185 @@ public class MemoryRepoHandlerTests_Merging extends MemoryRepoHandlerTestBase<
         assertEquals(expected, mergeArea.asListString());
     }
 
+    @Test
+    public void testMergingCommitIntoBranch_RootCommits()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.createArea();
+        contentArea1.putString("A1", "123");
+        MemoryCommit commit1 = repoHandler.commitToBranch(contentArea1, "1", "First Branch", CommitTags.none());
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.createArea();
+        contentArea2.putString("B2", "abc");
+        MemoryCommit commit2 = repoHandler.commit(contentArea2, "Second Branch", CommitTags.none());
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromCommit("1", commit2, "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
+
+    @Test
+    public void testMergingCommitIntoBranch_CommonAncestor()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the common ancestor for both commits:
+        StringHashMapArea contentArea0 = repoHandler.createArea();
+        contentArea0.putString("0", "0");
+        MemoryCommit commit0 = repoHandler.commit(contentArea0, "Common Ancestor", CommitTags.none());
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.checkout(commit0);
+        contentArea1.putString("A1", "123");
+        repoHandler.createBranchAtCommit(commit0, "1");
+        MemoryCommit commit1 = repoHandler.commitToBranch(contentArea1, "1", "First Branch", CommitTags.none());
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.checkout(commit0);
+        contentArea2.putString("B2", "abc");
+        MemoryCommit commit2 = repoHandler.commit(contentArea2, "Second Branch", CommitTags.none(), commit0);
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeIntoBranchFromCommit("1", commit2, "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/0 : '0'\n" +
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
+
+    @Test
+    public void testMergingBranchIntoCommit_RootCommits()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.createArea();
+        contentArea1.putString("A1", "123");
+        MemoryCommit commit1 = repoHandler.commit(contentArea1, "First Branch", CommitTags.none());
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.createArea();
+        contentArea2.putString("B2", "abc");
+        MemoryCommit commit2 = repoHandler.commitToBranch(contentArea2, "2", "Second Branch", CommitTags.none());
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeIntoCommitFromBranch(commit1, "2", "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
+
+    @Test
+    public void testMergingBranchIntoCommit_CommonAncestor()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the common ancestor for both commits:
+        StringHashMapArea contentArea0 = repoHandler.createArea();
+        contentArea0.putString("0", "0");
+        MemoryCommit commit0 = repoHandler.commit(contentArea0, "Common Ancestor", CommitTags.none());
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.checkout(commit0);
+        contentArea1.putString("A1", "123");
+        MemoryCommit commit1 = repoHandler.commit(contentArea1, "First Branch", CommitTags.none(), commit0);
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.checkout(commit0);
+        contentArea2.putString("B2", "abc");
+        repoHandler.createBranchAtCommit(commit0, "2");
+        MemoryCommit commit2 = repoHandler.commitToBranch(contentArea2, "2", "Second Branch", CommitTags.none());
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeIntoCommitFromBranch(commit1, "2", "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/0 : '0'\n" +
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
+
+    @Test
+    public void testMergingCommitIntoCommit_RootCommits()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.createArea();
+        contentArea1.putString("A1", "123");
+        MemoryCommit commit1 = repoHandler.commit(contentArea1, "First Branch", CommitTags.none());
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.createArea();
+        contentArea2.putString("B2", "abc");
+        MemoryCommit commit2 = repoHandler.commit(contentArea2, "Second Branch", CommitTags.none());
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeCommits(commit1, commit2, "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
+
+    @Test
+    public void testMergingCommitIntoCommit_CommonAncestor()
+    {
+        // Create the handler:
+        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
+
+        // Create the common ancestor for both commits:
+        StringHashMapArea contentArea0 = repoHandler.createArea();
+        contentArea0.putString("0", "0");
+        MemoryCommit commit0 = repoHandler.commit(contentArea0, "Common Ancestor", CommitTags.none());
+
+        // Create the first area to commit:
+        StringHashMapArea contentArea1 = repoHandler.checkout(commit0);
+        contentArea1.putString("A1", "123");
+        MemoryCommit commit1 = repoHandler.commit(contentArea1, "First Branch", CommitTags.none(), commit0);
+
+        // Create the second area to commit:
+        StringHashMapArea contentArea2 = repoHandler.checkout(commit0);
+        contentArea2.putString("B2", "abc");
+        MemoryCommit commit2 = repoHandler.commit(contentArea2, "Second Branch", CommitTags.none(), commit0);
+
+        // Merge the two branches:
+        MemoryCommit mergeCommit = repoHandler.mergeCommits(commit1, commit2, "Merge 2 into 1", CommitTags.none());
+
+        // Make sure that the merge looks as expected:
+        StringHashMapArea mergeArea = repoHandler.checkout(mergeCommit);
+        String expected =
+            "/0 : '0'\n" +
+            "/A1 : '123'\n" +
+            "/B2 : 'abc'";
+        assertEquals(expected, mergeArea.asListString());
+    }
 }
