@@ -20,6 +20,7 @@ import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.content.ByteArrayContent;
 import io.nanovc.differences.HashMapDifferenceHandler;
 import io.nanovc.indexes.HashWrapperByteArrayIndex;
+import io.nanovc.merges.DiffFromCommonAncestorMergeHandler;
 import io.nanovc.merges.LastWinsMergeHandler;
 
 import java.util.Arrays;
@@ -86,7 +87,7 @@ public class MemoryNanoRepo extends MemoryRepo<ByteArrayContent, ByteArrayHashMa
     /**
      * A common merge handler that is used as the default for Nano Repos.
      */
-    public static final LastWinsMergeHandler COMMON_MERGE_HANDLER = LastWinsMergeHandler.COMMON_MERGE_HANDLER;
+    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = DiffFromCommonAncestorMergeHandler.COMMON_MERGE_HANDLER;
 
     /**
      * The handler to use for merging commits.

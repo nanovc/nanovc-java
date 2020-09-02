@@ -23,6 +23,7 @@ import io.nanovc.indexes.HashWrapperByteArrayIndex;
 import io.nanovc.memory.MemoryCommit;
 import io.nanovc.memory.MemorySearchQuery;
 import io.nanovc.memory.MemorySearchResults;
+import io.nanovc.merges.DiffFromCommonAncestorMergeHandler;
 import io.nanovc.merges.LastWinsMergeHandler;
 
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public class ReflectiveObjectNanoRepo extends ReflectiveObjectMemoryRepo
     /**
      * A common merge handler that is used as the default for Nano Repos.
      */
-    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = LastWinsMergeHandler.COMMON_MERGE_HANDLER;
+    public static final MergeHandlerAPI<? extends MergeEngineAPI> COMMON_MERGE_HANDLER = DiffFromCommonAncestorMergeHandler.COMMON_MERGE_HANDLER;
 
     /**
      * The handler to use for merging commits.

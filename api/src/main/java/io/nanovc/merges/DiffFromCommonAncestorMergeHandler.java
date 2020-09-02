@@ -13,28 +13,32 @@
 package io.nanovc.merges;
 
 /**
- * A merge handler where the last change (in time) wins when a merge conflict is detected.
+ * A merge handler that performs a diff between the common ancestor of the commits.
  */
-public class LastWinsMergeHandler extends LastWinsMergeHandlerBase<LastWinsMergeEngineAPI>
+public class DiffFromCommonAncestorMergeHandler
+    extends DiffFromCommonAncestorMergeHandlerBase<DiffFromCommonAncestorMergeEngineAPI>
 {
+    /**
+     * A common merge handler that is used as the default for Nano Repos.
+     */
+    public static final DiffFromCommonAncestorMergeHandler COMMON_MERGE_HANDLER = new DiffFromCommonAncestorMergeHandler();
 
     /**
      * Creates a new merge handler with the given engine.
-     * The change from the last commit wins.
      *
-     * @param lastWinsMergeEngine The engine to use for this handler
+     * @param engine The engine to use for this handler
      */
-    public LastWinsMergeHandler(LastWinsMergeEngineAPI lastWinsMergeEngine)
+    public DiffFromCommonAncestorMergeHandler(DiffFromCommonAncestorMergeEngineAPI engine)
     {
-        super(lastWinsMergeEngine);
+        super(engine);
     }
 
     /**
-     * Creates a merge handler where the change from the last commit wins.
-     * A new engine is created automatically.
+     * Creates a merge handler.
+     * A {@link DiffFromCommonAncestorMergeEngine} will be used.
      */
-    public LastWinsMergeHandler()
+    public DiffFromCommonAncestorMergeHandler()
     {
-        this(new LastWinsMergeEngine());
+        this(new DiffFromCommonAncestorMergeEngine());
     }
 }

@@ -16,7 +16,7 @@ import io.nanovc.*;
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.comparisons.HashMapComparisonHandler;
 import io.nanovc.differences.HashMapDifferenceHandler;
-import io.nanovc.merges.LastWinsMergeHandler;
+import io.nanovc.merges.DiffFromCommonAncestorMergeHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -172,7 +172,7 @@ public abstract class MemoryRepoHandlerBase<
         if (this.mergeHandler == null)
         {
             // Create a new merge handler:
-            this.mergeHandler = new LastWinsMergeHandler();
+            this.mergeHandler = new DiffFromCommonAncestorMergeHandler();
         }
 
         // Initialise the repo as well:
