@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,14 +52,14 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
      * Asserts that dangling commits are removed after creating a branch.
      *
      * @param commitCount        The number of linear commits to create before testing.
-     * @param commitCreator      The logic to create a commit in the history for this type of test.
+     * @param commitCreator      The logic to create a commit in the history for this type of test. The first argument is the repo handler to use for the commit. The second argument is the default content area for the commit that is already populated. The third argument is the previous commit if there was one (null if there wasn't). The function must return the commit that was created.
      * @param repoAsserterBefore The logic to assert the state of the repo before all changes have been made.
      * @param repoModifier       The logic to modify the repo after the commits have been created. Provide the code that is specific to the type of test being performed. The first parameter is the repo handler under test. The second parameter is the last commit that was performed.
      * @param repoAsserterAfter  The logic to assert the state of the repo after all changes have been made.
      */
     public MemoryRepoHandler<StringContent, StringHashMapArea> assertDanglingCommits(
         int commitCount,
-        BiFunction<MemoryRepoHandler<StringContent, StringHashMapArea>, StringHashMapArea, MemoryCommit> commitCreator,
+        TriFunction<MemoryRepoHandler<StringContent, StringHashMapArea>, StringHashMapArea, MemoryCommit, MemoryCommit> commitCreator,
         BiConsumer<MemoryRepo<StringContent, StringHashMapArea>, MemoryCommit> repoAsserterBefore,
         BiConsumer<MemoryRepoHandler<StringContent, StringHashMapArea>, MemoryCommit> repoModifier,
         BiConsumer<MemoryRepo<StringContent, StringHashMapArea>, MemoryCommit> repoAsserterAfter
@@ -87,7 +86,7 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
         for (int i = 1; i <= commitCount; i++)
         {
             // Commit the content:
-            lastCommit = commitCreator.apply(repoHandler, contentArea);
+            lastCommit = commitCreator.apply(repoHandler, contentArea, lastCommit);
 
             // Keep track of the commits:
             commits.add(lastCommit);
@@ -145,14 +144,17 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                return repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                return previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
             },
             (repo, lastCommit) -> {
                 // Confirm that we have a dangling commit:
-                assertEquals(commitCount, repo.getDanglingCommits().size());
+                // NOTE: We only expect the tip of the dangling commits to be present.
+                assertEquals(1, repo.getDanglingCommits().size());
                 assertTrue(repo.getDanglingCommits().contains(lastCommit));
             },
             (repoHandler, lastCommit) -> {
@@ -201,14 +203,17 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                return repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                return previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
             },
             (repo, lastCommit) -> {
                 // Confirm that we have a dangling commit:
-                assertEquals(commitCount, repo.getDanglingCommits().size());
+                // NOTE: We only expect the tip of the dangling commits to be present.
+                assertEquals(1, repo.getDanglingCommits().size());
                 assertTrue(repo.getDanglingCommits().contains(lastCommit));
             },
             (repoHandler, lastCommit) -> {
@@ -259,14 +264,17 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                return repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                return previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
             },
             (repo, lastCommit) -> {
                 // Confirm that we have a dangling commit:
-                assertEquals(commitCount, repo.getDanglingCommits().size());
+                // NOTE: We only expect the tip of the dangling commits to be present.
+                assertEquals(1, repo.getDanglingCommits().size());
                 assertTrue(repo.getDanglingCommits().contains(lastCommit));
             },
             (repoHandler, lastCommit) -> {
@@ -315,14 +323,17 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                return repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                return previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
             },
             (repo, lastCommit) -> {
                 // Confirm that we have a dangling commit:
-                assertEquals(commitCount, repo.getDanglingCommits().size());
+                // NOTE: We only expect the tip of the dangling commits to be present.
+                assertEquals(1, repo.getDanglingCommits().size());
                 assertTrue(repo.getDanglingCommits().contains(lastCommit));
             },
             (repoHandler, lastCommit) -> {
@@ -373,7 +384,7 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
                 return repoHandler.commitToBranch(contentArea, "master", "Commit", CommitTags.none());
@@ -428,7 +439,7 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
                 return repoHandler.commitToBranch(contentArea, "master", "Commit", CommitTags.none());
@@ -487,7 +498,7 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create an unrelated commit to a different branch for this test:
                 repoHandler.commitToBranch(contentArea, "another", "Another Commit", CommitTags.none());
@@ -499,6 +510,11 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
                 // Confirm that we don't have a dangling commit because we have branches for each commit:
                 assertEquals(0, repo.getDanglingCommits().size());
                 assertFalse(repo.getDanglingCommits().contains(lastCommit));
+
+                // Confirm that we have the two expected branches:
+                assertEquals(2, repo.branchTips.size());
+                assertTrue(repo.branchTips.containsKey("master"));
+                assertTrue(repo.branchTips.containsKey("another"));
             },
             (repoHandler, lastCommit) -> {
                 // Remove the branch (while leaving the other unrelated branches):
@@ -506,11 +522,11 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
             },
             (repo, lastCommit) -> {
                 // Confirm that we do have a dangling commit because it is not referenced from the unrelated branches:
-                assertEquals(0, repo.getDanglingCommits().size());
+                assertEquals(1, repo.getDanglingCommits().size());
+                assertTrue(repo.getDanglingCommits().contains(lastCommit));
 
                 // Confirm that the commit is in the other branch:
                 assertEquals(1, repo.getBranchTips().size());
-                assertSame(lastCommit, repo.getBranchTips().get("another"));
             }
         );
     }
@@ -546,10 +562,12 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                MemoryCommit commit = repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                MemoryCommit commit = previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
 
                 // Tag the commit:
                 repoHandler.tagCommit(commit, "tag");
@@ -607,10 +625,12 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the specific type of commit for this test:
-                MemoryCommit commit = repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                MemoryCommit commit = previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
 
                 // Tag the commit:
                 repoHandler.tagCommit(commit, "tag");
@@ -671,7 +691,7 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     {
         assertDanglingCommits(
             commitCount,
-            (repoHandler, contentArea) ->
+            (repoHandler, contentArea, previousCommit) ->
             {
                 // Create the unrelated commit for this test:
                 MemoryCommit unrelatedCommit = repoHandler.commit(contentArea, "Another", CommitTags.none());
@@ -680,7 +700,9 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
                 repoHandler.tagCommit(unrelatedCommit, "Another");
 
                 // Create the specific type of commit:
-                MemoryCommit commit = repoHandler.commit(contentArea, "Commit", CommitTags.none());
+                MemoryCommit commit = previousCommit == null
+                    ? repoHandler.commit(contentArea, "Commit", CommitTags.none())
+                    : repoHandler.commit(contentArea, "Commit", CommitTags.none(), previousCommit);
 
                 // Tag the commit:
                 repoHandler.tagCommit(commit, "tag");
@@ -708,4 +730,18 @@ public class MemoryRepoHandlerTests_DanglingCommits extends MemoryRepoHandlerTes
     }
 
     //#endregion
+
+    @FunctionalInterface
+    public interface TriFunction<T, U, V, R>
+    {
+        /**
+         * Applies this function to the given arguments.
+         *
+         * @param t the first function argument
+         * @param u the second function argument
+         * @param v the third function argument
+         * @return the function result
+         */
+        R apply(T t, U u, V v);
+    }
 }
