@@ -106,27 +106,4 @@ public class MemoryRepoHandlerTests_Merging extends MemoryRepoHandlerTestBase<
         assertEquals(expected, mergeArea.asListString());
     }
 
-    /**
-     * Asserts that merging works as expected.
-     *
-     */
-    public MemoryRepoHandler<StringContent, StringHashMapArea> assertMerge(
-    )
-    {
-        // Create the handler:
-        MemoryRepoHandler<StringContent, StringHashMapArea> repoHandler = createNewRepoHandler();
-
-        // Create an area where we can commit content:
-        StringHashMapArea contentArea = repoHandler.createArea();
-
-        // Add content to the area:
-        contentArea.putString("Hello", "World");
-
-        // Get the repo so we can confirm the internal state:
-        MemoryRepo<StringContent, StringHashMapArea> repo = repoHandler.getRepo();
-
-
-        return repoHandler;
-    }
-
 }
