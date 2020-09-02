@@ -31,7 +31,7 @@ subprojects {
     // apply plugin: "org.javamodularity.moduleplugin"
 
     group = 'io.nanovc'
-    version = '0.0.7'
+    version = '0.0.8'
 
     // We are targeting Java 8
     // NOTE: We have tried setting up Multi-Release-JARS but it's still pretty complex.
