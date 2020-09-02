@@ -388,6 +388,14 @@ public abstract class MemoryRepoEngineBase<
      */
     protected boolean scanForCommitRecursively(TCommit commitToSearchFor, TCommit commitToSearchFrom, IdentityHashMap<TCommit, TCommit> visitedCommits)
     {
+        // Check whether we have reached the end of the commit chain:
+        if (commitToSearchFrom == null)
+        {
+            // We have hit the end of a commit chain.
+            // Flag that the commit was not found:
+            return false;
+        }
+
         // Check whether we have found the commit:
         if (commitToSearchFor == commitToSearchFrom)
         {

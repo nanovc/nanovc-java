@@ -39,10 +39,10 @@ public interface MemoryRepoAPI<
         >
 {
     /**
-     * The references to the commits that have been tagged.
-     * The key is the tag name.
-     * The value is the commit that has been tagged.
-     * @return The references to the commits that have been tagged.
+     * The list of all dangling commits in the repo.
+     * A dangling commit is one that is at the tip of a commit chain and does not have a branch or tag pointing at it.
+     * This is useful to get access to commits that have been "lost" because there are no branches or tags pointing at them or their children.
+     * @return The list of all dangling commits in the repo.
      */
     LinkedHashSet<TCommit> getDanglingCommits();
 
