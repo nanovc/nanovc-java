@@ -12,6 +12,7 @@
 
 package io.nanovc;
 
+import io.nanovc.areas.ByteArrayAreaAPI;
 import io.nanovc.areas.StringAreaAPI;
 import io.nanovc.content.StringContent;
 import org.junit.jupiter.api.Test;
@@ -90,6 +91,36 @@ public class RepoHandlerAPITests
         }
 
         @Override public TimestampAPI getTimestamp()
+        {
+            return null;
+        }
+
+        @Override
+        public ByteArrayAreaAPI getSnapshot()
+        {
+            return null;
+        }
+
+        @Override
+        public StringAreaAPI getCommitTags()
+        {
+            return null;
+        }
+
+        @Override
+        public CommitAPI getFirstParentCommit()
+        {
+            return null;
+        }
+
+        @Override
+        public List<CommitAPI> getOtherParentCommits()
+        {
+            return null;
+        }
+
+        @Override
+        public List<CommitAPI> getAllParentCommits()
         {
             return null;
         }

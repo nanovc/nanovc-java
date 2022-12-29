@@ -107,4 +107,23 @@ public interface MemoryCommitAPI<TSelf extends MemoryCommitAPI<?>>
      * @param commitTags The commit tags that contain additional meta-data for this commit.
      */
     void setCommitTags(StringAreaAPI commitTags);
+
+    /**
+     * Gets all the parent commits.
+     * This always returns a list, even when there are no parents (meaning this is a root commit).
+     * If this is empty then there are no other parents and this is a root commit.
+     * For better performance, consider using {@link #getFirstParent()} and {@link #getOtherParents()}
+     * since most commits only have 1 parent, we can avoid creating a whole list unnecessarily.
+     * @return All the parent commits. The first commit in the list is considered the first parent. The rest are considered the other parents.
+     */
+    List<TSelf> getAllParents();
+
+    /**
+     * Sets all the parent commits.
+     * If this is empty then there are no other parents and this is a root commit.
+     * For better performance, consider using {@link #setFirstParent(MemoryCommitAPI)} and {@link #setOtherParents(List)}
+     * since most commits only have 1 parent, we can avoid creating a whole list unnecessarily.
+     * @param allParents All the parent commits. The first commit in the list is considered the first parent. The rest are considered the other parents.
+     */
+    void setAllParents(List<TSelf> allParents);
 }
