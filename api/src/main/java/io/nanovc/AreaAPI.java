@@ -27,7 +27,9 @@ import java.util.stream.Stream;
 public interface AreaAPI<TContent extends ContentAPI> extends Iterable<AreaEntry<TContent>>
 {
     /**
-     * Returns true if the content area has any content or false if it is empty
+     * Returns true if the content area has any content or false if it is empty.
+     * This is useful for performance critical code where it might be cheaper to ascertain whether there is any content
+     * than it is to ascertain the amount of content we have.
      * @return true if any content exists in this content area.
      */
     boolean hasAnyContent();

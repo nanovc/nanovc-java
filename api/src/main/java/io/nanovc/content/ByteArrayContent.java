@@ -14,6 +14,7 @@ package io.nanovc.content;
 
 /**
  * Content that wraps a byte array.
+ * This means that we can store arbitrarily serialized information as bytes using this content type.
  */
 public class ByteArrayContent
     extends ContentWithByteArrayBase
